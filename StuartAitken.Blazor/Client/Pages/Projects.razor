@@ -1,0 +1,145 @@
+﻿@inherits CustomComponentBase
+
+@page "/projects"
+
+<PageTitle>Projects</PageTitle>
+
+<div>
+	<MudIconButton OnClick="@(() => Navigation.NavigateTo(Routes.Pages.Index))"
+				   Icon="@Icons.Rounded.ArrowBack" Color="Color.Info" />
+
+
+	.. / Projects
+</div>
+
+<h1>Projects</h1>
+
+<MudTable Items="@(projects)"
+		  Hover="true"
+		  Class="projects-table"
+		  Breakpoint="Breakpoint.Sm"
+		  Loading="@(projects.Count() == 0)"
+		  T="Project"
+		  Filter="FilterFunc"
+		  @bind-SelectedItem="selectedProject"
+		  OnRowClick="RowClickEvent"
+		  LoadingProgressColor="Color.Info">
+	<ToolBarContent>
+		<MudTextField @bind-Value="filterString"
+					  Placeholder="Search"
+					  Adornment="Adornment.Start"
+					  AdornmentIcon="@Icons.Material.Filled.Search"
+					  IconSize="Size.Medium"
+					  Class="mt-0">
+		</MudTextField>
+	</ToolBarContent>
+	<HeaderContent>
+		<MudTh>
+			<MudTableSortLabel SortBy="new Func<Project, object>(x=>x.ProjectDate)"
+							   InitialDirection="SortDirection.Descending">
+				Project Date
+			</MudTableSortLabel>
+		</MudTh>
+		<MudTh>
+			<MudTableSortLabel SortBy="new Func<Project, object>(x=>x.Name)">
+				Name
+			</MudTableSortLabel>
+		</MudTh>
+		<MudTh>
+			<MudTableSortLabel SortBy="new Func<Project, object>(x=>x.ProjectDurationDays)">
+				Duration
+			</MudTableSortLabel>
+		</MudTh>
+		<MudTh>
+			Types
+		</MudTh>
+		<MudTh>
+			Tech
+		</MudTh>
+	</HeaderContent>
+	<RowTemplate>
+		<MudTd DataLabel="ProjectDate" Style="width:140px">@context.ProjectDate.ToString("yyyy MMM")</MudTd>
+		<MudTd DataLabel="Name">
+			<MudChip>@context.Name</MudChip>
+		</MudTd>
+		<MudTd DataLabel="Duration" Style="width:100px">@StringHelpers.MakePresentableDuration(context)</MudTd>
+		<MudTd DataLabel="Types" Style="width:100px">
+			@foreach (var type in context.Type.Split(", "))
+			{
+				<ProjectIcon Src="@StringHelpers.TypeIconSrc(type)" Tooltip="@type" />
+			}
+		</MudTd>
+		<MudTd DataLabel="Tech">
+			@foreach (var tech in context.Tech.Split(", ").OrderBy(i => i))
+			{
+				<ProjectIcon Src="@StringHelpers.TechIconSrc(tech)" Tooltip="@tech" />
+			}
+		</MudTd>
+	</RowTemplate>
+	@*<PagerContent>
+	<MudTablePager  />
+	</PagerContent>*@
+</MudTable>
+
+
+@code {
+
+	[Parameter]
+	public int? ProjectId { get; set; }
+
+	private IEnumerable<Project> projects = new List<Project>();
+	private string filterString = "";
+	private Project? selectedProject = null;
+
+	protected override async Task OnInitializedAsync()
+	{
+		this.LoadProjectsList();
+
+		await base.OnInitializedAsync();
+	}
+
+	private async void LoadProjectsList()
+	{
+		var data = await Http.GetFromJsonAsync<IEnumerable<Project>>(Routes.Api.Projects_All);
+
+		if (data == null)
+		{
+			Snackbar.Add("Found no data!", Severity.Error);
+		}
+		else
+		{
+			projects = data;
+			this.StateHasChanged();
+		}
+	}
+
+	private void RowClickEvent(TableRowClickEventArgs<Project> tableRowClickEventArgs)
+	{
+		if (this.selectedProject != tableRowClickEventArgs.Item)
+		{
+			this.selectedProject = tableRowClickEventArgs.Item;
+		}
+
+		this.Navigation.NavigateTo($"{Routes.Pages.Projects}/{this.selectedProject.ID}");
+	}
+
+	private bool FilterFunc(Project p)
+	{
+		string s = filterString.Trim().ToLower();
+
+		if (string.IsNullOrWhiteSpace(s))
+			return true;
+
+		if (p.Name.ToLower().Contains(s))
+			return true;
+
+		//if (element.Sign.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+		//	return true;
+		//if (element.Name.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+		//	return true;
+		//if ($"{element.Number} {element.Position} {element.Molar}".Contains(searchString))
+		//	return true;
+		return false;
+	}
+
+}

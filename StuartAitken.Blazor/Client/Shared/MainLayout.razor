@@ -1,0 +1,44 @@
+﻿@inherits LayoutComponentBase
+@inject NavigationManager Navigation
+
+<MudLayout>
+	<MudAppBar>
+		<MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
+		
+		<div class="site-title">
+			@Constants.SiteName
+		</div>
+		
+		<MudContainer MaxWidth="MaxWidth.Large">
+			<CustomAppBarButton Icon="@Icons.Material.Filled.Home" Color="Color.Secondary" Edge="Edge.False" Page="@Routes.Pages.Index" Tooltip="/home" />
+			<CustomAppBarButton Icon="@Icons.Material.Filled.Dns" Color="Color.Secondary" Edge="Edge.False" Page="@Routes.Pages.Projects" />
+		</MudContainer>
+		@*<CustomAppBarButton Icon="@Icons.Material.Filled.DocumentScanner" Color="Color.Secondary" Edge="Edge.False" Page="@(Routes.Pages.Projects)" />*@
+		<MudSpacer />
+		@*<MudNavLink Href="@Routes.Pages.Swagger" Target="_blank" Match="NavLinkMatch.Prefix">Swagger API</MudNavLink>*@
+	</MudAppBar>
+	<MudDrawer @bind-Open="@_drawerOpen">
+		<NavMenu />
+	</MudDrawer>
+	<MudMainContent>
+		<MudContainer MaxWidth="MaxWidth.Large" Style="padding-top:1rem;min-height:100%">
+			<MudPaper Class="mud-theme-primary" Style="padding:1rem">
+				@Body
+			</MudPaper>
+		</MudContainer>
+	</MudMainContent>
+</MudLayout>
+
+@code {
+	bool _drawerOpen = false;
+
+	void DrawerToggle()
+	{
+		_drawerOpen = !_drawerOpen;
+	}
+}
+
+
+<MudThemeProvider />
+<MudDialogProvider />
+<MudSnackbarProvider />

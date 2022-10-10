@@ -1,0 +1,29 @@
+﻿@inherits CustomComponentBase
+
+<MudTooltip Text="@(string.IsNullOrEmpty(Tooltip) ? this.Page : this.Tooltip)" Placement="Placement.Bottom">
+	<MudIconButton Class="custom-app-bar-btn"
+				   Style="margin: 0 10px;"
+				   Icon="@Icon"
+				   Variant="Variant.Filled"
+				   Color="@Color"
+				   Edge="@Edge"
+				   OnClick="@(() => Navigation.NavigateTo(Page))" />
+</MudTooltip>
+
+@code {
+	[Parameter]
+	public string Icon { get; set; }
+
+	[Parameter]
+	public Color Color { get; set; }
+
+	[Parameter]
+	public string Page { get; set; }
+
+	[Parameter]
+	public Edge Edge { get; set; }
+
+	[Parameter]
+	public string Tooltip { get; set; }
+
+}

@@ -1,0 +1,27 @@
+﻿@page "/"
+
+@inherits CustomComponentBase
+
+<PageTitle>Index</PageTitle>
+
+<MudGrid Class="index-container">
+	<MudItem md="6">
+		<h1>Welcome to my website</h1>
+		<p>It's a bit sparse on here at the moment, but that'll probably change as I start to build it up with more stuff.</p>
+		<p>
+			Have a look at the
+			<MudButton Variant="Variant.Filled"
+					   Color="Color.Secondary"
+					   Size="Size.Small"
+					   OnClick="() => Navigation.NavigateTo(Routes.Pages.Projects)">
+				Projects
+			</MudButton>
+			page for info on my latest projects
+		</p>
+	</MudItem>
+	<MudItem md="6">
+		<div class="homeImage">
+			<MudImage Fluid Src="@StringHelpers.ImageAssetSrc("console", "png")" />
+		</div>
+	</MudItem>
+</MudGrid>

@@ -1,0 +1,65 @@
+﻿
+body, #app, .mud-layout {
+    min-height: 100vh;
+}
+
+.site-title {
+    min-width: 125px;
+}
+
+.mud-main-content {
+    min-height: 100%
+}
+
+.homeImage img {
+    border: 10px solid #000;
+    border-radius: 5px;
+    max-width: 500px;
+    margin: auto;
+}
+
+.index-container p {
+    margin-top: 1rem;
+}
+
+.projects-table thead {
+    font-weight: bold
+}
+
+.projects-table tbody tr td:hover {
+    cursor: pointer;
+}
+
+.carousel-image img {
+    height: 50vh !important;
+    margin: auto;
+}
+
+.project-description {
+    padding: 1rem;
+    margin: 2rem 1rem;
+}
+
+.project-description-title {
+    margin-bottom: 1.5rem;
+}
+
+.project-info {
+    max-width: 500px;
+    background: var(--mud-palette-primary-lighten);
+    padding: 1rem;
+    margin: 1rem auto;
+    border-radius: 1rem;
+}
+
+.project-info-links {
+    margin-bottom: 1rem;
+}
+
+.project-info-grid {
+    margin-top: 1rem;
+}
+
+    .project-info-grid h3 {
+        margin-bottom: 1rem;
+    }

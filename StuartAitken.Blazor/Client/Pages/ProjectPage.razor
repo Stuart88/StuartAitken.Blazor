@@ -1,0 +1,39 @@
+﻿@page "/projects/{ProjectId:int}"
+
+@inherits CustomComponentBase
+
+<PageTitle>@(project?.Name ?? "Project")</PageTitle>
+
+	<div>
+		<MudIconButton OnClick="@(() => Navigation.NavigateTo(Routes.Pages.Projects))"
+				   Icon="@Icons.Rounded.ArrowBack" Color="Color.Info" />
+
+
+		.. / Projects / @(project?.Name ?? "Loading...")
+	</div>
+
+	<ProjectComponent Project="project" />
+
+	@code {
+	[Parameter]
+	public int ProjectId { get; set; }
+
+	private Project project;
+
+	protected override async Task OnParametersSetAsync()
+	{
+		var data = await Http.GetFromJsonAsync<Project>($"{Routes.Api.Projects}{this.ProjectId}");
+
+		if (data == null)
+		{
+			Snackbar.Add("Found no data!", Severity.Error);
+		}
+		else
+		{
+			project = data;
+			this.StateHasChanged();
+		}
+
+		await base.OnParametersSetAsync();
+	}
+}

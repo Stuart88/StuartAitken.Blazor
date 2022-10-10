@@ -1,0 +1,54 @@
+﻿@using StuartAitken.Blazor.Client.Helpers
+
+@if (Project != null)
+{
+	<div class="project-info">
+		@{
+			Console.WriteLine(Project.Urls);
+		}
+		@if (!string.IsNullOrEmpty(Project.Urls))
+		{
+			<div class="project-info-links">
+				<h3>Links</h3>
+				@foreach (string url in Project.Urls.Split(", "))
+				{
+					<MudLink Href="@url" Target="_blank" Color="Color.Default">
+						@url
+					</MudLink>
+				}
+			</div>
+			<MudDivider Light />
+		}
+		<MudGrid Class="project-info-grid" Justify="Justify.FlexStart">
+			<MudItem xs="4">
+				<h3>Project Type</h3>
+				<MudGrid Justify="Justify.FlexStart">
+					@foreach (var type in Project.Type.Split(", "))
+					{
+						<MudItem>
+							<ProjectIcon Src="@StringHelpers.TypeIconSrc(type)" Tooltip="@type" />
+						</MudItem>
+					}
+				</MudGrid>
+
+			</MudItem>
+			<MudItem xs="8">
+				<h3>Tech</h3>
+				<MudGrid Justify="Justify.FlexStart">
+					@foreach (var tech in Project.Tech.Split(", ").OrderBy(i => i))
+					{
+						<MudItem>
+							<ProjectIcon Src="@StringHelpers.TechIconSrc(tech)" Tooltip="@tech" />
+						</MudItem>
+					}
+				</MudGrid>
+
+			</MudItem>
+		</MudGrid>
+	</div>
+}
+
+@code {
+	[Parameter]
+	public Project Project { get; set; }
+}

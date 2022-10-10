@@ -1,0 +1,12 @@
+﻿
+<MudTooltip Text="@Tooltip">
+	<MudImage Fluid Src="@Src" Width="30" Style="padding:1px;margin: 0px 7px" />
+</MudTooltip>
+
+@code {
+	[Parameter]
+	public string Src { get; set; }
+
+	[Parameter]
+	public string Tooltip { get; set; }
+}

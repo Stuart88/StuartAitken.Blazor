@@ -1,0 +1,43 @@
+﻿@inherits CustomComponentBase
+
+@if (Project == null)
+{
+	<MudProgressCircular Indeterminate=true Color="Color.Primary" />
+}
+else
+{
+	<div>
+		
+
+		<MudCarousel Class="mud-width-full"
+				 Style="height:400px;"
+				 ShowArrows="true" 
+				 ShowBullets="true" 
+				 EnableSwipeGesture="true" 
+				 AutoCycle="true"
+				 TData="object">
+			@foreach (var img in Project.Images.OrderByDescending(i => i.PrimaryImage == 1).ToList())
+			{
+				<MudCarouselItem Transition="Transition.Fade" Color="@Color.Primary">
+					<div class="d-flex text-center carousel-image" style="height:100%">
+						<MudImage Fluid Src="@($"/{Routes.Api.ProjectImage_AsObject}{img.ID}")" />
+					</div>
+				</MudCarouselItem>
+			}
+		</MudCarousel>
+
+		<ProjectInfoSection Project="Project" />
+
+		<div class="project-description">
+			<div class="project-description-title">
+				<h1>@Project.Name</h1>
+			</div>
+			@((MarkupString)(Project.Description ?? ""))
+		</div>
+	</div>
+}
+
+@code {
+	[Parameter]
+	public Project Project { get; set; }
+}
