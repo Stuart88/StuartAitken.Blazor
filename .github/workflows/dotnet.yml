@@ -31,11 +31,11 @@ jobs:
     
     steps:
     - name: Publish Release
-      run: dotnet publish ../StuartAitken.Blazor.sln -c Release -o ./publish
+      run: dotnet publish .\StuartAitken.Blazor\Server\StuartAitken.Blazor.Server.csproj -c Release -o ./publish
 
   deploy:
     needs: [build, publish]
-    runs-on: windows-2019
+    runs-on: ubuntu-latest
     concurrency: deploy
     
     steps:
