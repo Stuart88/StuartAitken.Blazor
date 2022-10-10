@@ -30,16 +30,16 @@ jobs:
       run: dotnet test --no-build --verbosity normal
       
     - name: Publish Release
-      run: dotnet publish -c Release -o publish
+      run: dotnet publish -c Release -o ./publish
       
     - uses: actions/checkout@v2
       
     - name: FTP to HostWinds Server
-      uses: airvzxf/ftp-deployment-action@latest
+      uses:  sebastianpopp/ftp-action@releases/v2
       with:
-        server: ${{ secrets.HOSTWINDS_SERVER }}
+        host: ${{ secrets.HOSTWINDS_SERVER }}
         user: ${{ secrets.HOSTWINDS_USER }}
         password: ${{ secrets.HOSTWINDS_PASS }}
-        local_dir: "publish"
+        localDir: "/home/runner/work/StuartAitken.Blazor/StuartAitken.Blazor/publish/"
         remote_dir: "./StuartAitken.Blazor"
-        delete: "false"
+        options: "--delete --asci"
