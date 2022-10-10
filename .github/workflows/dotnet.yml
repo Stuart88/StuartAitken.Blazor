@@ -31,7 +31,7 @@ jobs:
     
     steps:
     - name: Publish Release
-      run: dotnet publish StuartAitken.Blazor.sln -c Release -o ./publish
+      run: dotnet publish D:\a\StuartAitken.Blazor\StuartAitken.Blazor\StuartAitken.Blazor\Server\StuartAitken.Blazor.Server.csproj -c Release -o ./publish
 
   deploy:
     needs: [build, publish]
