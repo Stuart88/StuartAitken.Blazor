@@ -23,18 +23,11 @@ jobs:
       run: dotnet build --configuration Release --no-restore
     - name: Test
       run: dotnet test --no-build --verbosity normal
-  
-  publish:
-    needs: build 
-    runs-on: windows-2019
-    concurrency: publish
-    
-    steps:
     - name: Publish Release
-      run: dotnet publish D:\a\StuartAitken.Blazor\StuartAitken.Blazor\StuartAitken.Blazor\Server\StuartAitken.Blazor.Server.csproj -c Release -o ./publish
+      run: dotnet publish -c Release -o ./publish
 
   deploy:
-    needs: [build, publish]
+    needs: [build]
     runs-on: ubuntu-latest
     concurrency: deploy
     
