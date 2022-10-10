@@ -33,12 +33,14 @@ jobs:
       run: dotnet publish -c Release -o ./publish
     
     - name: FTP to HostWinds Server
-      uses: kevinpainchaud/simple-ftp-deploy-action@v1.2.1
+      uses: SamKirkland/FTP-Deploy-Action@4.3.2
       with:
-        ftp_host: ${{ secrets.HOSTWINDS_SERVER }}
-        ftp_username: ${{ secrets.HOSTWINDS_USER }}
-        ftp_password: ${{ secrets.HOSTWINDS_PASS }}
-        local_source_dir: "./publish"
-        dist_target_dir: "./StuartAitken.Blazor"
-        delete: "true"
-        exclude: "'^projectImages/' '^web.config' ^Database/''"
+        server: ${{ secrets.HOSTWINDS_SERVER }}
+        username: ${{ secrets.HOSTWINDS_USER }}
+        password: ${{ secrets.HOSTWINDS_PASS }}
+        local-dir: "./publish/"
+        server-dir: "./StuartAitken.Blazor/"
+        exclude: |
+          **/projectImages/**
+          **/Database/**
+          web.config
