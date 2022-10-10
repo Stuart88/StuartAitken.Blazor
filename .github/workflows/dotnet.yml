@@ -10,7 +10,10 @@ jobs:
     #runs-on: windows-2019
     runs-on: ubuntu-latest
     concurrency: build
-
+    defaults:
+      run:
+        working-directory: /github/workspace
+        
     steps:
     - uses: actions/checkout@v3
     
