@@ -12,7 +12,7 @@ jobs:
     concurrency: build
     defaults:
       run:
-        working-directory: ${{ github.workspace }}/tmp
+        working-directory: ${{ github.workspace }}
         
     steps:
     - uses: actions/checkout@v3
@@ -32,7 +32,7 @@ jobs:
       run: dotnet test --no-build --verbosity normal
       
     - name: Publish Release
-      run: dotnet publish -c Release -o /home/runner/work/StuartAitken.Blazor/StuartAitken.Blazor/publish/
+      run: dotnet publish -c Release -o /publish
       
     - uses: actions/checkout@v2
       
@@ -42,6 +42,6 @@ jobs:
         host: ${{ secrets.HOSTWINDS_SERVER }}
         user: ${{ secrets.HOSTWINDS_USER }}
         password: ${{ secrets.HOSTWINDS_PASS }}
-        localDir: "/home/runner/work/StuartAitken.Blazor/StuartAitken.Blazor/publish/"
+        localDir: "/publish"
         remoteDir: "./StuartAitken.Blazor"
         options: "--delete --asci"
