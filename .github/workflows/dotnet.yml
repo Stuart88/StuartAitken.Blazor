@@ -8,38 +8,38 @@ on:
 jobs:
   build:
 
-    runs-on: windows-2019
+    #runs-on: windows-2019
+    runs-on: ubuntu-latest
     concurrency: build
 
     steps:
     - uses: actions/checkout@v3
+    
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
       with:
         dotnet-version: 6.0.x
+        
     - name: Restore dependencies
       run: dotnet restore
+      
     - name: Build
       run: dotnet build --configuration Release --no-restore
+      
     - name: Test
       run: dotnet test --no-build --verbosity normal
+      
     - name: Publish Release
       run: dotnet publish -c Release -o ./publish
-
-  deploy:
-    needs: [build]
-    runs-on: ubuntu-latest
-    concurrency: deploy
-    
-    steps:
-      - uses: actions/checkout@v2
-      # Here is the deployment action
-      - name: FTP to HostWinds Server
-        uses: airvzxf/ftp-deployment-action@latest
-        with:
-          server: ${{ secrets.HOSTWINDS_SERVER }}
-          user: ${{ secrets.HOSTWINDS_USER }}
-          password: ${{ secrets.HOSTWINDS_PASS }}
-          local_dir: "./publish"
-          remote_dir: "./StuartAitken.Blazor"
-          delete: "false"
+      
+    - uses: actions/checkout@v2
+      
+    - name: FTP to HostWinds Server
+      uses: airvzxf/ftp-deployment-action@latest
+      with:
+        server: ${{ secrets.HOSTWINDS_SERVER }}
+        user: ${{ secrets.HOSTWINDS_USER }}
+        password: ${{ secrets.HOSTWINDS_PASS }}
+        local_dir: "./publish"
+        remote_dir: "./StuartAitken.Blazor"
+        delete: "false"
