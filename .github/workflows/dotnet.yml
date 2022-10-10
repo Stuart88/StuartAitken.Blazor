@@ -1,8 +1,9 @@
 name: .NET
 
 on:
-  push:
-    branches: [ "master" ]
+  workflow_dispatch
+#  push:
+#    branches: [ "master" ]
 
 jobs:
   build:
@@ -24,14 +25,16 @@ jobs:
       run: dotnet test --no-build --verbosity normal
   
   publish:
+    needs: build 
     runs-on: windows-2019
     concurrency: publish
     
     steps:
     - name: Publish Release
-      run: dotnet publish -c Release -o ./StuartAitken.Blazor/publish
+      run: dotnet publish -SOLUTION ./StuartAitken.Blazor.sln -c Release -o ./publish
 
   deploy:
+    needs: [build, publish]
     runs-on: windows-2019
     concurrency: deploy
     
@@ -44,6 +47,6 @@ jobs:
           server: ${{ secrets.HOSTWINDS_SERVER }}
           user: ${{ secrets.HOSTWINDS_USER }}
           password: ${{ secrets.HOSTWINDS_PASS }}
-          local_dir: "./StuartAitken.Blazor/publish"
+          local_dir: "./publish"
           remote_dir: "./StuartAitken.Blazor"
           delete: "false"
