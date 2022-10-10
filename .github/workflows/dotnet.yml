@@ -50,4 +50,4 @@ jobs:
         password: ${{ secrets.HOSTWINDS_PASS }}
         localDir: "./publish"
         remoteDir: "./StuartAitken.Blazor"
-        options: "--delete --asci -x */projectImages/ -x */Database/ -x web.config"
+        options: "--delete --asci -x ^projectImages/ -x ^Database/ -x web.config"
