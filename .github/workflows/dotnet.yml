@@ -30,7 +30,7 @@ jobs:
       run: dotnet test --no-build --verbosity normal
       
     - name: Publish Release
-      run: dotnet publish -c Release -o ./publish -r win-x64
+      run: dotnet publish -c Release -o ./publish -r win-x64 -p:PublishReadyToRun=true
       
     - name: FTP to HostWinds Server
       uses:  sebastianpopp/ftp-action@releases/v2
@@ -40,4 +40,4 @@ jobs:
         password: ${{ secrets.HOSTWINDS_PASS }}
         localDir: "./publish"
         remoteDir: "./StuartAitken.Blazor"
-        options: "--delete --asci --exclude=./StuartAitken.Blazor/wwwroot/images/projectImages --exclude=./StuartAitken.Blazor/Database --exclude=./StuartAitken.Blazor/web.config"
+        options: "--delete --asci --exclude /wwwroot/images/projectImages/ --exclude /Database/ --exclude= web.config
