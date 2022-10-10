@@ -17,7 +17,7 @@
 <MudTable Items="@(projects)"
 		  Hover="true"
 		  Class="projects-table"
-		  Breakpoint="Breakpoint.Sm"
+		  Breakpoint="Breakpoint.None"
 		  Loading="@(projects.Count() == 0)"
 		  T="Project"
 		  Filter="FilterFunc"
@@ -45,36 +45,40 @@
 				Name
 			</MudTableSortLabel>
 		</MudTh>
-		<MudTh>
-			<MudTableSortLabel SortBy="new Func<Project, object>(x=>x.ProjectDurationDays)">
-				Duration
-			</MudTableSortLabel>
-		</MudTh>
-		<MudTh>
-			Types
-		</MudTh>
-		<MudTh>
-			Tech
-		</MudTh>
+		<MudHidden Breakpoint="Breakpoint.SmAndDown">
+			<MudTh>
+				<MudTableSortLabel SortBy="new Func<Project, object>(x=>x.ProjectDurationDays)">
+					Duration
+				</MudTableSortLabel>
+			</MudTh>
+			<MudTh>
+				Types
+			</MudTh>
+			<MudTh>
+				Tech
+			</MudTh>
+		</MudHidden>
 	</HeaderContent>
 	<RowTemplate>
 		<MudTd DataLabel="ProjectDate" Style="width:140px">@context.ProjectDate.ToString("yyyy MMM")</MudTd>
 		<MudTd DataLabel="Name">
 			<MudChip>@context.Name</MudChip>
 		</MudTd>
-		<MudTd DataLabel="Duration" Style="width:100px">@StringHelpers.MakePresentableDuration(context)</MudTd>
-		<MudTd DataLabel="Types" Style="width:100px">
-			@foreach (var type in context.Type.Split(", "))
-			{
-				<ProjectIcon Src="@StringHelpers.TypeIconSrc(type)" Tooltip="@type" />
-			}
-		</MudTd>
-		<MudTd DataLabel="Tech">
-			@foreach (var tech in context.Tech.Split(", ").OrderBy(i => i))
-			{
-				<ProjectIcon Src="@StringHelpers.TechIconSrc(tech)" Tooltip="@tech" />
-			}
-		</MudTd>
+		<MudHidden Breakpoint="Breakpoint.SmAndDown">
+			<MudTd DataLabel="Duration" Style="width:100px">@StringHelpers.MakePresentableDuration(context)</MudTd>
+			<MudTd DataLabel="Types" Style="width:100px">
+				@foreach (var type in context.Type.Split(", "))
+				{
+					<ProjectIcon Src="@StringHelpers.TypeIconSrc(type)" Tooltip="@type" />
+				}
+			</MudTd>
+			<MudTd DataLabel="Tech">
+				@foreach (var tech in context.Tech.Split(", ").OrderBy(i => i))
+				{
+					<ProjectIcon Src="@StringHelpers.TechIconSrc(tech)" Tooltip="@tech" />
+				}
+			</MudTd>
+		</MudHidden>
 	</RowTemplate>
 	@*<PagerContent>
 	<MudTablePager  />

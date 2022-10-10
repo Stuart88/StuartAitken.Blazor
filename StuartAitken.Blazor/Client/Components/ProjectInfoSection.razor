@@ -10,12 +10,16 @@
 		{
 			<div class="project-info-links">
 				<h3>Links</h3>
-				@foreach (string url in Project.Urls.Split(", "))
-				{
-					<MudLink Href="@url" Target="_blank" Color="Color.Default">
-						@url
-					</MudLink>
-				}
+				<ul>
+					@foreach (string url in Project.Urls.Split(", "))
+					{
+						<li>
+							<MudLink Href="@url" Target="_blank" Color="Color.Default">
+								@url
+							</MudLink>
+						</li>
+					}
+				</ul>
 			</div>
 			<MudDivider Light />
 		}
