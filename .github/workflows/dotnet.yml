@@ -39,6 +39,7 @@ jobs:
         username: ${{ secrets.HOSTWINDS_USER }}
         password: ${{ secrets.HOSTWINDS_PASS }}
         protocol: ftps
+        security: strict
         local-dir: "./publish/"
         server-dir: "./StuartAitken.Blazor/"
         exclude: |
