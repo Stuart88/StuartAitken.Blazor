@@ -30,7 +30,7 @@ jobs:
       run: dotnet test --no-build --verbosity normal
       
     - name: Publish Release
-      run: dotnet publish -c Release -o ./publish
+      run: dotnet publish -c Release -o publish
       
     - uses: actions/checkout@v2
       
@@ -40,6 +40,6 @@ jobs:
         server: ${{ secrets.HOSTWINDS_SERVER }}
         user: ${{ secrets.HOSTWINDS_USER }}
         password: ${{ secrets.HOSTWINDS_PASS }}
-        local_dir: "./publish"
+        local_dir: "publish"
         remote_dir: "./StuartAitken.Blazor"
         delete: "false"
