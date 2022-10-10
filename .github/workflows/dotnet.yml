@@ -30,7 +30,7 @@ jobs:
       run: dotnet test --no-build --verbosity normal
       
     - name: Publish Release
-      run: dotnet publish -c Release -o ./publish -r win10-x64 --self-contained false
+      run: dotnet publish -c Release -o ./publish -r win10-x64 --self-contained false -p:PublishTrimmed=false
       
     - name: FTP to HostWinds Server
       uses:  sebastianpopp/ftp-action@releases/v2
