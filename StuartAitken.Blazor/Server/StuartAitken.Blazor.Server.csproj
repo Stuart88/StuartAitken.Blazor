@@ -7,6 +7,84 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="wwwroot\images\projectImages\1.png" />
+    <Content Remove="wwwroot\images\projectImages\10.png" />
+    <Content Remove="wwwroot\images\projectImages\100.png" />
+    <Content Remove="wwwroot\images\projectImages\101.png" />
+    <Content Remove="wwwroot\images\projectImages\102.png" />
+    <Content Remove="wwwroot\images\projectImages\103.png" />
+    <Content Remove="wwwroot\images\projectImages\104.png" />
+    <Content Remove="wwwroot\images\projectImages\105.png" />
+    <Content Remove="wwwroot\images\projectImages\11.png" />
+    <Content Remove="wwwroot\images\projectImages\1105.png" />
+    <Content Remove="wwwroot\images\projectImages\1106.png" />
+    <Content Remove="wwwroot\images\projectImages\1107.png" />
+    <Content Remove="wwwroot\images\projectImages\1110.png" />
+    <Content Remove="wwwroot\images\projectImages\1114.png" />
+    <Content Remove="wwwroot\images\projectImages\1115.png" />
+    <Content Remove="wwwroot\images\projectImages\1116.png" />
+    <Content Remove="wwwroot\images\projectImages\1120.png" />
+    <Content Remove="wwwroot\images\projectImages\1121.png" />
+    <Content Remove="wwwroot\images\projectImages\1122.png" />
+    <Content Remove="wwwroot\images\projectImages\1123.png" />
+    <Content Remove="wwwroot\images\projectImages\1124.png" />
+    <Content Remove="wwwroot\images\projectImages\1125.png" />
+    <Content Remove="wwwroot\images\projectImages\1126.png" />
+    <Content Remove="wwwroot\images\projectImages\1127.png" />
+    <Content Remove="wwwroot\images\projectImages\1131.png" />
+    <Content Remove="wwwroot\images\projectImages\1132.png" />
+    <Content Remove="wwwroot\images\projectImages\1133.png" />
+    <Content Remove="wwwroot\images\projectImages\1134.png" />
+    <Content Remove="wwwroot\images\projectImages\1135.png" />
+    <Content Remove="wwwroot\images\projectImages\13.png" />
+    <Content Remove="wwwroot\images\projectImages\17.png" />
+    <Content Remove="wwwroot\images\projectImages\18.png" />
+    <Content Remove="wwwroot\images\projectImages\19.png" />
+    <Content Remove="wwwroot\images\projectImages\2.png" />
+    <Content Remove="wwwroot\images\projectImages\24.png" />
+    <Content Remove="wwwroot\images\projectImages\3.png" />
+    <Content Remove="wwwroot\images\projectImages\33.png" />
+    <Content Remove="wwwroot\images\projectImages\34.png" />
+    <Content Remove="wwwroot\images\projectImages\38.png" />
+    <Content Remove="wwwroot\images\projectImages\4.png" />
+    <Content Remove="wwwroot\images\projectImages\40.png" />
+    <Content Remove="wwwroot\images\projectImages\42.png" />
+    <Content Remove="wwwroot\images\projectImages\43.png" />
+    <Content Remove="wwwroot\images\projectImages\44.png" />
+    <Content Remove="wwwroot\images\projectImages\45.png" />
+    <Content Remove="wwwroot\images\projectImages\46.png" />
+    <Content Remove="wwwroot\images\projectImages\47.png" />
+    <Content Remove="wwwroot\images\projectImages\48.png" />
+    <Content Remove="wwwroot\images\projectImages\49.png" />
+    <Content Remove="wwwroot\images\projectImages\5.png" />
+    <Content Remove="wwwroot\images\projectImages\50.png" />
+    <Content Remove="wwwroot\images\projectImages\53.png" />
+    <Content Remove="wwwroot\images\projectImages\56.png" />
+    <Content Remove="wwwroot\images\projectImages\6.png" />
+    <Content Remove="wwwroot\images\projectImages\61.png" />
+    <Content Remove="wwwroot\images\projectImages\62.png" />
+    <Content Remove="wwwroot\images\projectImages\63.png" />
+    <Content Remove="wwwroot\images\projectImages\64.png" />
+    <Content Remove="wwwroot\images\projectImages\65.png" />
+    <Content Remove="wwwroot\images\projectImages\7.png" />
+    <Content Remove="wwwroot\images\projectImages\76.png" />
+    <Content Remove="wwwroot\images\projectImages\79.png" />
+    <Content Remove="wwwroot\images\projectImages\80.png" />
+    <Content Remove="wwwroot\images\projectImages\82.png" />
+    <Content Remove="wwwroot\images\projectImages\83.png" />
+    <Content Remove="wwwroot\images\projectImages\84.png" />
+    <Content Remove="wwwroot\images\projectImages\85.png" />
+    <Content Remove="wwwroot\images\projectImages\92.png" />
+    <Content Remove="wwwroot\images\projectImages\93.png" />
+    <Content Remove="wwwroot\images\projectImages\94.png" />
+    <Content Remove="wwwroot\images\projectImages\95.png" />
+    <Content Remove="wwwroot\images\projectImages\96.png" />
+    <Content Remove="wwwroot\images\projectImages\97.png" />
+    <Content Remove="wwwroot\images\projectImages\98.png" />
+    <Content Remove="wwwroot\images\projectImages\99.png" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="6.0.9" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="6.0.9" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.9">
@@ -24,7 +102,234 @@
 
   <ItemGroup>
     <Folder Include="Database\" />
-    <Folder Include="wwwroot\images\projectImages\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="wwwroot\images\projectImages\1.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\images\projectImages\10.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\images\projectImages\100.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\images\projectImages\101.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\images\projectImages\102.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\images\projectImages\103.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\images\projectImages\104.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\images\projectImages\105.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\images\projectImages\11.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\images\projectImages\1105.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\images\projectImages\1106.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\images\projectImages\1107.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\images\projectImages\1110.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\images\projectImages\1114.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\images\projectImages\1115.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\images\projectImages\1116.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\images\projectImages\1120.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\images\projectImages\1121.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\images\projectImages\1122.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\images\projectImages\1123.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\images\projectImages\1124.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\images\projectImages\1125.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\images\projectImages\1126.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\images\projectImages\1127.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\images\projectImages\1131.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\images\projectImages\1132.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\images\projectImages\1133.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\images\projectImages\1134.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\images\projectImages\1135.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\images\projectImages\13.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\images\projectImages\17.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\images\projectImages\18.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\images\projectImages\19.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\images\projectImages\2.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\images\projectImages\24.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\images\projectImages\3.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\images\projectImages\33.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\images\projectImages\34.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\images\projectImages\38.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\images\projectImages\4.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\images\projectImages\40.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\images\projectImages\42.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\images\projectImages\43.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\images\projectImages\44.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\images\projectImages\45.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\images\projectImages\46.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\images\projectImages\47.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\images\projectImages\48.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\images\projectImages\49.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\images\projectImages\5.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\images\projectImages\50.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\images\projectImages\53.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\images\projectImages\56.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\images\projectImages\6.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\images\projectImages\61.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\images\projectImages\62.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\images\projectImages\63.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\images\projectImages\64.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\images\projectImages\65.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\images\projectImages\7.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\images\projectImages\76.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\images\projectImages\79.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\images\projectImages\80.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\images\projectImages\82.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\images\projectImages\83.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\images\projectImages\84.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\images\projectImages\85.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\images\projectImages\92.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\images\projectImages\93.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\images\projectImages\94.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\images\projectImages\95.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\images\projectImages\96.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\images\projectImages\97.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\images\projectImages\98.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\images\projectImages\99.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 
