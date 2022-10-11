@@ -1,28 +1,31 @@
 ﻿@inherits LayoutComponentBase
 @inject NavigationManager Navigation
 
-<MudLayout>
-	<MudAppBar>
-		<MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
+<MudLayout Style="@($"background-color:{Colors.Yellow.Default}")">
+	<MudAppBar Style="@($"background-color:{Colors.Yellow.Accent4}")">
+		<MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Default" Style="@($"background-color:{Colors.Blue.Default}")" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
 		
-		<div class="site-title">
-			@Constants.SiteName
-		</div>
+		<MudHidden Breakpoint="Breakpoint.SmAndDown">
+			<div class="site-title" style="@($"color:{Colors.Grey.Darken1}")">
+				@Constants.SiteName
+			</div>
+		</MudHidden>
 		
 		<MudContainer MaxWidth="MaxWidth.Large">
-			<CustomAppBarButton Icon="@Icons.Material.Filled.Home" Color="Color.Secondary" Edge="Edge.False" Page="@Routes.Pages.Index" Tooltip="/home" />
-			<CustomAppBarButton Icon="@Icons.Material.Filled.Dns" Color="Color.Secondary" Edge="Edge.False" Page="@Routes.Pages.Projects" />
+			<CustomAppBarButton Icon="@Icons.Material.Filled.Home" Page="@Routes.Pages.Index" Tooltip="/home" />
+			<CustomAppBarButton Icon="@Icons.Material.Filled.Dns" Page="@Routes.Pages.Projects" />
+			<CustomAppBarButton Icon="@Icons.Material.Filled.DocumentScanner" Page="@Routes.Pages.CV" />
 		</MudContainer>
 		@*<CustomAppBarButton Icon="@Icons.Material.Filled.DocumentScanner" Color="Color.Secondary" Edge="Edge.False" Page="@(Routes.Pages.Projects)" />*@
 		<MudSpacer />
 		@*<MudNavLink Href="@Routes.Pages.Swagger" Target="_blank" Match="NavLinkMatch.Prefix">Swagger API</MudNavLink>*@
 	</MudAppBar>
-	<MudDrawer @bind-Open="@_drawerOpen">
+	<MudDrawer @bind-Open="@_drawerOpen" Style="@($"background-color:{Colors.Yellow.Accent4}")">
 		<NavMenu />
 	</MudDrawer>
 	<MudMainContent>
 		<MudContainer MaxWidth="MaxWidth.Large" Style="padding-top:1rem;min-height:100%">
-			<MudPaper Class="mud-theme-primary" Style="padding:1rem">
+			<MudPaper Style="@($"background-color:{Colors.Yellow.Accent1};padding:1rem")">
 				@Body
 			</MudPaper>
 		</MudContainer>

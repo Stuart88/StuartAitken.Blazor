@@ -1,0 +1,57 @@
+﻿@page "/cv"
+@inherits CustomComponentBase
+
+<PageTitle>Stuart Aitken - CV</PageTitle>
+
+
+<div>
+	<MudIconButton OnClick="@(() => Navigation.NavigateTo(Routes.Pages.Index))"
+				   Icon="@Icons.Rounded.ArrowBack" Color="Color.Info" />
+
+
+	.. / CV
+</div>
+
+
+<div id="cv-container" style="padding-top:1rem">
+	<MudButton Variant="Variant.Filled"
+			   Style="@($"background-color:{Colors.Blue.Default};color:{Colors.Grey.Lighten5}")"
+			   Size="Size.Small"
+			   OnClick="@(async () => await JsRuntime.InvokeVoidAsync("downloadCv"))">
+		Download CV
+	</MudButton>
+	<center>
+		<h1>
+			CV - Stuart Aitken @DateTime.Now.Year
+		</h1>
+		@if (width == 0)
+		{
+			<MudProgressCircular Indeterminate />
+		}
+		else
+		{
+			<object data="/downloads/Stuart-Aitken-CV-Oct-2022-Default.pdf"
+				width="@width"
+				height="@height">
+			</object>
+		}
+	</center>
+</div>
+
+@code {
+	private int width = 0;
+	private int height = 0;
+	private const double A4PageRatio = 1.414;
+
+	protected async override Task OnAfterRenderAsync(bool firstRender)
+	{
+		if (firstRender)
+		{
+			this.width = (int)Math.Round(await JsRuntime.InvokeAsync<double>("getCvWidth"));
+			this.height = (int)Math.Round(this.width * A4PageRatio);
+			this.StateHasChanged();
+		}
+
+		await base.OnAfterRenderAsync(firstRender);
+	}
+}

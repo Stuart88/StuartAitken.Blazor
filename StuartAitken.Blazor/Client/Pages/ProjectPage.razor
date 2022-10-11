@@ -2,19 +2,19 @@
 
 @inherits CustomComponentBase
 
-<PageTitle>@(project?.Name ?? "Project")</PageTitle>
+<PageTitle>Stuart Aitken - @(project?.Name ?? "Project")</PageTitle>
 
 	<div>
 		<MudIconButton OnClick="@(() => Navigation.NavigateTo(Routes.Pages.Projects))"
 				   Icon="@Icons.Rounded.ArrowBack" Color="Color.Info" />
 
 
-		.. / Projects / @(project?.Name ?? "Loading...")
-	</div>
+		.. / <MudLink Href="@(Routes.Pages.Projects)" Color="Color.Default">Projects</MudLink> / @(project?.Name ?? "Loading...")
+</div>
 
-	<ProjectComponent Project="project" />
+<ProjectComponent Project="project" />
 
-	@code {
+@code {
 	[Parameter]
 	public int ProjectId { get; set; }
 

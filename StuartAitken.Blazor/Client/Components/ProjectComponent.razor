@@ -7,18 +7,21 @@
 else
 {
 	<div>
-		<MudCarousel Class="mud-width-full"
-				 Style="height:400px;"
-				 ShowArrows="true" 
-				 ShowBullets="true" 
-				 EnableSwipeGesture="true" 
-				 AutoCycle="true"
+		<MudCarousel Class="project-carousel"
+				 ShowArrows="true"
+				 ShowBullets="true"
+				 Style="@($"background-color:{Colors.Yellow.Default}")"
+				 EnableSwipeGesture="true"
+				 AutoCycle="false"
 				 TData="object">
 			@foreach (var img in Project.Images.OrderByDescending(i => i.PrimaryImage == 1).ToList())
 			{
-				<MudCarouselItem Transition="Transition.Fade" Color="@Color.Primary">
-					<div class="d-flex text-center carousel-image" style="height:100%">
-						<MudImage Fluid Src="@($"/{Routes.Api.ProjectImage_AsObject}{img.ID}")" />
+				<MudCarouselItem Transition="Transition.Fade" Color="@Color.Default">
+					<div class="d-flex text-center carousel-image">
+						<MudImage Fluid
+						  Src="@($"/{Routes.Api.ProjectImage_AsObject}{img.ID}")"
+						  ObjectFit="ObjectFit.Contain"
+						  ObjectPosition="ObjectPosition.Center" />
 					</div>
 				</MudCarouselItem>
 			}

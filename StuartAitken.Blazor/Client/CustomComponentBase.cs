@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 using MudBlazor;
 
 namespace StuartAitken.Blazor.Client
@@ -16,5 +17,8 @@ namespace StuartAitken.Blazor.Client
 
         [Inject]
         public NavigationManager Navigation { get; set; }
+
+        [Inject]
+        public IJSRuntime JsRuntime { get; set; }
     }
 }

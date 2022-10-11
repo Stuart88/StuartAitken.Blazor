@@ -1,10 +1,14 @@
 ﻿
 body, #app, .mud-layout {
     min-height: 100vh;
+    /*Need to add this +/ 3rem to deal with annoying white area that seems to appear for pages larger than 100vh. It's a hack but it's basic CSS so who cares.*/
+    margin-bottom: -3rem;
+    padding-bottom: 3rem;
 }
 
 .site-title {
     min-width: 125px;
+    margin-left: 1rem;
 }
 
 .mud-main-content {
@@ -30,8 +34,15 @@ body, #app, .mud-layout {
     cursor: pointer;
 }
 
-.carousel-image img {
-    height: 50vh !important;
+.project-carousel {
+    min-height: 40vh;
+    width: 95%;
+    margin: 0 auto !important;
+    padding: 0 2%;
+}
+
+.carousel-image, .carousel-image img {
+    height: 100% !important;
     margin: auto;
 }
 
@@ -46,7 +57,6 @@ body, #app, .mud-layout {
 
 .project-info {
     max-width: 500px;
-    background: var(--mud-palette-primary-lighten);
     padding: 1rem;
     margin: 1rem auto;
     border-radius: 1rem;

@@ -2,7 +2,7 @@
 
 @if (Project != null)
 {
-	<div class="project-info">
+	<div class="project-info" style="@($"background-color:{Colors.Yellow.Default}")">
 		@{
 			Console.WriteLine(Project.Urls);
 		}
@@ -25,7 +25,7 @@
 		}
 		<MudGrid Class="project-info-grid" Justify="Justify.FlexStart">
 			<MudItem xs="4">
-				<h3>Project Type</h3>
+				<h3>Type</h3>
 				<MudGrid Justify="Justify.FlexStart">
 					@foreach (var type in Project.Type.Split(", "))
 					{
@@ -36,9 +36,9 @@
 				</MudGrid>
 
 			</MudItem>
-			<MudItem xs="8">
+			<MudItem xs="8" Style="text-align:end">
 				<h3>Tech</h3>
-				<MudGrid Justify="Justify.FlexStart">
+				<MudGrid Justify="Justify.FlexEnd">
 					@foreach (var tech in Project.Tech.Split(", ").OrderBy(i => i))
 					{
 						<MudItem>

@@ -11,6 +11,7 @@
         {
             public const string Index = "/";
             public const string Projects = "/projects";
+            public const string CV = "/cv";
             public const string Swagger = "/swagger/index.html";
         }
 

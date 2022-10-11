@@ -1,0 +1,24 @@
+﻿<MudNavLink Href="@Href"
+			Match="NavLinkMatch.All"
+			Target="@Target"
+			Style="text-align:left">
+	<MudButton StartIcon="@Icon"
+			   Variant="Variant.Filled"
+			   Color="Color.Primary"
+			   Style="@($"background-color:{Colors.Blue.Default};justify-content:left")"
+			   FullWidth>@Text</MudButton>
+</MudNavLink>
+
+@code {
+	[Parameter]
+	public string Href { get; set; }
+
+	[Parameter]
+	public string Text { get; set; }
+
+	[Parameter]
+	public string Icon { get; set; }
+
+	[Parameter]
+	public string Target { get; set; }
+}

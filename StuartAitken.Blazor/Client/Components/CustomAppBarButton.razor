@@ -2,11 +2,11 @@
 
 <MudTooltip Text="@(string.IsNullOrEmpty(Tooltip) ? this.Page : this.Tooltip)" Placement="Placement.Bottom">
 	<MudIconButton Class="custom-app-bar-btn"
-				   Style="margin: 0 10px;"
+				   Style="@($"background-color:{Colors.Blue.Default};margin: 0 10px;")"
 				   Icon="@Icon"
 				   Variant="Variant.Filled"
-				   Color="@Color"
-				   Edge="@Edge"
+				   Color="@(Color ?? MudBlazor.Color.Default)"
+				   Edge="@(Edge ?? MudBlazor.Edge.False)"
 				   OnClick="@(() => Navigation.NavigateTo(Page))" />
 </MudTooltip>
 
@@ -15,13 +15,13 @@
 	public string Icon { get; set; }
 
 	[Parameter]
-	public Color Color { get; set; }
+	public Color? Color { get; set; }
 
 	[Parameter]
 	public string Page { get; set; }
 
 	[Parameter]
-	public Edge Edge { get; set; }
+	public Edge? Edge { get; set; }
 
 	[Parameter]
 	public string Tooltip { get; set; }

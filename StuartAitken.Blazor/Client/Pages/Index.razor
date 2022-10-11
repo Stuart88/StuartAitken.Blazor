@@ -2,7 +2,7 @@
 
 @inherits CustomComponentBase
 
-<PageTitle>Index</PageTitle>
+<PageTitle>Stuart Aitken</PageTitle>
 
 <MudGrid Class="index-container">
 	<MudItem md="6">
@@ -11,7 +11,7 @@
 		<p>
 			Have a look at the
 			<MudButton Variant="Variant.Filled"
-					   Color="Color.Secondary"
+					   Style="@($"background-color:{Colors.Blue.Default};color:{Colors.Grey.Lighten5}")"
 					   Size="Size.Small"
 					   OnClick="() => Navigation.NavigateTo(Routes.Pages.Projects)">
 				Projects
