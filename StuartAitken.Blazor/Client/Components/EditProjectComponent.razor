@@ -1,0 +1,218 @@
+﻿@inherits CustomComponentBase
+
+@if (Project == null)
+{
+	<MudProgressLinear Indeterminate=true Color="Color.Primary" />
+}
+else if (showPreview)
+{
+	<ProjectComponent Project="this.Project" />
+}
+else
+{
+	<div class="edit-project-container">
+		<h2>Details</h2>
+		<MudTextField Immediate @bind-Value="@Project.Name" Label="Name" Variant="Variant.Filled"
+				  Adornment="Adornment.Start" AdornmentIcon="@Icons.Filled.DocumentScanner"
+				  Disabled="@saving" />
+		<MudNumericField Immediate HideSpinButtons="true" T="int" @bind-Value="Project.ProjectDurationDays" Label="Duration Days" Variant="Variant.Filled"
+					 Adornment="Adornment.Start" AdornmentIcon="@Icons.Filled.CalendarMonth"
+					 Disabled="@saving" />
+
+		<h2>Links</h2>
+
+		@for (int i = 0; i < Links.Count; i++)
+		{
+			int index = i;
+			<MudTextField Immediate T="string" TextChanged="@((val) => OnUrlUpdated(index,val))" Variant="Variant.Text"
+				  Adornment="Adornment.Start" AdornmentIcon="@Icons.Filled.Link"
+				  Disabled="@saving"
+				  Text="@this.Links[index]" />
+		}
+
+		<h2>Type / Tech</h2>
+
+		<MudSelect MultiSelection T="string" Label="Project Type" Variant="Variant.Filled"
+			   SelectedValues="@(this.Project.Type.Split(", ").Where(i => !string.IsNullOrWhiteSpace(i)))"
+			   SelectedValuesChanged="@((vals) => OnSelectedValuesChanged(ItemType.ProjectType, vals))"
+			   Disabled="@saving">
+			@foreach (var t in ProjectTypesOrdered)
+			{
+				<MudSelectItem Value="@(t.Name)">
+					<ProjectIcon Small Src="@StringHelpers.TypeIconSrc(t.Name)" /> @t.Name
+				</MudSelectItem>
+			}
+		</MudSelect>
+
+		<MudSelect MultiSelection T="string" Label="Project Type" Variant="Variant.Filled"
+			   SelectedValues="@(this.Project.Tech.Split(", ").Where(i => !string.IsNullOrWhiteSpace(i)))"
+			   SelectedValuesChanged="@((vals) => OnSelectedValuesChanged(ItemType.ProjectTech, vals))"
+			   Disabled="@saving">
+			@foreach (var t in ProjectTechsOrdered)
+			{
+				<MudSelectItem Value="@(t.Name)">
+					<ProjectIcon Small Src="@StringHelpers.TechIconSrc(t.Name)" /> @t.Name
+				</MudSelectItem>
+			}
+		</MudSelect>
+
+		<h2>Description</h2>
+
+		<div class="description-content">
+			<div id="quill-editor"></div>
+		</div>
+
+	</div>
+}
+
+<MudButton FullWidth
+		   Style="@($"background-color:{Colors.Green.Default};color:{Colors.Grey.Lighten5};margin:10px")"
+		   OnClick="OnPreviewClicked"
+		   Disabled="@saving">
+	@if (this.showPreview)
+	{
+		<span>Hide Preview</span>
+	}
+	else
+	{
+		<span>Show Preview</span>
+	}
+</MudButton>
+
+<MudButton FullWidth
+		   Style="@($"background-color:{Colors.Blue.Default};color:{Colors.Grey.Lighten5};margin:10px")"
+		   OnClick="OnSave"
+		   Disabled="@saving">
+	@if (saving)
+	{
+		<MudProgressCircular Indeterminate />
+	}
+	else
+	{
+		<span>Save</span>
+	}
+</MudButton>
+
+@code {
+    [Parameter]
+    public Project Project { get; set; }
+
+    private List<ProjectType> ProjectTypes { get; set; } = new List<ProjectType>();
+    private List<ProjectTech> ProjectTechs { get; set; } = new List<ProjectTech>();
+    private bool saving;
+    private bool showPreview;
+
+    private List<ProjectType> ProjectTypesOrdered => this.ProjectTypes.OrderByDescending(p => this.Project.Type.Contains(p.Name)).ThenBy(p => p.Name).ToList();
+	private List<ProjectTech> ProjectTechsOrdered => this.ProjectTechs.OrderByDescending(p => this.Project.Tech.Contains(p.Name)).ThenBy(p => p.Name).ToList();
+
+    private List<string> Links => Project?.Urls?.Split(", ").Append(string.Empty).ToList() ?? new List<string>() { string.Empty };
+
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		await ResetEditor();
+		await base.OnAfterRenderAsync(firstRender);
+	}
+
+	protected override async Task OnInitializedAsync()
+	{
+		GetProjectTechsList();
+		GetProjectTypesList();
+		await ResetEditor();
+		await base.OnInitializedAsync();
+	}
+
+	private async Task ResetEditor()
+	{
+		if (!this.showPreview)
+		{
+			await PrepareEditor();
+			await SetEditorText();
+		}
+	}
+
+	private async void OnPreviewClicked()
+	{
+		this.showPreview = !this.showPreview;
+
+		if (this.showPreview)
+		{
+			this.Project.Description = await GetEditorText();
+		}
+		else
+		{
+			await ResetEditor();
+		}
+
+		StateHasChanged();
+	}
+
+	private async Task OnSave()
+	{
+		this.Project.Description = await GetEditorText();
+		var p = this.Project;
+	}
+
+	private async void GetProjectTechsList()
+	{
+		var tech = await Http.GetFromJsonAsync<List<ProjectTech>>(Routes.Api.Projects_Techs);
+
+		if (tech == null)
+		{
+			Snackbar.Add("Found no project tech data!", Severity.Error);
+		}
+		else
+		{
+			this.ProjectTechs = tech;
+		}
+	}
+
+	private async void GetProjectTypesList()
+	{
+		var types = await Http.GetFromJsonAsync<List<ProjectType>>(Routes.Api.Projects_Types);
+
+		if (types == null)
+		{
+			Snackbar.Add("Found no project types data!", Severity.Error);
+		}
+		else
+		{
+			this.ProjectTypes = types;
+		}
+	}
+
+	private void OnUrlUpdated(int index, string url)
+	{
+		var links = this.Links.ToList();
+
+		links[index] = url;
+
+		Project.Urls = string.Join(", ", links.Where(i => !string.IsNullOrWhiteSpace(i)));
+	}
+
+	private void OnSelectedValuesChanged(ItemType type, IEnumerable<string> values)
+	{
+		switch (type)
+		{
+			case ItemType.ProjectType: Project.Type = string.Join(", ", values); break;
+			case ItemType.ProjectTech: Project.Tech = string.Join(", ", values); break;
+		}
+	}
+
+	private async Task PrepareEditor()
+	{
+		await JsRuntime.InvokeVoidAsync("prepareQuillIfNotExist");
+	}
+
+	private async Task SetEditorText()
+	{
+		if (this.Project != null)
+		{
+			await JsRuntime.InvokeVoidAsync("setEditorText", this.Project.Description);
+		}
+	}
+
+	private async Task<string> GetEditorText()
+	{
+		return await JsRuntime.InvokeAsync<string>("getEditorText");
+	}
+}

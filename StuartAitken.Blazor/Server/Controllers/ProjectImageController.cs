@@ -18,7 +18,10 @@ namespace StuartAitken.Blazor.Server.Controllers
         private ProjectImageService _projectImageService;
         private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public ProjectImageController(ProjectImageService projectImageService, IWebHostEnvironment webHostEnvironment)
+        public ProjectImageController(
+            ProjectImageService projectImageService,
+            IWebHostEnvironment webHostEnvironment
+        )
         {
             this._projectImageService = projectImageService;
             this._webHostEnvironment = webHostEnvironment;
@@ -56,7 +59,12 @@ namespace StuartAitken.Blazor.Server.Controllers
         [HttpGet("image-object/{id}")]
         public async Task<IActionResult> GetPortfolioImageObject([FromRoute] int id)
         {
-            string imagePath = Path.Combine(_webHostEnvironment.WebRootPath, "images", "projectImages", $"{id}.png");
+            string imagePath = Path.Combine(
+                _webHostEnvironment.WebRootPath,
+                "images",
+                "projectImages",
+                $"{id}.png"
+            );
 
             return PhysicalFile(imagePath, "image/png");
         }

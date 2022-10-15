@@ -38,6 +38,11 @@
 						 AdornmentIcon="@Icons.Material.Filled.Search"
 						 IconSize="Size.Medium"
 						 AdornmentColor="Color.Primary" />
+		@if (this.IsAdmin)
+		{
+			<MudIconButton OnClick="@(() => this.Navigation.NavigateTo($"{Routes.Pages.EditProject}/0"))"
+					   Icon="@Icons.Rounded.Add" Color="Color.Tertiary" Variant="Variant.Filled" />
+		}
 	</ToolBarContent>
 	<HeaderContent>
 		<MudTh>
@@ -90,8 +95,17 @@
 				}
 			</MudTd>
 			<MudTd>
+				@if (this.IsAdmin)
+				{
+					<MudButton Variant="Variant.Filled"
+						   Style="@($"background-color:{Colors.Blue.Default};color:{Colors.Grey.Lighten5};margin:10px")"
+						   Size="Size.Small"
+						   OnClick="@(() => this.Navigation.NavigateTo($"{Routes.Pages.EditProject}/{context.ID}"))">
+						Edit
+					</MudButton>
+				}
 				<MudButton Variant="Variant.Filled"
-						   Style="@($"background-color:{Colors.Blue.Default};color:{Colors.Grey.Lighten5}")"
+						   Style="@($"background-color:{Colors.Blue.Default};color:{Colors.Grey.Lighten5};margin:10px")"
 						   Size="Size.Small"
 						   OnClick="@(() => this.Navigation.NavigateTo($"{Routes.Pages.Projects}/{context.ID}"))">
 					View

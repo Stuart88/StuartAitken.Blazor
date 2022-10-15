@@ -3,9 +3,10 @@
 @if (Project != null)
 {
 	<div class="project-info" style="@($"background-color:{Colors.Yellow.Default}")">
-		@{
-			Console.WriteLine(Project.Urls);
-		}
+		<h3>Duration</h3>
+		<div>
+			@StringHelpers.MakePresentableDuration(Project)
+		</div>
 		@if (!string.IsNullOrEmpty(Project.Urls))
 		{
 			<div class="project-info-links">

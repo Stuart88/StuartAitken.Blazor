@@ -60,6 +60,9 @@ namespace StuartAitken.Blazor.Server.Controllers
         [HttpGet("{id}")]
         public async Task<Project> GetPortfolioProject([FromRoute] int id)
         {
+            if (id == 0)
+                return new Project();
+
             var portfolioProject = await _projectsService.GetPortfolioProject(id);
 
             if (portfolioProject == null)
@@ -71,6 +74,22 @@ namespace StuartAitken.Blazor.Server.Controllers
             portfolioProject.Images = _projectImageService.GetProjectImages(id);
 
             return portfolioProject;
+        }
+
+        [HttpGet("types")]
+        public async Task<List<ProjectType>> GetProjectTypes()
+        {
+            var types = await _projectsService.GetProjectTypes();
+
+            return types;
+        }
+
+        [HttpGet("techs")]
+        public async Task<List<ProjectTech>> GetProjectTechs()
+        {
+            var techs = await _projectsService.GetProjectTechs();
+
+            return techs;
         }
 
         //[HttpPost("viewedProject")]

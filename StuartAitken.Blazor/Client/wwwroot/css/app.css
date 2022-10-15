@@ -73,3 +73,8 @@ body, #app, .mud-layout {
     .project-info-grid h3 {
         margin-bottom: 1rem;
     }
+
+.edit-project-container h2 {
+    margin-top: 1rem;
+    margin-bottom: 0.5rem;
+}

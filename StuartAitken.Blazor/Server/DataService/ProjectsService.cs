@@ -49,6 +49,34 @@ namespace StuartAitken.Blazor.Server.DataService
             }
         }
 
+        public Task<List<ProjectType>> GetProjectTypes()
+        {
+            try
+            {
+                return _db.PortfolioProjectTypes
+                    .Select(p => Mapper.Mapper.Map<PortfolioProjectType, ProjectType>(p))
+                    .ToListAsync();
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        public Task<List<ProjectTech>> GetProjectTechs()
+        {
+            try
+            {
+                return _db.PortfolioProjectTeches
+                    .Select(p => Mapper.Mapper.Map<PortfolioProjectTech, ProjectTech>(p))
+                    .ToListAsync();
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
         public Task<Project?> GetPortfolioProject(PortfolioProject project)
         {
             try

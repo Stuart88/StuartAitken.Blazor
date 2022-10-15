@@ -11,6 +11,7 @@
         {
             public const string Index = "/";
             public const string Projects = "/projects";
+            public const string EditProject = "/projects/edit";
             public const string CV = "/cv";
             public const string Swagger = "/swagger/index.html";
         }
@@ -23,6 +24,8 @@
 
             public const string Projects_All = Projects + "all";
             public const string Projects_SelectList = Projects + "select-list";
+            public const string Projects_Techs = Projects + "techs";
+            public const string Projects_Types = Projects + "types";
 
             public const string ProjectImages = BaseApi + "project-images/";
             public const string ProjectImages_IdsForProject =

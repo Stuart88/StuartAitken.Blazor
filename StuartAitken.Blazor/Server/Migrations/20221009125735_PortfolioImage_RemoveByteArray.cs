@@ -9,9 +9,7 @@ namespace StuartAitken.Blazor.Server.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropColumn(
-                name: "ImageByteArray",
-                table: "PortfolioProjectImage");
+            migrationBuilder.DropColumn(name: "ImageByteArray", table: "PortfolioProjectImage");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -21,7 +19,8 @@ namespace StuartAitken.Blazor.Server.Migrations
                 table: "PortfolioProjectImage",
                 type: "BLOB",
                 nullable: false,
-                defaultValue: new byte[0]);
+                defaultValue: new byte[0]
+            );
         }
     }
 }

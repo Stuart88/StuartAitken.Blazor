@@ -20,5 +20,7 @@ namespace StuartAitken.Blazor.Client
 
         [Inject]
         public IJSRuntime JsRuntime { get; set; }
+
+        public bool IsAdmin { get; set; } = true;
     }
 }

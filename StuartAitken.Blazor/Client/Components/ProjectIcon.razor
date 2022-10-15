@@ -1,6 +1,6 @@
 ﻿
 <MudTooltip Text="@Tooltip">
-	<MudImage Fluid Src="@Src" Width="30" Style="padding:1px;margin: 0px 7px" />
+	<MudImage Fluid Src="@Src" Width="@width" Style="padding:1px;margin: 0px 7px" />
 </MudTooltip>
 
 @code {
@@ -9,4 +9,9 @@
 
 	[Parameter]
 	public string Tooltip { get; set; }
+
+	[Parameter]
+	public bool Small { get; set; } = false;
+
+	private int width => Small ? 18 : 30;
 }

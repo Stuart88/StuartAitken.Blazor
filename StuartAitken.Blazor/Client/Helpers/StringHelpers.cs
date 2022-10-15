@@ -33,6 +33,10 @@ namespace StuartAitken.Blazor.Client.Helpers
         public static string MakePresentableDuration(Project p)
         {
             double d = p.ProjectDurationDays;
+
+            if (d <= 0)
+                return "Indeterminate";
+
             // Duration is between 1 week and 2 months. Give result in weeks.
             if (d >= 7 && d < 62)
                 return $"{d / 7d:F0} Weeks";

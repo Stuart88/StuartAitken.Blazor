@@ -1,0 +1,31 @@
+﻿@page "/projects/edit/{ProjectId:int}"
+
+@inherits ProjectPage
+
+<PageTitle>Stuart Aitken - @(project?.Name ?? "Project")</PageTitle>
+
+<h1>Edit Project</h1>
+
+@if (this.IsAdmin)
+{
+	<MudButton Variant="Variant.Filled"
+		   Style="@($"background-color:{Colors.Red.Default};color:{Colors.Grey.Lighten5};margin-bottom:1rem")"
+		   Size="Size.Small"
+		   OnClick="() => Navigation.NavigateTo(Routes.Pages.Projects)">
+		Cancel
+	</MudButton>
+
+	<EditProjectComponent Project="this.project"/>
+}
+
+@code {
+	protected override void OnParametersSet()
+	{
+		if (!this.IsAdmin)
+		{
+			this.Navigation.NavigateTo(Routes.Pages.Projects);
+		}
+
+		base.OnParametersSet();
+	}
+}
