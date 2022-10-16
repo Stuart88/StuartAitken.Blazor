@@ -1,22 +1,33 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
+﻿using Microsoft.EntityFrameworkCore;
 using StuartAitken.Blazor.Server.DataAccess.Entities;
 
 namespace StuartAitken.Blazor.Server.DataAccess
 {
     public partial class StuartAitkenContext : DbContext
     {
-        public StuartAitkenContext() { }
+        #region Public Properties
+
+        public virtual DbSet<PortfolioProjectImage> PortfolioProjectImages { get; set; } = null!;
+
+        public virtual DbSet<PortfolioProject> PortfolioProjects { get; set; } = null!;
+
+        public virtual DbSet<PortfolioProjectTech> PortfolioProjectTeches { get; set; } = null!;
+
+        public virtual DbSet<PortfolioProjectType> PortfolioProjectTypes { get; set; } = null!;
+
+        #endregion Public Properties
+
+        #region Public Constructors
+
+        public StuartAitkenContext()
+        { }
 
         public StuartAitkenContext(DbContextOptions<StuartAitkenContext> options) : base(options)
         { }
 
-        public virtual DbSet<PortfolioProject> PortfolioProjects { get; set; } = null!;
-        public virtual DbSet<PortfolioProjectImage> PortfolioProjectImages { get; set; } = null!;
-        public virtual DbSet<PortfolioProjectTech> PortfolioProjectTeches { get; set; } = null!;
-        public virtual DbSet<PortfolioProjectType> PortfolioProjectTypes { get; set; } = null!;
+        #endregion Public Constructors
+
+        #region Protected Methods
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -26,6 +37,8 @@ namespace StuartAitken.Blazor.Server.DataAccess
                 optionsBuilder.UseSqlite("DataSource=Database\\database.db");
             }
         }
+
+        #endregion Protected Methods
 
         //protected override void OnModelCreating(ModelBuilder modelBuilder)
         //{

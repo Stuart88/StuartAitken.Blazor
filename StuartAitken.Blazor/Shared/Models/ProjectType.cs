@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-
-namespace StuartAitken.Blazor.Shared.Models
+﻿namespace StuartAitken.Blazor.Shared.Models
 {
     public class ProjectType
     {
+        #region Public Properties
+
         public int ID { get; set; }
         public string Name { get; set; } = null!;
+
+        #endregion Public Properties
     }
 }

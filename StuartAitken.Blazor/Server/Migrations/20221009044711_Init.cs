@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -7,6 +6,19 @@ namespace StuartAitken.Blazor.Server.Migrations
 {
     public partial class Init : Migration
     {
+        #region Protected Methods
+
+        protected override void Down(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.DropTable(name: "PortfolioProjectImage");
+
+            migrationBuilder.DropTable(name: "PortfolioProjectTech");
+
+            migrationBuilder.DropTable(name: "PortfolioProjectType");
+
+            migrationBuilder.DropTable(name: "PortfolioProject");
+        }
+
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
@@ -102,15 +114,6 @@ namespace StuartAitken.Blazor.Server.Migrations
             );
         }
 
-        protected override void Down(MigrationBuilder migrationBuilder)
-        {
-            migrationBuilder.DropTable(name: "PortfolioProjectImage");
-
-            migrationBuilder.DropTable(name: "PortfolioProjectTech");
-
-            migrationBuilder.DropTable(name: "PortfolioProjectType");
-
-            migrationBuilder.DropTable(name: "PortfolioProject");
-        }
+        #endregion Protected Methods
     }
 }

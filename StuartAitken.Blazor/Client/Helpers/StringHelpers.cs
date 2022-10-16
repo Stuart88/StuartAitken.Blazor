@@ -4,24 +4,7 @@ namespace StuartAitken.Blazor.Client.Helpers
 {
     public static class StringHelpers
     {
-        public static string TechIconSrc(string name)
-        {
-            switch (name)
-            {
-                case "C#":
-                    name = "C-Sharp";
-                    break;
-                case "C++":
-                    name = "C-PlusPlus";
-                    break;
-            }
-            return "images/techIcons/" + name.Replace(' ', '-') + ".svg";
-        }
-
-        public static string TypeIconSrc(string name)
-        {
-            return "images/typeIcons/" + name.Replace(' ', '-') + ".svg";
-        }
+        #region Public Methods
 
         public static string ImageAssetSrc(string name, string extension)
         {
@@ -53,5 +36,27 @@ namespace StuartAitken.Blazor.Client.Helpers
             // Duration is less than one week Give result in days.
             return $"{d} Days";
         }
+
+        public static string TechIconSrc(string name)
+        {
+            switch (name)
+            {
+                case "C#":
+                    name = "C-Sharp";
+                    break;
+
+                case "C++":
+                    name = "C-PlusPlus";
+                    break;
+            }
+            return "images/techIcons/" + name.Replace(' ', '-') + ".svg";
+        }
+
+        public static string TypeIconSrc(string name)
+        {
+            return "images/typeIcons/" + name.Replace(' ', '-') + ".svg";
+        }
+
+        #endregion Public Methods
     }
 }

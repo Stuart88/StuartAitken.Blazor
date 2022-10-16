@@ -8,20 +8,36 @@ namespace StuartAitken.Blazor.Server.Pages
     [IgnoreAntiforgeryToken]
     public class ErrorModel : PageModel
     {
+        #region Private Fields
+
+        private readonly ILogger<ErrorModel> _logger;
+
+        #endregion Private Fields
+
+        #region Public Properties
+
         public string? RequestId { get; set; }
 
         public bool ShowRequestId => !string.IsNullOrEmpty(RequestId);
 
-        private readonly ILogger<ErrorModel> _logger;
+        #endregion Public Properties
+
+        #region Public Constructors
 
         public ErrorModel(ILogger<ErrorModel> logger)
         {
             _logger = logger;
         }
 
+        #endregion Public Constructors
+
+        #region Public Methods
+
         public void OnGet()
         {
             RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier;
         }
+
+        #endregion Public Methods
     }
 }

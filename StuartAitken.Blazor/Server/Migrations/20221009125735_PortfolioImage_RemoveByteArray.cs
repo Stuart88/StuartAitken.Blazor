@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -7,10 +6,7 @@ namespace StuartAitken.Blazor.Server.Migrations
 {
     public partial class PortfolioImage_RemoveByteArray : Migration
     {
-        protected override void Up(MigrationBuilder migrationBuilder)
-        {
-            migrationBuilder.DropColumn(name: "ImageByteArray", table: "PortfolioProjectImage");
-        }
+        #region Protected Methods
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
@@ -22,5 +18,12 @@ namespace StuartAitken.Blazor.Server.Migrations
                 defaultValue: new byte[0]
             );
         }
+
+        protected override void Up(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.DropColumn(name: "ImageByteArray", table: "PortfolioProjectImage");
+        }
+
+        #endregion Protected Methods
     }
 }

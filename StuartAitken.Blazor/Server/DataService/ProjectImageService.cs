@@ -7,9 +7,79 @@ namespace StuartAitken.Blazor.Server.DataService
 {
     public class ProjectImageService : ServiceBase
     {
-        public ProjectImageService() { }
+        #region Public Constructors
 
-        #region Portfolio Project Images
+        public ProjectImageService()
+        { }
+
+        #endregion Public Constructors
+
+        #region Public Methods
+
+        public async Task AddNewProjectImageAsync(byte[] image, int projectID)
+        {
+            // TO DO
+            // Save image to file system with name {imageId}.png
+
+            PortfolioProjectImage newImage = new PortfolioProjectImage
+            {
+                ProjectId = projectID,
+                CreationDate = DateTime.Now,
+                ModifiedDate = DateTime.Now,
+                Status = 1,
+            };
+            await AddPortfolioProjectImageAsync(newImage);
+        }
+
+        public async Task<int> AddPortfolioProjectImageAsync(
+            PortfolioProjectImage portfolioProjectImage
+        )
+        {
+            try
+            {
+                _db.Add(portfolioProjectImage);
+                return await _db.SaveChangesAsync();
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        public async Task DeleteAllImagesForProjectId(int id)
+        {
+            try
+            {
+                var images = _db.PortfolioProjectImages.Where(i => i.ProjectId == id);
+                _db.PortfolioProjectImages.RemoveRange(images);
+                await _db.SaveChangesAsync();
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        public async Task<int> DeletePortfolioProjectImage(int id)
+        {
+            try
+            {
+                PortfolioProjectImage? portfolioProjectImage = _db.PortfolioProjectImages.Find(id);
+
+                if (portfolioProjectImage != null)
+                {
+                    _db.PortfolioProjectImages.Remove(portfolioProjectImage);
+                    _db.Entry(portfolioProjectImage).State = EntityState.Deleted;
+                    return await _db.SaveChangesAsync();
+                }
+
+                return 0;
+            }
+            catch
+            {
+                throw;
+            }
+        }
 
         public IEnumerable<ProjectImage> GetAllPortfolioProjectImages()
         {
@@ -20,6 +90,21 @@ namespace StuartAitken.Blazor.Server.DataService
                     .ToList();
 
                 return allProjects;
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        public async Task<ProjectImage?> GetMainPortfolioProjectImageAsync(int projID)
+        {
+            try
+            {
+                return await _db.PortfolioProjectImages
+                    .Where(img => img.PrimaryImage == 1 && img.ProjectId == projID)
+                    .Map<PortfolioProjectImage, ProjectImage>()
+                    .FirstOrDefaultAsync();
             }
             catch
             {
@@ -44,28 +129,14 @@ namespace StuartAitken.Blazor.Server.DataService
             }
         }
 
-        public async Task<ProjectImage?> GetMainPortfolioProjectImageAsync(int projID)
+        public async Task<ProjectImage?> GetPortfolioProjectImageFromProjectIDAsync(int projectID)
         {
             try
             {
                 return await _db.PortfolioProjectImages
-                    .Where(img => img.PrimaryImage == 1 && img.ProjectId == projID)
+                    .Where(x => x.ProjectId == projectID)
                     .Map<PortfolioProjectImage, ProjectImage>()
                     .FirstOrDefaultAsync();
-            }
-            catch
-            {
-                throw;
-            }
-        }
-
-        public IEnumerable<ProjectImage> GetProjectImages(int projID)
-        {
-            try
-            {
-                var images = _db.PortfolioProjectImages.Where(x => x.ProjectId == projID);
-
-                return images.Map<PortfolioProjectImage, ProjectImage>();
             }
             catch
             {
@@ -87,14 +158,13 @@ namespace StuartAitken.Blazor.Server.DataService
             }
         }
 
-        public async Task<ProjectImage?> GetPortfolioProjectImageFromProjectIDAsync(int projectID)
+        public IEnumerable<ProjectImage> GetProjectImages(int projID)
         {
             try
             {
-                return await _db.PortfolioProjectImages
-                    .Where(x => x.ProjectId == projectID)
-                    .Map<PortfolioProjectImage, ProjectImage>()
-                    .FirstOrDefaultAsync();
+                var images = _db.PortfolioProjectImages.Where(x => x.ProjectId == projID);
+
+                return images.Map<PortfolioProjectImage, ProjectImage>();
             }
             catch
             {
@@ -102,34 +172,9 @@ namespace StuartAitken.Blazor.Server.DataService
             }
         }
 
-        public async Task<int> AddPortfolioProjectImageAsync(
-            PortfolioProjectImage portfolioProjectImage
-        )
+        public bool PortfolioImageExists(int id)
         {
-            try
-            {
-                _db.Add(portfolioProjectImage);
-                return await _db.SaveChangesAsync();
-            }
-            catch
-            {
-                throw;
-            }
-        }
-
-        public async Task<int> UpdatePortfolioProjectImageAsync(
-            PortfolioProjectImage portfolioProjectImage
-        )
-        {
-            try
-            {
-                _db.Entry(portfolioProjectImage).State = EntityState.Modified;
-                return await _db.SaveChangesAsync();
-            }
-            catch
-            {
-                throw;
-            }
+            return _db.PortfolioProjectImages.Any(e => e.ID == id);
         }
 
         public async Task<int> SetMainPortfolioProjectImageAsync(int id)
@@ -167,40 +212,19 @@ namespace StuartAitken.Blazor.Server.DataService
             }
         }
 
-        public async Task<int> DeletePortfolioProjectImage(int id)
+        public async Task<int> UpdatePortfolioProjectImageAsync(
+                            PortfolioProjectImage portfolioProjectImage
+        )
         {
             try
             {
-                PortfolioProjectImage? portfolioProjectImage = _db.PortfolioProjectImages.Find(id);
-
-                if (portfolioProjectImage != null)
-                {
-                    _db.PortfolioProjectImages.Remove(portfolioProjectImage);
-                    _db.Entry(portfolioProjectImage).State = EntityState.Deleted;
-                    return await _db.SaveChangesAsync();
-                }
-
-                return 0;
+                _db.Entry(portfolioProjectImage).State = EntityState.Modified;
+                return await _db.SaveChangesAsync();
             }
             catch
             {
                 throw;
             }
-        }
-
-        public async Task AddNewProjectImageAsync(byte[] image, int projectID)
-        {
-            // TO DO
-            // Save image to file system with name {imageId}.png
-
-            PortfolioProjectImage newImage = new PortfolioProjectImage
-            {
-                ProjectId = projectID,
-                CreationDate = DateTime.Now,
-                ModifiedDate = DateTime.Now,
-                Status = 1,
-            };
-            await AddPortfolioProjectImageAsync(newImage);
         }
 
         public async Task UpdateProjectImageAsync(byte[] image, PortfolioProjectImage updating)
@@ -213,11 +237,6 @@ namespace StuartAitken.Blazor.Server.DataService
             await UpdatePortfolioProjectImageAsync(updating);
         }
 
-        public bool PortfolioImageExists(int id)
-        {
-            return _db.PortfolioProjectImages.Any(e => e.ID == id);
-        }
-
-        #endregion
+        #endregion Public Methods
     }
 }

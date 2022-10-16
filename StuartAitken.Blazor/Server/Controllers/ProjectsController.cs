@@ -1,8 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using StuartAitken.Blazor.Server.DataAccess.Entities;
 using StuartAitken.Blazor.Server.DataService;
 using StuartAitken.Blazor.Server.Helpers;
 using StuartAitken.Blazor.Shared.Models;
@@ -13,8 +10,14 @@ namespace StuartAitken.Blazor.Server.Controllers
     [ApiController]
     public class ProjectsController : ControllerBase
     {
-        private ProjectsService _projectsService;
+        #region Private Fields
+
         private ProjectImageService _projectImageService;
+        private ProjectsService _projectsService;
+
+        #endregion Private Fields
+
+        #region Public Constructors
 
         public ProjectsController(
             ProjectsService projectsService,
@@ -25,7 +28,110 @@ namespace StuartAitken.Blazor.Server.Controllers
             this._projectImageService = projectImageService;
         }
 
-        #region Portfolio Projects
+        #endregion Public Constructors
+
+        #region Public Methods
+
+        [HttpPost]
+        public async Task<ApiResponse<Project>> AddPortfolioProject(
+            [FromBody] Project portfolioProject
+        )
+        {
+            portfolioProject.CreationDate = DateTime.Now;
+            portfolioProject.ModifiedDate = DateTime.Now;
+
+            Project? newlyAdded = null;
+
+            try
+            {
+                int projectId = await _projectsService.AddPortfolioProjectAndGetID(portfolioProject);
+
+                //if (Request.Form.Files.Count > 0)
+                //{
+                //    //if form data has anything else, it's an image! So add it.
+                //    newlyAdded = await _projectsService.GetPortfolioProject(
+                //        projectId
+                //    );
+
+                //    if (newlyAdded == null)
+                //        throw new Exception("Could not find just-added project?!");
+
+                //    //foreach (IFormFile file in Request.Form.Files)
+                //    //{
+                //    //    await _projectImageService.AddNewProjectImageAsync(
+                //    //        ByteHelper.ConvertToBytes(file),
+                //    //        newlyAdded.ID
+                //    //    );
+                //    //}
+                //}
+            }
+            catch (DbUpdateException)
+            {
+                if (_projectsService.PortfolioProjectExists(portfolioProject.ID))
+                {
+                    return new ApiResponse<Project>("DB conflict; Project ID exists");
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            if (newlyAdded == null)
+                return new ApiResponse<Project>("newlyAdded is null?!");
+
+            return new ApiResponse<Project>(newlyAdded);
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<ApiResponse> DeletePortfolioProject([FromRoute] int id)
+        {
+            await _projectImageService.DeleteAllImagesForProjectId(id);
+
+            await _projectsService.DeletePortfolioProjectAsync(id);
+
+            return new ApiResponse();
+        }
+
+        [HttpPut("{id}")]
+        public async Task<ApiResponse<Project>> EditPortfolioProject(
+            [FromRoute] int ID,
+            [FromBody] Project portfolioProject
+        )
+        {
+            if (ID != portfolioProject.ID)
+            {
+                return new ApiResponse<Project>("Portfolio ID mismatch.");
+            }
+            try
+            {
+                var updatedProject = await _projectsService.UpdatePortfolioProject(portfolioProject);
+                if (updatedProject != null)
+                {
+                    ////check for image in Form (will always be second file in form)
+                    //if (Request.Form.Files.Count > 0)
+                    //{
+                    //    foreach (IFormFile file in Request.Form.Files)
+                    //    {
+                    //        await _projectImageService.AddNewProjectImageAsync(
+                    //            ByteHelper.ConvertToBytes(file),
+                    //            ID
+                    //        );
+                    //    }
+                    //}
+
+                    return new ApiResponse<Project>(updatedProject);
+                }
+                else
+                {
+                    return new ApiResponse<Project>("Update error. Nothing updated.");
+                }
+            }
+            catch (Exception ex)
+            {
+                return new ApiResponse<Project>(ex.Message);
+            }
+        }
 
         [HttpGet("all")]
         public IEnumerable<Project> GetAllPortfolioProjects()
@@ -33,6 +139,25 @@ namespace StuartAitken.Blazor.Server.Controllers
             var projects = _projectsService.GetAllPortfolioProjects();
 
             return projects;
+        }
+
+        [HttpGet("{id}")]
+        public async Task<Project> GetPortfolioProject([FromRoute] int id)
+        {
+            if (id == 0)
+                return new Project();
+
+            var portfolioProject = await _projectsService.GetPortfolioProject(id);
+
+            if (portfolioProject == null)
+            {
+                return null;
+            }
+
+            portfolioProject.Views = portfolioProject.Views ?? 0;
+            portfolioProject.Images = _projectImageService.GetProjectImages(id);
+
+            return portfolioProject;
         }
 
         /// <summary>
@@ -57,23 +182,12 @@ namespace StuartAitken.Blazor.Server.Controllers
             return items;
         }
 
-        [HttpGet("{id}")]
-        public async Task<Project> GetPortfolioProject([FromRoute] int id)
+        [HttpGet("techs")]
+        public async Task<List<ProjectTech>> GetProjectTechs()
         {
-            if (id == 0)
-                return new Project();
+            var techs = await _projectsService.GetProjectTechs();
 
-            var portfolioProject = await _projectsService.GetPortfolioProject(id);
-
-            if (portfolioProject == null)
-            {
-                return null;
-            }
-
-            portfolioProject.Views = portfolioProject.Views ?? 0;
-            portfolioProject.Images = _projectImageService.GetProjectImages(id);
-
-            return portfolioProject;
+            return techs;
         }
 
         [HttpGet("types")]
@@ -84,207 +198,24 @@ namespace StuartAitken.Blazor.Server.Controllers
             return types;
         }
 
-        [HttpGet("techs")]
-        public async Task<List<ProjectTech>> GetProjectTechs()
+        [HttpPost("viewedProject")]
+        public async Task<ApiResponse> ViewedProject([FromBody] int id)
         {
-            var techs = await _projectsService.GetProjectTechs();
+            var portfolioProject = await _projectsService.GetPortfolioProject(id);
 
-            return techs;
+            if (portfolioProject == null)
+            {
+                return new ApiResponse("Project not found");
+            }
+
+            portfolioProject.Views = portfolioProject.Views ?? 0;
+            portfolioProject.Views++;
+
+            _ = await _projectsService.UpdatePortfolioProject(portfolioProject);
+
+            return new ApiResponse();
         }
 
-        //[HttpPost("viewedProject")]
-        //public async Task<IActionResult> ViewedProject([FromBody] int id)
-        //{
-        //    var portfolioProject = await _projectsService.GetPortfolioProject(id);
-
-        //    if (portfolioProject == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    portfolioProject.Views = portfolioProject.Views ?? 0;
-        //    portfolioProject.Views++;
-
-        //    await _projectsService.UpdatePortfolioProject(portfolioProject);
-
-        //    return Ok();
-        //}
-
-        //// PUT
-        //[HttpPut("{id}")]
-        //public async Task<IActionResult> EditPortfolioProject(
-        //    [FromRoute] int ID,
-        //    [FromForm] PortfolioProject portfolioProject
-        //)
-        //{
-        //    if (!ModelState.IsValid)
-        //    {
-        //        return BadRequest(ModelState);
-        //    }
-
-        //    if (ID != portfolioProject.ID)
-        //    {
-        //        return BadRequest();
-        //    }
-        //    try
-        //    {
-        //        if (await _projectsService.UpdatePortfolioProject(portfolioProject) != 0)
-        //        {
-        //            //check for image in Form (will always be second file in form)
-        //            if (Request.Form.Files.Count > 0)
-        //            {
-        //                foreach (IFormFile file in Request.Form.Files)
-        //                {
-        //                    await _projectImageService.AddNewProjectImageAsync(
-        //                        ByteHelper.ConvertToBytes(file),
-        //                        ID
-        //                    );
-        //                }
-        //            }
-
-        //            return CreatedAtAction(
-        //                "EditPortfolioProject",
-        //                new { ID = portfolioProject.ID },
-        //                portfolioProject
-        //            );
-        //        }
-        //        else
-        //        {
-        //            return StatusCode(500);
-        //        }
-        //    }
-        //    catch
-        //    {
-        //        return StatusCode(500);
-        //    }
-        //}
-
-        //// POST
-        //[HttpPost]
-        //public async Task<IActionResult> AddPortfolioProject(
-        //    [FromForm] PortfolioProject portfolioProject
-        //)
-        //{
-        //    portfolioProject.CreationDate = DateTime.Now;
-        //    portfolioProject.ModifiedDate = DateTime.Now;
-
-        //    if (!ModelState.IsValid)
-        //    {
-        //        return BadRequest(ModelState);
-        //    }
-
-        //    try
-        //    {
-        //        await _projectsService.AddPortfolioProject(portfolioProject);
-
-        //        if (Request.Form.Files.Count > 0)
-        //        {
-        //            //if form data has anything else, it's an image! So add it.
-        //            PortfolioProject justAdded = await _projectsService.GetPortfolioProject(
-        //                portfolioProject
-        //            );
-        //            foreach (IFormFile file in Request.Form.Files)
-        //            {
-        //                await _projectImageService.AddNewProjectImageAsync(
-        //                    ByteHelper.ConvertToBytes(file),
-        //                    justAdded.ID
-        //                );
-        //            }
-        //        }
-        //    }
-        //    catch (DbUpdateException)
-        //    {
-        //        if (_projectsService.PortfolioProjectExists(portfolioProject.ID))
-        //        {
-        //            return new StatusCodeResult(StatusCodes.Status409Conflict);
-        //        }
-        //        else
-        //        {
-        //            throw;
-        //        }
-        //    }
-
-        //    return CreatedAtAction(
-        //        "GetPortfolioProject",
-        //        new { ID = portfolioProject.ID },
-        //        portfolioProject
-        //    );
-        //}
-
-        //[HttpDelete("{id}")]
-        //public async Task<IActionResult> DeletePortfolioProject([FromRoute] int id)
-        //{
-        //    var portfolioProject = await _projectsService.GetPortfolioProject(id);
-        //    if (portfolioProject == null)
-        //    {
-        //        return NotFound();
-        //    }
-        //    //List<PortfolioProjectImage> projectImages = _projectsService.GetAllPortfolioProjectImages().Where(x => x.ProjectID == ID).ToList();
-
-        //    //foreach(PortfolioProjectImage img in projectImages)
-        //    //{
-        //    //    await _projectsService.DeletePortfolioProjectImage(img.ID);
-        //    //}
-
-        //    await _projectsService.DeletePortfolioProjectAsync(id);
-
-        //    return Ok(portfolioProject);
-        //}
-
-        //// POST
-        //[HttpPost]
-        //[AcceptVerbs("POST", "post")]
-        //[Route("api/StuartAitkenWebsite/masterlist")]
-        //public async Task<IActionResult> UploadMasterList()
-        //{
-        //    if (Request.Form.Files.Count > 0)
-        //    {
-        //        try
-        //        {
-        //            string currentDir = Environment.CurrentDirectory;
-        //            string appPath = Path.Combine(
-        //                currentDir,
-        //                "wwwroot",
-        //                "dist",
-        //                "assets",
-        //                "downloads"
-        //            );
-
-        //            string filePath = "";
-
-        //            var file = Request.Form.Files[0];
-
-        //            //add new files
-        //            if (file.Length > 0)
-        //            {
-        //                if (file.FileName != "masterList.json")
-        //                    throw new Exception(
-        //                        $"Filename incorrect! ({file.FileName}). Should be 'masterList.json'"
-        //                    );
-
-        //                string fileName = file.FileName;
-
-        //                filePath = Path.Combine(appPath, "masterList.json");
-
-        //                using (FileStream fileStream = new FileStream(filePath, FileMode.Create))
-        //                {
-        //                    await file.CopyToAsync(fileStream);
-        //                }
-        //            }
-
-        //            return new JsonResult(new { ok = true, message = "" });
-        //        }
-        //        catch (Exception e)
-        //        {
-        //            return new JsonResult(new { ok = false, message = e.ToString() });
-        //        }
-        //    }
-        //    else
-        //    {
-        //        return NoContent();
-        //    }
-        //}
-
-        #endregion
+        #endregion Public Methods
     }
 }

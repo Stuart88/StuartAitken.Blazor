@@ -2,6 +2,8 @@
 {
     public static class ByteHelper
     {
+        #region Public Methods
+
         public static byte[] ConvertToBytes(IFormFile image)
         {
             byte[] CoverImageBytes = null;
@@ -9,5 +11,7 @@
             CoverImageBytes = reader.ReadBytes((int)image.Length);
             return CoverImageBytes;
         }
+
+        #endregion Public Methods
     }
 }

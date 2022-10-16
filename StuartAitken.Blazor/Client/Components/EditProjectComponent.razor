@@ -1,6 +1,10 @@
 ﻿@inherits CustomComponentBase
 
-@if (Project == null)
+@if (!this.IsAdmin)
+{
+	<MudChip Color="Color.Error">Unauthorised!</MudChip>
+}
+else if (Project == null)
 {
 	<MudProgressLinear Indeterminate=true Color="Color.Primary" />
 }
@@ -15,6 +19,12 @@ else
 		<MudTextField Immediate @bind-Value="@Project.Name" Label="Name" Variant="Variant.Filled"
 				  Adornment="Adornment.Start" AdornmentIcon="@Icons.Filled.DocumentScanner"
 				  Disabled="@saving" />
+		<MudDatePicker Label="Project Date" Editable="true" Variant="Variant.Filled"
+				   Adornment="Adornment.Start" AdornmentIcon="@Icons.Filled.CalendarMonth"
+				   DateChanged="@((val) => Project.ProjectDate = val ?? DateTime.MinValue)"
+				   Placeholder="Select Date"
+				   Date="@Project.ProjectDate"
+				   DateFormat="dd MMM yyyy" />
 		<MudNumericField Immediate HideSpinButtons="true" T="int" @bind-Value="Project.ProjectDurationDays" Label="Duration Days" Variant="Variant.Filled"
 					 Adornment="Adornment.Start" AdornmentIcon="@Icons.Filled.CalendarMonth"
 					 Disabled="@saving" />
@@ -94,18 +104,18 @@ else
 </MudButton>
 
 @code {
-    [Parameter]
-    public Project Project { get; set; }
+	[Parameter]
+	public Project Project { get; set; }
 
-    private List<ProjectType> ProjectTypes { get; set; } = new List<ProjectType>();
-    private List<ProjectTech> ProjectTechs { get; set; } = new List<ProjectTech>();
-    private bool saving;
-    private bool showPreview;
+	private List<ProjectType> ProjectTypes { get; set; } = new List<ProjectType>();
+	private List<ProjectTech> ProjectTechs { get; set; } = new List<ProjectTech>();
+	private bool saving;
+	private bool showPreview;
 
-    private List<ProjectType> ProjectTypesOrdered => this.ProjectTypes.OrderByDescending(p => this.Project.Type.Contains(p.Name)).ThenBy(p => p.Name).ToList();
+	private List<ProjectType> ProjectTypesOrdered => this.ProjectTypes.OrderByDescending(p => this.Project.Type.Contains(p.Name)).ThenBy(p => p.Name).ToList();
 	private List<ProjectTech> ProjectTechsOrdered => this.ProjectTechs.OrderByDescending(p => this.Project.Tech.Contains(p.Name)).ThenBy(p => p.Name).ToList();
 
-    private List<string> Links => Project?.Urls?.Split(", ").Append(string.Empty).ToList() ?? new List<string>() { string.Empty };
+	private List<string> Links => Project?.Urls?.Split(", ").Append(string.Empty).ToList() ?? new List<string>() { string.Empty };
 
 	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{
@@ -150,6 +160,31 @@ else
 	{
 		this.Project.Description = await GetEditorText();
 		var p = this.Project;
+
+		try
+		{
+			Project? response = null;
+			
+			if (p.ID > 0)
+			{
+				response = await this.Http.CustomPutAsJsonAsync<Project, Project>(Routes.Api.Projects + p.ID, p);
+			}
+			else
+			{
+				response = await this.Http.CustomPostAsJsonAsync<Project, Project>(Routes.Api.Projects, p);
+			}
+
+			if (response == null)
+			{
+				throw new Exception("No response!");
+			}
+
+			this.Navigation.NavigateTo($"{Routes.Pages.Projects}/{response.ID}");
+		}
+		catch (Exception e)
+		{
+			this.Snackbar.Add(e.Message, Severity.Error);
+		}
 	}
 
 	private async void GetProjectTechsList()

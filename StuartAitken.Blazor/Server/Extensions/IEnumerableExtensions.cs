@@ -1,4 +1,5 @@
 ﻿namespace StuartAitken.Blazor.Server.Extensions
 {
-    public class IEnumerableExtensions { }
+    public class IEnumerableExtensions
+    { }
 }

@@ -1,13 +1,6 @@
-﻿using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Hosting.Internal;
-using StuartAitken.Blazor.Server.DataAccess.Entities;
+﻿using Microsoft.AspNetCore.Mvc;
 using StuartAitken.Blazor.Server.DataService;
-using StuartAitken.Blazor.Server.Helpers;
 using StuartAitken.Blazor.Shared.Models;
-using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 
 namespace StuartAitken.Blazor.Server.Controllers
 {
@@ -15,8 +8,14 @@ namespace StuartAitken.Blazor.Server.Controllers
     [ApiController]
     public class ProjectImageController : ControllerBase
     {
-        private ProjectImageService _projectImageService;
+        #region Private Fields
+
         private readonly IWebHostEnvironment _webHostEnvironment;
+        private ProjectImageService _projectImageService;
+
+        #endregion Private Fields
+
+        #region Public Constructors
 
         public ProjectImageController(
             ProjectImageService projectImageService,
@@ -27,25 +26,9 @@ namespace StuartAitken.Blazor.Server.Controllers
             this._webHostEnvironment = webHostEnvironment;
         }
 
-        #region Portfolio Images
+        #endregion Public Constructors
 
-        // GET (images for project)
-        [HttpGet("images-for-project/{projID}")]
-        public IEnumerable<ProjectImage> GetProjectImages([FromRoute] int projID)
-        {
-            var projectImages = _projectImageService.GetProjectImages(projID);
-
-            return projectImages;
-        }
-
-        // GET (images for project)
-        [HttpGet("image-ids-for-project/{projID}")]
-        public IEnumerable<int> GetProjectImageIDs([FromRoute] int projID)
-        {
-            var projectImageIDs = _projectImageService.GetProjectImageIDs(projID);
-
-            return projectImageIDs;
-        }
+        #region Public Methods
 
         // GET
         [HttpGet("{id}")]
@@ -69,10 +52,29 @@ namespace StuartAitken.Blazor.Server.Controllers
             return PhysicalFile(imagePath, "image/png");
         }
 
+        // GET (images for project)
+        [HttpGet("image-ids-for-project/{projID}")]
+        public IEnumerable<int> GetProjectImageIDs([FromRoute] int projID)
+        {
+            var projectImageIDs = _projectImageService.GetProjectImageIDs(projID);
+
+            return projectImageIDs;
+        }
+
+        // GET (images for project)
+        [HttpGet("images-for-project/{projID}")]
+        public IEnumerable<ProjectImage> GetProjectImages([FromRoute] int projID)
+        {
+            var projectImages = _projectImageService.GetProjectImages(projID);
+
+            return projectImages;
+        }
+
+        #endregion Public Methods
+
         //[HttpPut("{id}")]
         //public async Task<IActionResult> EditPortfolioImage([FromRoute] int id, [FromForm] PortfolioProjectImage image)
         //{
-
         //    if (!ModelState.IsValid)
         //    {
         //        return BadRequest(ModelState);
@@ -98,13 +100,11 @@ namespace StuartAitken.Blazor.Server.Controllers
         //        return StatusCode(500);
         //    }
 
-
         //}
 
         //[HttpPost("{id}")]
         //public async Task<IActionResult> SetMainImage([FromRoute] int id)
         //{
-
         //    try
         //    {
         //        return await _projectImageService.SetMainPortfolioProjectImageAsync(id) != 0
@@ -116,13 +116,11 @@ namespace StuartAitken.Blazor.Server.Controllers
         //        return StatusCode(500);
         //    }
 
-
         //}
 
         //[HttpPost]
         //public async Task<IActionResult> AddPortfolioImage([FromForm] PortfolioProjectImage image)
         //{
-
         //    if (!ModelState.IsValid)
         //    {
         //        return BadRequest(ModelState);
@@ -156,7 +154,6 @@ namespace StuartAitken.Blazor.Server.Controllers
         //[HttpDelete("{id}")]
         //public async Task<IActionResult> DeletePortfolioImage([FromRoute] int id)
         //{
-
         //    var image = await _projectImageService.GetPortfolioProjectImageAsync(id);
         //    if (image == null)
         //    {
@@ -167,8 +164,5 @@ namespace StuartAitken.Blazor.Server.Controllers
 
         //    return Ok();
         //}
-
-
-        #endregion
     }
 }

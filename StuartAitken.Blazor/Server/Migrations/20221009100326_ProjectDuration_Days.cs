@@ -6,14 +6,7 @@ namespace StuartAitken.Blazor.Server.Migrations
 {
     public partial class ProjectDuration_Days : Migration
     {
-        protected override void Up(MigrationBuilder migrationBuilder)
-        {
-            migrationBuilder.RenameColumn(
-                "ProjectDurationWeeks",
-                "PortfolioProject",
-                "ProjectDurationDays"
-            );
-        }
+        #region Protected Methods
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
@@ -23,5 +16,16 @@ namespace StuartAitken.Blazor.Server.Migrations
                 "ProjectDurationWeeks"
             );
         }
+
+        protected override void Up(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.RenameColumn(
+                "ProjectDurationWeeks",
+                "PortfolioProject",
+                "ProjectDurationDays"
+            );
+        }
+
+        #endregion Protected Methods
     }
 }

@@ -1,16 +1,50 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using StuartAitken.Blazor.Server.DataAccess;
 using StuartAitken.Blazor.Server.DataAccess.Entities;
-using StuartAitken.Blazor.Server.Mapper;
 using StuartAitken.Blazor.Shared.Models;
 
 namespace StuartAitken.Blazor.Server.DataService
 {
     public class ProjectsService : ServiceBase
     {
-        public ProjectsService() { }
+        #region Public Constructors
 
-        #region Porfolio Projects
+        public ProjectsService()
+        { }
+
+        #endregion Public Constructors
+
+        #region Public Methods
+
+        public async Task<int> AddPortfolioProjectAndGetID(Project project)
+        {
+            try
+            {
+                var portfolioProject = Mapper.Mapper.Map<Project, PortfolioProject>(project);
+                portfolioProject.Urls = portfolioProject.Urls ?? "";
+                _db.Add(portfolioProject);
+                await _db.SaveChangesAsync();
+                return portfolioProject.ID;
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        public async Task<int> DeletePortfolioProjectAsync(int id)
+        {
+            try
+            {
+                PortfolioProject portfolioProject = _db.PortfolioProjects.Find(id);
+                _db.PortfolioProjects.Remove(portfolioProject);
+                _db.Entry(portfolioProject).State = EntityState.Deleted;
+                return await _db.SaveChangesAsync();
+            }
+            catch
+            {
+                throw;
+            }
+        }
 
         public IEnumerable<Project> GetAllPortfolioProjects()
         {
@@ -49,13 +83,19 @@ namespace StuartAitken.Blazor.Server.DataService
             }
         }
 
-        public Task<List<ProjectType>> GetProjectTypes()
+        public Task<Project?> GetPortfolioProject(Project project)
         {
             try
             {
-                return _db.PortfolioProjectTypes
-                    .Select(p => Mapper.Mapper.Map<PortfolioProjectType, ProjectType>(p))
-                    .ToListAsync();
+                int justAddedID =
+                    _db.PortfolioProjects
+                        .Where(
+                            x => x.CreationDate == project.CreationDate && x.Name == project.Name
+                        )
+                        .FirstOrDefault()
+                        ?.ID ?? 0;
+
+                return GetPortfolioProject(justAddedID);
             }
             catch
             {
@@ -77,19 +117,13 @@ namespace StuartAitken.Blazor.Server.DataService
             }
         }
 
-        public Task<Project?> GetPortfolioProject(PortfolioProject project)
+        public Task<List<ProjectType>> GetProjectTypes()
         {
             try
             {
-                int justAddedID =
-                    _db.PortfolioProjects
-                        .Where(
-                            x => x.CreationDate == project.CreationDate && x.Name == project.Name
-                        )
-                        .FirstOrDefault()
-                        ?.ID ?? 0;
-
-                return GetPortfolioProject(justAddedID);
+                return _db.PortfolioProjectTypes
+                    .Select(p => Mapper.Mapper.Map<PortfolioProjectType, ProjectType>(p))
+                    .ToListAsync();
             }
             catch
             {
@@ -97,26 +131,19 @@ namespace StuartAitken.Blazor.Server.DataService
             }
         }
 
-        public async Task<int> AddPortfolioProject(Project project)
+        public bool PortfolioProjectExists(int ID)
         {
-            try
-            {
-                var portfolioProject = Mapper.Mapper.Map<Project, PortfolioProject>(project);
-                portfolioProject.Urls = portfolioProject.Urls ?? "";
-                _db.Add(portfolioProject);
-                return await _db.SaveChangesAsync();
-            }
-            catch
-            {
-                throw;
-            }
+            return GetAllPortfolioProjects().Any(e => e.ID == ID);
         }
 
-        public async Task<int> UpdatePortfolioProject(Project project)
+        public async Task<Project?> UpdatePortfolioProject(Project project)
         {
             try
             {
-                PortfolioProject updating = _db.PortfolioProjects.Find(project.ID);
+                if (project == null)
+                    throw new Exception("Project was null");
+
+                PortfolioProject? updating = _db.PortfolioProjects.Find(project.ID);
 
                 if (updating == null)
                     throw new Exception("Project not found!");
@@ -132,7 +159,9 @@ namespace StuartAitken.Blazor.Server.DataService
                 updating.ModifiedDate = DateTime.Now;
 
                 _db.Entry(updating).State = EntityState.Modified;
-                return await _db.SaveChangesAsync();
+                await _db.SaveChangesAsync();
+
+                return await GetPortfolioProject(project.ID);
             }
             catch (Exception e)
             {
@@ -140,26 +169,6 @@ namespace StuartAitken.Blazor.Server.DataService
             }
         }
 
-        public async Task<int> DeletePortfolioProjectAsync(int id)
-        {
-            try
-            {
-                PortfolioProject portfolioProject = _db.PortfolioProjects.Find(id);
-                _db.PortfolioProjects.Remove(portfolioProject);
-                _db.Entry(portfolioProject).State = EntityState.Deleted;
-                return await _db.SaveChangesAsync();
-            }
-            catch
-            {
-                throw;
-            }
-        }
-
-        public bool PortfolioProjectExists(int ID)
-        {
-            return GetAllPortfolioProjects().Any(e => e.ID == ID);
-        }
-
-        #endregion
+        #endregion Public Methods
     }
 }

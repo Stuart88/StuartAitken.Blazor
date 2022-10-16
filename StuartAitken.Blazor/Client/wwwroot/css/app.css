@@ -1,5 +1,4 @@
-﻿
-body, #app, .mud-layout {
+﻿body, #app, .mud-layout {
     min-height: 100vh;
     /*Need to add this +/ 3rem to deal with annoying white area that seems to appear for pages larger than 100vh. It's a hack but it's basic CSS so who cares.*/
     margin-bottom: -3rem;

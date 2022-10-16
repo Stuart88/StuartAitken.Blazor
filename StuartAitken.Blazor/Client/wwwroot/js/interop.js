@@ -1,6 +1,4 @@
-﻿
-window.getCvWidth = function () {
-
+﻿window.getCvWidth = function () {
     var cvContainer = document.getElementById('cv-container');
 
     if (cvContainer) {
@@ -80,8 +78,8 @@ window.setEditorText = function (text) {
     }
 }
 
-/** 
- * This checks to ensure the container area exists for initialising the quill editor 
+/**
+ * This checks to ensure the container area exists for initialising the quill editor
  * */
 function quillAreaExists() {
     var quillArea = document.getElementById('quill-editor');

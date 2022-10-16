@@ -3,6 +3,10 @@
 @if (Project != null)
 {
 	<div class="project-info" style="@($"background-color:{Colors.Yellow.Default}")">
+		<h3>Date</h3>
+		<div>
+			@Project.ProjectDate.ToString("dd MMM yyyy")
+		</div>
 		<h3>Duration</h3>
 		<div>
 			@StringHelpers.MakePresentableDuration(Project)

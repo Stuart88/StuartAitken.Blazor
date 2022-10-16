@@ -10,6 +10,16 @@
 
 
 		.. / <MudLink Href="@(Routes.Pages.Projects)" Color="Color.Default">Projects</MudLink> / @(project?.Name ?? "Loading...")
+
+	@if (this.IsAdmin)
+	{
+		<MudButton Variant="Variant.Filled"
+			   Style="@($"background-color:{Colors.Blue.Default};color:{Colors.Grey.Lighten5};margin:10px;float:right")"
+			   Size="Size.Small"
+			   OnClick="@(() => this.Navigation.NavigateTo($"{Routes.Pages.EditProject}/{ProjectId}"))">
+			Edit
+		</MudButton>
+	}
 </div>
 
 <ProjectComponent Project="project" />

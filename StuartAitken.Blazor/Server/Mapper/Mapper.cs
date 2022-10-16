@@ -2,6 +2,8 @@
 {
     public static class Mapper
     {
+        #region Public Methods
+
         public static TDest Map<TSource, TDest>(TSource source) where TDest : new()
         {
             if (source == null)
@@ -47,5 +49,7 @@
         {
             return values.Select(i => Map<TSource, TDest>(i));
         }
+
+        #endregion Public Methods
     }
 }

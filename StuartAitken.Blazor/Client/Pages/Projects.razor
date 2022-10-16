@@ -95,27 +95,33 @@
 				}
 			</MudTd>
 			<MudTd>
-				@if (this.IsAdmin)
-				{
+				<MudButtonGroup Color="Color.Primary" Variant="Variant.Outlined" VerticalAlign>
+					@if (this.IsAdmin)
+					{
+						<MudIconButton Variant="Variant.Filled"
+								   Style="@($"background-color:{Colors.Green.Default};color:{Colors.Grey.Lighten5}")"
+								   Size="Size.Small"
+								   OnClick="@(() => this.Navigation.NavigateTo($"{Routes.Pages.EditProject}/{context.ID}"))"
+								   Icon="@Icons.Rounded.Edit">
+						</MudIconButton>
+						<MudIconButton Variant="Variant.Filled"
+								   Style="@($"background-color:{Colors.Red.Default};color:{Colors.Red.Lighten5}")"
+								   Size="Size.Small"
+								   OnClick="@(() => this.OnDeleteClicked(context.ID))"
+								   Icon="@Icons.Rounded.Delete">
+						</MudIconButton>
+					}
 					<MudButton Variant="Variant.Filled"
-						   Style="@($"background-color:{Colors.Blue.Default};color:{Colors.Grey.Lighten5};margin:10px")"
-						   Size="Size.Small"
-						   OnClick="@(() => this.Navigation.NavigateTo($"{Routes.Pages.EditProject}/{context.ID}"))">
-						Edit
+							   Style="@($"background-color:{Colors.Blue.Default};color:{Colors.Grey.Lighten5}")"
+							   Size="Size.Small"
+							   OnClick="@(() => this.Navigation.NavigateTo($"{Routes.Pages.Projects}/{context.ID}"))">
+						View
 					</MudButton>
-				}
-				<MudButton Variant="Variant.Filled"
-						   Style="@($"background-color:{Colors.Blue.Default};color:{Colors.Grey.Lighten5};margin:10px")"
-						   Size="Size.Small"
-						   OnClick="@(() => this.Navigation.NavigateTo($"{Routes.Pages.Projects}/{context.ID}"))">
-					View
-				</MudButton>
+				</MudButtonGroup>
+
 			</MudTd>
 		</MudHidden>
 	</RowTemplate>
-	@*<PagerContent>
-	<MudTablePager  />
-	</PagerContent>*@
 </MudTable>
 
 
@@ -199,5 +205,8 @@
 		return false;
 	}
 
-
+	private async void OnDeleteClicked(int id)
+	{
+		this.Snackbar.Add($"Delete ({id}). Not implemented", Severity.Info);
+	}
 }
