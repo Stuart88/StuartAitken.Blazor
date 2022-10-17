@@ -15,6 +15,27 @@ else if (showPreview)
 else
 {
 	<div class="edit-project-container">
+		<h2>Images</h2>
+		<InputFile id="fileInput" OnChange="PrepareFiles" hidden multiple />
+		<MudButton HtmlTag="label"
+			   Variant="Variant.Filled"
+			   Color="Color.Primary"
+			   StartIcon="@Icons.Filled.CloudUpload"
+			   for="fileInput">
+			Upload Files
+		</MudButton>
+		@if (images != null)
+		{
+			<MudText Typo="@Typo.h6">@images.Count() File@(images.Count() == 1 ? "" : "s"):</MudText>
+			<MudList>
+				@foreach (var img in images)
+				{
+					<MudListItem Icon="@Icons.Filled.AttachFile" @key="@img">
+						@img.Name <code>@img.Size bytes</code>
+					</MudListItem>
+				}
+			</MudList>
+		}
 		<h2>Details</h2>
 		<MudTextField Immediate @bind-Value="@Project.Name" Label="Name" Variant="Variant.Filled"
 				  Adornment="Adornment.Start" AdornmentIcon="@Icons.Filled.DocumentScanner"
@@ -111,6 +132,7 @@ else
 	private List<ProjectTech> ProjectTechs { get; set; } = new List<ProjectTech>();
 	private bool saving;
 	private bool showPreview;
+	private IList<IBrowserFile> images = new List<IBrowserFile>();
 
 	private List<ProjectType> ProjectTypesOrdered => this.ProjectTypes.OrderByDescending(p => this.Project.Type.Contains(p.Name)).ThenBy(p => p.Name).ToList();
 	private List<ProjectTech> ProjectTechsOrdered => this.ProjectTechs.OrderByDescending(p => this.Project.Tech.Contains(p.Name)).ThenBy(p => p.Name).ToList();
@@ -158,13 +180,15 @@ else
 
 	private async Task OnSave()
 	{
+
 		this.Project.Description = await GetEditorText();
+		this.saving = true;
 		var p = this.Project;
 
 		try
 		{
 			Project? response = null;
-			
+
 			if (p.ID > 0)
 			{
 				response = await this.Http.CustomPutAsJsonAsync<Project, Project>(Routes.Api.Projects + p.ID, p);
@@ -179,11 +203,62 @@ else
 				throw new Exception("No response!");
 			}
 
+			this.Snackbar.Add("Saved project", Severity.Success);
+
+			if (this.images.Count > 0)
+			{
+				this.Snackbar.Add("Uploading images", Severity.Info);
+				await this.UploadImages(response.ID);
+			}
+
 			this.Navigation.NavigateTo($"{Routes.Pages.Projects}/{response.ID}");
 		}
 		catch (Exception e)
 		{
 			this.Snackbar.Add(e.Message, Severity.Error);
+		}
+		finally
+		{
+			this.saving = false;
+			this.StateHasChanged();
+		}
+	}
+
+	private async Task UploadImages(int projectId)
+	{
+		using var content = new MultipartFormDataContent();
+
+		foreach (var img in images)
+		{
+			var fileContent =
+						new StreamContent(img.OpenReadStream(StuartAitken.Blazor.Shared.Constants.Constants.MaxFileSizeBytes));
+
+			fileContent.Headers.ContentType =
+				new System.Net.Http.Headers.MediaTypeHeaderValue(img.ContentType);
+
+
+			content.Add(
+				content: fileContent,
+				name: "\"images\"",
+				fileName: img.Name);
+		}
+
+		var response = await Http.PostAsync(Routes.Api.ProjectImages + projectId, content);
+
+		var apiResponse = await response.Content
+			.ReadFromJsonAsync<ApiResponse<List<ProjectImage>>>();
+
+		if (apiResponse == null)
+		{
+			this.Snackbar.Add("Could not deserialise response", Severity.Warning);
+		}
+		else if (!apiResponse.Ok)
+		{
+			this.Snackbar.Add(apiResponse.Error, Severity.Warning);
+		}
+		else
+		{
+			this.Snackbar.Add("Images uploaded successfully", Severity.Success);
 		}
 	}
 
@@ -230,6 +305,14 @@ else
 		{
 			case ItemType.ProjectType: Project.Type = string.Join(", ", values); break;
 			case ItemType.ProjectTech: Project.Tech = string.Join(", ", values); break;
+		}
+	}
+
+	private void PrepareFiles(InputFileChangeEventArgs e)
+	{
+		foreach (var file in e.GetMultipleFiles())
+		{
+			images.Add(file);
 		}
 	}
 

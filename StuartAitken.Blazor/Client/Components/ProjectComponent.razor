@@ -22,6 +22,28 @@ else
 						  Src="@($"/{Routes.Api.ProjectImage_AsObject}{img.ID}")"
 						  ObjectFit="ObjectFit.Contain"
 						  ObjectPosition="ObjectPosition.Center" />
+
+						@if (this.IsAdmin)
+						{
+							<div id="image-edit-btns">
+								@if (img.PrimaryImage != 1)
+								{
+									<MudButton Size="Size.Small"
+							   ButtonType="ButtonType.Button"
+							   Style="@($"background-color:{Colors.Blue.Default};color:{Colors.Shades.White}")"
+							   OnClick="() => SetPrimaryImage(img)">
+										Make main image
+									</MudButton>
+
+								}
+								<MudButton Size="Size.Small"
+							   ButtonType="ButtonType.Button"
+							   Style="@($"background-color:{Colors.Red.Default};color:{Colors.Shades.White}")"
+							   OnClick="() => DeleteImage(img)">
+									Delete
+								</MudButton>
+							</div>
+						}
 					</div>
 				</MudCarouselItem>
 			}
@@ -41,4 +63,66 @@ else
 @code {
 	[Parameter]
 	public Project Project { get; set; }
+
+	private async Task DeleteImage(ProjectImage img)
+	{
+		bool? shouldDelete = await this.Dialog.ShowMessageBox(
+			"Delete",
+			$"Delete image. \n\nAre you sure?",
+			yesText: "Delete", cancelText: "Cancel");
+
+		if (shouldDelete == true)
+		{
+			try
+			{
+				await this.Http.CustomDeleteAsync(Routes.Api.ProjectImages + img.ID);
+
+				this.Project.Images = this.Project.Images.Where(i => i.ID != img.ID).ToList();
+
+				this.StateHasChanged();
+			}
+			catch (Exception e)
+			{
+				this.Snackbar.Add(e.Message, Severity.Error);
+			}
+
+		}
+	}
+
+	private async Task SetPrimaryImage(ProjectImage img)
+	{
+		try
+		{
+			var resp = await this.Http.PostAsync(Routes.Api.ProjectImages_SetMainImage + img.ID, null);
+
+			var apiResponse = await resp.Content.ReadFromJsonAsync<ApiResponse>();
+
+			if (apiResponse == null)
+				throw new Exception("ApiResponse is null!");
+
+			if (apiResponse.Ok)
+			{
+				this.Project.Images.ForEach(_img =>
+				{
+					_img.PrimaryImage = 0;
+					if (_img.ID == img.ID)
+					{
+						_img.PrimaryImage = 1;
+
+					}
+				});
+
+				this.StateHasChanged();
+			}
+			else
+			{
+				this.Snackbar.Add(apiResponse.Error, Severity.Error);
+			}
+		}
+		catch (Exception e)
+		{
+			this.Snackbar.Add(e.Message, Severity.Error);
+
+		}
+	}
 }

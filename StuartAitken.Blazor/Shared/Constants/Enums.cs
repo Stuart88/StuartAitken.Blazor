@@ -1,4 +1,4 @@
-﻿namespace StuartAitken.Blazor.Shared.Enums
+﻿namespace StuartAitken.Blazor.Shared.Constants
 {
     public enum ItemType
     {

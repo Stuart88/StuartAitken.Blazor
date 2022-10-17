@@ -15,7 +15,7 @@ namespace StuartAitken.Blazor.Server.DataService
 
         #region Public Methods
 
-        public async Task<int> AddPortfolioProjectAndGetID(Project project)
+        public async Task<Project> AddPortfolioProject(Project project)
         {
             try
             {
@@ -23,7 +23,7 @@ namespace StuartAitken.Blazor.Server.DataService
                 portfolioProject.Urls = portfolioProject.Urls ?? "";
                 _db.Add(portfolioProject);
                 await _db.SaveChangesAsync();
-                return portfolioProject.ID;
+                return Mapper.Mapper.Map<PortfolioProject, Project>(portfolioProject);
             }
             catch
             {

@@ -12,8 +12,10 @@ namespace StuartAitken.Blazor.Server.Controllers
     {
         #region Private Fields
 
+        private readonly IWebHostEnvironment _webHostEnvironment;
         private ProjectImageService _projectImageService;
         private ProjectsService _projectsService;
+        private string imageRootFolder => Path.Combine(_webHostEnvironment.WebRootPath, "images", "projectImages");
 
         #endregion Private Fields
 
@@ -21,11 +23,13 @@ namespace StuartAitken.Blazor.Server.Controllers
 
         public ProjectsController(
             ProjectsService projectsService,
-            ProjectImageService projectImageService
+            ProjectImageService projectImageService,
+            IWebHostEnvironment webHostEnvironment
         )
         {
             this._projectsService = projectsService;
             this._projectImageService = projectImageService;
+            this._webHostEnvironment = webHostEnvironment;
         }
 
         #endregion Public Constructors
@@ -44,7 +48,7 @@ namespace StuartAitken.Blazor.Server.Controllers
 
             try
             {
-                int projectId = await _projectsService.AddPortfolioProjectAndGetID(portfolioProject);
+                newlyAdded = await _projectsService.AddPortfolioProject(portfolioProject);
 
                 //if (Request.Form.Files.Count > 0)
                 //{
@@ -86,7 +90,7 @@ namespace StuartAitken.Blazor.Server.Controllers
         [HttpDelete("{id}")]
         public async Task<ApiResponse> DeletePortfolioProject([FromRoute] int id)
         {
-            await _projectImageService.DeleteAllImagesForProjectId(id);
+            await _projectImageService.DeleteAllImagesForProjectId(imageRootFolder, id);
 
             await _projectsService.DeletePortfolioProjectAsync(id);
 

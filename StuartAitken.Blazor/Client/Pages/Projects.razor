@@ -19,7 +19,7 @@
 		  Class="projects-table"
 		  Breakpoint="Breakpoint.None"
 		  Style="@($"background-color:{Colors.Grey.Lighten5}")"
-		  Loading="@(projects.Count() == 0)"
+		  Loading="@(this.loading)"
 		  T="Project"
 		  Filter="FilterFunc"
 		  @bind-SelectedItem="selectedProject"
@@ -38,6 +38,10 @@
 						 AdornmentIcon="@Icons.Material.Filled.Search"
 						 IconSize="Size.Medium"
 						 AdornmentColor="Color.Primary" />
+
+		<MudIconButton OnClick="@(async () => this.LoadProjectsList())"
+					   Icon="@Icons.Rounded.Refresh" Color="Color.Secondary" Variant="Variant.Filled" />
+
 		@if (this.IsAdmin)
 		{
 			<MudIconButton OnClick="@(() => this.Navigation.NavigateTo($"{Routes.Pages.EditProject}/0"))"
@@ -107,7 +111,7 @@
 						<MudIconButton Variant="Variant.Filled"
 								   Style="@($"background-color:{Colors.Red.Default};color:{Colors.Red.Lighten5}")"
 								   Size="Size.Small"
-								   OnClick="@(() => this.OnDeleteClicked(context.ID))"
+								   OnClick="@(() => this.OnDeleteClicked(context))"
 								   Icon="@Icons.Rounded.Delete">
 						</MudIconButton>
 					}
@@ -134,16 +138,21 @@
 	private string filterString = "";
 	private Project? selectedProject = null;
 	private List<string> autoCompleteList = new();
+	private bool loading = true;
 
 	protected override async Task OnInitializedAsync()
 	{
-		this.LoadProjectsList();
+		await this.LoadProjectsList();
 
 		await base.OnInitializedAsync();
 	}
 
-	private async void LoadProjectsList()
+	private async Task LoadProjectsList()
 	{
+		this.loading = true;
+		this.projects = new List<Project>();
+		this.StateHasChanged();
+
 		var data = await Http.GetFromJsonAsync<IEnumerable<Project>>(Routes.Api.Projects_All);
 
 		if (data == null)
@@ -160,6 +169,7 @@
 
 			autoCompleteList = projectNames.Concat(projectTechs).Concat(projectTypes).ToList();
 
+			this.loading = false;
 			this.StateHasChanged();
 		}
 	}
@@ -196,17 +206,32 @@
 		if (itemData.Contains(s))
 			return true;
 
-		//if (element.Sign.Contains(searchString, StringComparison.OrdinalIgnoreCase))
-		//	return true;
-		//if (element.Name.Contains(searchString, StringComparison.OrdinalIgnoreCase))
-		//	return true;
-		//if ($"{element.Number} {element.Position} {element.Molar}".Contains(searchString))
-		//	return true;
 		return false;
 	}
 
-	private async void OnDeleteClicked(int id)
+	private async Task OnDeleteClicked(Project p)
 	{
-		this.Snackbar.Add($"Delete ({id}). Not implemented", Severity.Info);
+
+		bool? shouldDelete = await this.Dialog.ShowMessageBox(
+			"Delete",
+			$"Delete {p.Name}. \n\nAre you sure?",
+			yesText: "Delete", cancelText: "Cancel");
+
+		if (shouldDelete == true)
+		{
+			try
+			{
+				await this.Http.CustomDeleteAsync(Routes.Api.Projects + p.ID);
+			}
+			catch (Exception e)
+			{
+				this.Snackbar.Add(e.Message, Severity.Error);
+			}
+			finally
+			{
+				await this.LoadProjectsList();
+			}
+		}
+
 	}
 }

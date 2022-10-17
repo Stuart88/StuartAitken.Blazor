@@ -1,14 +1,5 @@
 ﻿namespace StuartAitken.Blazor.Client.Constants
 {
-    public static class Constants
-    {
-        #region Public Fields
-
-        public const string SiteName = "stuart-aitken.co.uk";
-
-        #endregion Public Fields
-    }
-
     public static class Routes
     {
         #region Public Classes
@@ -26,6 +17,7 @@
 
             public const string ProjectImages = BaseApi + "project-images/";
             public const string ProjectImages_ForProject = ProjectImages + "images-for-project/";
+            public const string ProjectImages_SetMainImage = ProjectImages + "set-main-image/";
 
             public const string ProjectImages_IdsForProject =
                 ProjectImages + "image-ids-for-project/";

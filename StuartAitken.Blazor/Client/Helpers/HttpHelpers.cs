@@ -36,6 +36,20 @@ namespace StuartAitken.Blazor.Client.Helpers
             }
         }
 
+        public static async Task CustomDeleteAsync(this HttpClient http, string uri)
+        {
+            try
+            {
+                var response = await http.DeleteAsync(uri);
+
+                await HandleApiResponse(response);
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
         #endregion Public Methods
 
         #region Private Methods
@@ -71,6 +85,32 @@ namespace StuartAitken.Blazor.Client.Helpers
             }
 
             return resp.Data;
+        }
+
+        /// <summary>
+        /// Processes Http response and throws an exception on any problems
+        /// </summary>
+        /// <param name="response"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
+        private static async Task HandleApiResponse(HttpResponseMessage response)
+        {
+            if (!response.IsSuccessStatusCode)
+                throw new Exception($"Server Error: {response.StatusCode}");
+
+            string content = await response.Content.ReadAsStringAsync();
+
+            ApiResponse? resp = JsonSerializer.Deserialize<ApiResponse>(content, jsonSerializerOptions);
+
+            if (resp == null)
+            {
+                throw new Exception("Failed to deserialize response!");
+            }
+
+            if (!resp.Ok)
+            {
+                throw new Exception(resp.Error);
+            }
         }
 
         #endregion Private Methods

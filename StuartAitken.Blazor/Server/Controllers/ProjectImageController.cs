@@ -1,6 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using StuartAitken.Blazor.Server.DataAccess.Entities;
 using StuartAitken.Blazor.Server.DataService;
 using StuartAitken.Blazor.Shared.Models;
+using System.Collections.Generic;
+using System.Net;
 
 namespace StuartAitken.Blazor.Server.Controllers
 {
@@ -12,6 +16,8 @@ namespace StuartAitken.Blazor.Server.Controllers
 
         private readonly IWebHostEnvironment _webHostEnvironment;
         private ProjectImageService _projectImageService;
+        private ProjectsService _projectService;
+        private string imageRootFolder => Path.Combine(_webHostEnvironment.WebRootPath, "images", "projectImages");
 
         #endregion Private Fields
 
@@ -19,9 +25,11 @@ namespace StuartAitken.Blazor.Server.Controllers
 
         public ProjectImageController(
             ProjectImageService projectImageService,
+            ProjectsService projectService,
             IWebHostEnvironment webHostEnvironment
         )
         {
+            this._projectService = projectService;
             this._projectImageService = projectImageService;
             this._webHostEnvironment = webHostEnvironment;
         }
@@ -43,9 +51,7 @@ namespace StuartAitken.Blazor.Server.Controllers
         public async Task<IActionResult> GetPortfolioImageObject([FromRoute] int id)
         {
             string imagePath = Path.Combine(
-                _webHostEnvironment.WebRootPath,
-                "images",
-                "projectImages",
+                imageRootFolder,
                 $"{id}.png"
             );
 
@@ -72,97 +78,80 @@ namespace StuartAitken.Blazor.Server.Controllers
 
         #endregion Public Methods
 
-        //[HttpPut("{id}")]
-        //public async Task<IActionResult> EditPortfolioImage([FromRoute] int id, [FromForm] PortfolioProjectImage image)
-        //{
-        //    if (!ModelState.IsValid)
-        //    {
-        //        return BadRequest(ModelState);
-        //    }
+        [HttpPost("{projectId}")]
+        public async Task<ApiResponse<List<ProjectImage>>> PostProjectImage(
+      [FromForm] IEnumerable<IFormFile> images, [FromRoute] int projectId)
+        {
 
-        //    if (id != image.ID)
-        //    {
-        //        return BadRequest();
-        //    }
-        //    try
-        //    {
-        //        if (await _projectImageService.UpdatePortfolioProjectImageAsync(image) != 0)
-        //        {
-        //            return CreatedAtAction("EditPortfolioImage", new { id = image.ID }, image);
-        //        }
-        //        else
-        //        {
-        //            return StatusCode(500);
-        //        }
-        //    }
-        //    catch
-        //    {
-        //        return StatusCode(500);
-        //    }
+            var project = await _projectService.GetPortfolioProject(projectId);
 
-        //}
+            ApiResponse<List<ProjectImage>> response = new();
+            List<ProjectImage> addedImages = new();
+            string errorMessage = "";
 
-        //[HttpPost("{id}")]
-        //public async Task<IActionResult> SetMainImage([FromRoute] int id)
-        //{
-        //    try
-        //    {
-        //        return await _projectImageService.SetMainPortfolioProjectImageAsync(id) != 0
-        //            ? Ok()
-        //            : StatusCode(500);
-        //    }
-        //    catch
-        //    {
-        //        return StatusCode(500);
-        //    }
+            if (project == null)
+                return new ApiResponse<List<ProjectImage>>("Project not found!");
 
-        //}
+            foreach (var file in images)
+            {
 
-        //[HttpPost]
-        //public async Task<IActionResult> AddPortfolioImage([FromForm] PortfolioProjectImage image)
-        //{
-        //    if (!ModelState.IsValid)
-        //    {
-        //        return BadRequest(ModelState);
-        //    }
+                try
+                {
+                    var addedImage = await _projectImageService.AddPortfolioProjectImageAsync(imageRootFolder, file, projectId);
+                    if (addedImage != null)
+                        addedImages.Add(addedImage);
+                }
+                catch (Exception e)
+                {
+                    errorMessage += $"{e.Message}\n";
+                    response.Ok = false;
+                }
 
-        //    try
-        //    {
-        //        var imgUpload = Request.Form.Files[0];
-        //        image.ImageByteArray = ByteHelper.ConvertToBytes(imgUpload);
+            }
 
-        //        image.CreationDate = DateTime.Now;
-        //        image.ModifiedDate = DateTime.Now;
+            response.Data = addedImages;
 
-        //        await _projectImageService.AddPortfolioProjectImageAsync(image);
-        //    }
-        //    catch (DbUpdateException)
-        //    {
-        //        if (_projectImageService.PortfolioImageExists(image.ID))
-        //        {
-        //            return new StatusCodeResult(StatusCodes.Status409Conflict);
-        //        }
-        //        else
-        //        {
-        //            throw;
-        //        }
-        //    }
+            return response;
+        }
 
-        //    return CreatedAtAction("GetPortfolioImage", new { id = image.ID }, image);
-        //}
+        [HttpPost("set-main-image/{id}")]
+        public async Task<ApiResponse> SetMainImage([FromRoute] int id)
+        {
+            try
+            {
+                return await _projectImageService.SetMainPortfolioProjectImageAsync(id) != 0
+                    ? new ApiResponse()
+                    : throw new Exception("No data saved!");
+            }
+            catch (Exception e)
+            {
+                return new ApiResponse(e.Message);
+            }
 
-        //[HttpDelete("{id}")]
-        //public async Task<IActionResult> DeletePortfolioImage([FromRoute] int id)
-        //{
-        //    var image = await _projectImageService.GetPortfolioProjectImageAsync(id);
-        //    if (image == null)
-        //    {
-        //        return NotFound();
-        //    }
+        }
 
-        //    await _projectImageService.DeletePortfolioProjectImage(id);
 
-        //    return Ok();
-        //}
+        [HttpDelete("{id}")]
+        public async Task<ApiResponse> DeletePortfolioImage([FromRoute] int id)
+        {
+            try
+            {
+
+                var image = await _projectImageService.GetPortfolioProjectImageAsync(id);
+
+                if (image == null)
+                {
+                    return new ApiResponse("Image not found");
+                }
+
+                await _projectImageService.DeletePortfolioProjectImage(imageRootFolder, id);
+
+                return new ApiResponse();
+            }
+            catch (Exception e)
+            {
+                return new ApiResponse(e.Message);
+            }
+        }
     }
 }

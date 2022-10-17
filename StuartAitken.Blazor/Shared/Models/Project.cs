@@ -7,7 +7,7 @@
         public DateTime CreationDate { get; set; }
         public string? Description { get; set; }
         public int ID { get; set; }
-        public IEnumerable<ProjectImage> Images { get; set; } = new List<ProjectImage>();
+        public List<ProjectImage> Images { get; set; } = new List<ProjectImage>();
         public DateTime ModifiedDate { get; set; }
         public string Name { get; set; } = "";
         public DateTime ProjectDate { get; set; }
