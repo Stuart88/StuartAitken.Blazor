@@ -6,7 +6,7 @@
 
 <h1>Edit Project</h1>
 
-@if (this.IsAdmin)
+@if (this.AppStateContainer.IsAdmin)
 {
 	<MudButton Variant="Variant.Filled"
 		   Style="@($"background-color:{Colors.Red.Default};color:{Colors.Grey.Lighten5};margin-bottom:1rem")"
@@ -21,11 +21,13 @@
 @code {
 	protected override void OnParametersSet()
 	{
-		if (!this.IsAdmin)
+		base.OnParametersSet();
+		
+		if (!this.AppStateContainer.IsAdmin)
 		{
 			this.Navigation.NavigateTo(Routes.Pages.Projects);
 		}
 
-		base.OnParametersSet();
+
 	}
 }

@@ -1,7 +1,9 @@
-﻿
-<MudTooltip Text="@Tooltip">
-	<MudImage Fluid Src="@Src" Width="@width" Style="padding:1px;margin: 0px 7px" />
-</MudTooltip>
+﻿@if (!string.IsNullOrEmpty(Src))
+{
+	<MudTooltip Text="@Tooltip">
+		<MudImage Fluid Src="@Src" Width="@width" Style="padding:1px;margin: 0px 7px" />
+	</MudTooltip>
+}
 
 @code {
 	[Parameter]

@@ -1,3 +1,5 @@
+using Microsoft.OpenApi.Models;
+using StuartAitken.Blazor.Server.ActionFilters;
 using StuartAitken.Blazor.Server.DataService;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -6,10 +8,31 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddScoped<ProjectsService>();
 builder.Services.AddScoped<ProjectImageService>();
+builder.Services.AddScoped<SecureDataService>();
 
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews(opts =>
+{
+    //opts.Filters.AddService<CustomAuthorise>();
+});
 builder.Services.AddRazorPages();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.OperationFilter<AuthHeaderSwaggerFilter>();
+    c.AddSecurityDefinition(
+        "Bearer",
+        new OpenApiSecurityScheme()
+        {
+            Name = "Authorization",
+            Type = SecuritySchemeType.Http,
+            Scheme = "Basic",
+            //BearerFormat = "JWT",
+            In = ParameterLocation.Header,
+            //Description = "JWT Authorization header. \r\n\r\n Enter the token in the text input below.,
+        }
+    );
+});
+
+builder.Services.AddScoped<AdminAuthorise>();
 
 var app = builder.Build();
 
@@ -32,6 +55,7 @@ app.UseStaticFiles();
 app.UseSwagger();
 app.UseSwaggerUI(c =>
 {
+    c.OAuthUseBasicAuthenticationWithAccessCodeGrant();
     c.SwaggerEndpoint("/swagger/v1/swagger.json", "StuartAitken.Blazor API");
 });
 

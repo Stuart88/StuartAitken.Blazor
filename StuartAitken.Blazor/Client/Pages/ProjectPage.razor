@@ -11,7 +11,7 @@
 
 		.. / <MudLink Href="@(Routes.Pages.Projects)" Color="Color.Default">Projects</MudLink> / @(project?.Name ?? "Loading...")
 
-	@if (this.IsAdmin)
+	@if (this.AppStateContainer.IsAdmin)
 	{
 		<MudButton Variant="Variant.Filled"
 			   Style="@($"background-color:{Colors.Blue.Default};color:{Colors.Grey.Lighten5};margin:10px;float:right")"
@@ -32,18 +32,30 @@
 
 	protected override async Task OnParametersSetAsync()
 	{
-		var data = await Http.GetFromJsonAsync<Project>($"{Routes.Api.Projects}{this.ProjectId}");
-
-		if (data == null)
-		{
-			Snackbar.Add("Found no data!", Severity.Error);
-		}
-		else
-		{
-			project = data;
-			this.StateHasChanged();
-		}
-
 		await base.OnParametersSetAsync();
+
+		try
+		{
+			var resp = await Http.GetFromJsonAsync<ApiResponse<Project>>($"{Routes.Api.Projects}{this.ProjectId}");
+
+			if (resp == null)
+			{
+				Snackbar.Add("Found no data!", Severity.Error);
+			}
+			else if(!resp.Ok)
+			{
+				throw new Exception(resp.Error);
+			}
+			else
+			{
+				project = resp.Data;
+				this.StateHasChanged();
+			}
+		}
+		catch (Exception e)
+		{
+			Snackbar.Add(e.Message, Severity.Error);
+		}
+
 	}
 }

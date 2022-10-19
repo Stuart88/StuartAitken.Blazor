@@ -12,9 +12,7 @@
 
         #region Public Constructors
 
-        public ApiResponse()
-        {
-        }
+        public ApiResponse() { }
 
         public ApiResponse(bool ok)
         {
@@ -39,10 +37,8 @@
         #endregion Public Properties
 
         #region Public Constructors
-        public ApiResponse()
-        {
 
-        }
+        public ApiResponse() { }
 
         public ApiResponse(T data)
         {
@@ -50,13 +46,9 @@
             this.Ok = true;
         }
 
-        public ApiResponse(bool ok) : base(ok)
-        {
-        }
+        public ApiResponse(bool ok) : base(ok) { }
 
-        public ApiResponse(string errorMessage) : base(errorMessage)
-        {
-        }
+        public ApiResponse(string errorMessage) : base(errorMessage) { }
 
         #endregion Public Constructors
     }

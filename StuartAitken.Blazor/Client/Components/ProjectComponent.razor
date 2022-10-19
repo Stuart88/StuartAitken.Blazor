@@ -23,7 +23,7 @@ else
 						  ObjectFit="ObjectFit.Contain"
 						  ObjectPosition="ObjectPosition.Center" />
 
-						@if (this.IsAdmin)
+						@if (this.AppStateContainer.IsAdmin)
 						{
 							<div id="image-edit-btns">
 								@if (img.PrimaryImage != 1)

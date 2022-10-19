@@ -1,23 +1,29 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using StuartAitken.Blazor.Server.ActionFilters;
 using StuartAitken.Blazor.Server.DataService;
-using StuartAitken.Blazor.Server.Helpers;
 using StuartAitken.Blazor.Shared.Models;
 
 namespace StuartAitken.Blazor.Server.Controllers
 {
     [Route("api/projects/")]
     [ApiController]
-    public class ProjectsController : ControllerBase
+    public class ProjectsController : CustomControllerBase
     {
         #region Private Fields
 
         private readonly IWebHostEnvironment _webHostEnvironment;
         private ProjectImageService _projectImageService;
         private ProjectsService _projectsService;
-        private string imageRootFolder => Path.Combine(_webHostEnvironment.WebRootPath, "images", "projectImages");
 
         #endregion Private Fields
+
+        #region Private Properties
+
+        private string imageRootFolder =>
+            Path.Combine(_webHostEnvironment.WebRootPath, "images", "projectImages");
+
+        #endregion Private Properties
 
         #region Public Constructors
 
@@ -36,6 +42,7 @@ namespace StuartAitken.Blazor.Server.Controllers
 
         #region Public Methods
 
+        [AdminAuthorise]
         [HttpPost]
         public async Task<ApiResponse<Project>> AddPortfolioProject(
             [FromBody] Project portfolioProject
@@ -49,25 +56,6 @@ namespace StuartAitken.Blazor.Server.Controllers
             try
             {
                 newlyAdded = await _projectsService.AddPortfolioProject(portfolioProject);
-
-                //if (Request.Form.Files.Count > 0)
-                //{
-                //    //if form data has anything else, it's an image! So add it.
-                //    newlyAdded = await _projectsService.GetPortfolioProject(
-                //        projectId
-                //    );
-
-                //    if (newlyAdded == null)
-                //        throw new Exception("Could not find just-added project?!");
-
-                //    //foreach (IFormFile file in Request.Form.Files)
-                //    //{
-                //    //    await _projectImageService.AddNewProjectImageAsync(
-                //    //        ByteHelper.ConvertToBytes(file),
-                //    //        newlyAdded.ID
-                //    //    );
-                //    //}
-                //}
             }
             catch (DbUpdateException)
             {
@@ -87,6 +75,7 @@ namespace StuartAitken.Blazor.Server.Controllers
             return new ApiResponse<Project>(newlyAdded);
         }
 
+        [AdminAuthorise]
         [HttpDelete("{id}")]
         public async Task<ApiResponse> DeletePortfolioProject([FromRoute] int id)
         {
@@ -97,6 +86,7 @@ namespace StuartAitken.Blazor.Server.Controllers
             return new ApiResponse();
         }
 
+        [AdminAuthorise]
         [HttpPut("{id}")]
         public async Task<ApiResponse<Project>> EditPortfolioProject(
             [FromRoute] int ID,
@@ -109,7 +99,9 @@ namespace StuartAitken.Blazor.Server.Controllers
             }
             try
             {
-                var updatedProject = await _projectsService.UpdatePortfolioProject(portfolioProject);
+                var updatedProject = await _projectsService.UpdatePortfolioProject(
+                    portfolioProject
+                );
                 if (updatedProject != null)
                 {
                     ////check for image in Form (will always be second file in form)
@@ -146,22 +138,31 @@ namespace StuartAitken.Blazor.Server.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<Project> GetPortfolioProject([FromRoute] int id)
+        public async Task<ApiResponse<Project>> GetPortfolioProject([FromRoute] int id)
         {
-            if (id == 0)
-                return new Project();
-
-            var portfolioProject = await _projectsService.GetPortfolioProject(id);
-
-            if (portfolioProject == null)
+            try
             {
-                return null;
+                if (id == 0)
+                    throw new Exception("Project with ID 0 does not exist");
+
+                var portfolioProject = await _projectsService.GetPortfolioProject(id);
+
+                if (portfolioProject == null)
+                {
+                    throw new Exception($"Project with ID {id} does not exist");
+                }
+
+                portfolioProject.Views ??= 0;
+                portfolioProject.Images = _projectImageService.GetProjectImages(id);
+
+                await _projectsService.IncrementViews(id);
+
+                return new ApiResponse<Project>(portfolioProject);
             }
-
-            portfolioProject.Views = portfolioProject.Views ?? 0;
-            portfolioProject.Images = _projectImageService.GetProjectImages(id);
-
-            return portfolioProject;
+            catch (Exception e)
+            {
+                return new ApiResponse<Project>(e.Message);
+            }
         }
 
         /// <summary>
@@ -200,24 +201,6 @@ namespace StuartAitken.Blazor.Server.Controllers
             var types = await _projectsService.GetProjectTypes();
 
             return types;
-        }
-
-        [HttpPost("viewedProject")]
-        public async Task<ApiResponse> ViewedProject([FromBody] int id)
-        {
-            var portfolioProject = await _projectsService.GetPortfolioProject(id);
-
-            if (portfolioProject == null)
-            {
-                return new ApiResponse("Project not found");
-            }
-
-            portfolioProject.Views = portfolioProject.Views ?? 0;
-            portfolioProject.Views++;
-
-            _ = await _projectsService.UpdatePortfolioProject(portfolioProject);
-
-            return new ApiResponse();
         }
 
         #endregion Public Methods

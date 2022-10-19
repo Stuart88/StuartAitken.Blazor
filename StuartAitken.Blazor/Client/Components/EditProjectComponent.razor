@@ -1,6 +1,6 @@
 ﻿@inherits CustomComponentBase
 
-@if (!this.IsAdmin)
+@if (!this.AppStateContainer.IsAdmin)
 {
 	<MudChip Color="Color.Error">Unauthorised!</MudChip>
 }
@@ -147,10 +147,10 @@ else
 
 	protected override async Task OnInitializedAsync()
 	{
+		await base.OnInitializedAsync();
 		GetProjectTechsList();
 		GetProjectTypesList();
 		await ResetEditor();
-		await base.OnInitializedAsync();
 	}
 
 	private async Task ResetEditor()

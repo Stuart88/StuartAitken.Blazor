@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Hosting;
-using Microsoft.EntityFrameworkCore;
-using StuartAitken.Blazor.Client.Pages;
+﻿using Microsoft.EntityFrameworkCore;
 using StuartAitken.Blazor.Server.DataAccess.Entities;
 using StuartAitken.Blazor.Server.Mapper;
 using StuartAitken.Blazor.Shared.Models;
@@ -11,8 +9,7 @@ namespace StuartAitken.Blazor.Server.DataService
     {
         #region Public Constructors
 
-        public ProjectImageService()
-        { }
+        public ProjectImageService() { }
 
         #endregion Public Constructors
 
@@ -28,7 +25,9 @@ namespace StuartAitken.Blazor.Server.DataService
                 throw new Exception("No image data!");
 
             if (image.Length > Shared.Constants.Constants.MaxFileSizeBytes)
-                throw new Exception("Image too large! (> 3)");
+                throw new Exception(
+                    $"Image too large! (> {Shared.Constants.Constants.MaxFileSizeBytes.ToString()[0]}MB)"
+                ); // <-- This is daft but good enough for typical image upload sizes
 
             try
             {
@@ -43,13 +42,14 @@ namespace StuartAitken.Blazor.Server.DataService
                 _db.Add(portfolioProjectImage);
                 await _db.SaveChangesAsync();
 
-
                 string imagePath = Path.Combine(imageRootPath, $"{portfolioProjectImage.ID}.png");
 
                 await using FileStream fs = new(imagePath, FileMode.Create);
                 await image.CopyToAsync(fs);
 
-                return Mapper.Mapper.Map<PortfolioProjectImage, ProjectImage>(portfolioProjectImage);
+                return Mapper.Mapper.Map<PortfolioProjectImage, ProjectImage>(
+                    portfolioProjectImage
+                );
             }
             catch
             {
@@ -62,7 +62,7 @@ namespace StuartAitken.Blazor.Server.DataService
             try
             {
                 var images = _db.PortfolioProjectImages.Where(i => i.ProjectId == id);
-                foreach(var img in images)
+                foreach (var img in images)
                 {
                     File.Delete(Path.Combine(imageFolder, $"{img.ID}.png"));
                 }
@@ -233,7 +233,7 @@ namespace StuartAitken.Blazor.Server.DataService
         }
 
         public async Task<int> UpdatePortfolioProjectImageAsync(
-                            PortfolioProjectImage portfolioProjectImage
+            PortfolioProjectImage portfolioProjectImage
         )
         {
             try

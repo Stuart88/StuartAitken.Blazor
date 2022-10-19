@@ -8,8 +8,7 @@ namespace StuartAitken.Blazor.Server.DataService
     {
         #region Public Constructors
 
-        public ProjectsService()
-        { }
+        public ProjectsService() { }
 
         #endregion Public Constructors
 
@@ -124,6 +123,28 @@ namespace StuartAitken.Blazor.Server.DataService
                 return _db.PortfolioProjectTypes
                     .Select(p => Mapper.Mapper.Map<PortfolioProjectType, ProjectType>(p))
                     .ToListAsync();
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        public async Task IncrementViews(int projectId)
+        {
+            try
+            {
+                var project = await _db.PortfolioProjects
+                    .Where(p => p.ID == projectId)
+                    .FirstOrDefaultAsync();
+
+                if (project != null)
+                {
+                    project.Views ??= 0;
+                    project.Views += 1;
+                    _db.Update(project);
+                    await _db.SaveChangesAsync();
+                }
             }
             catch
             {

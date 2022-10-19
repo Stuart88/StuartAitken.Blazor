@@ -8,6 +8,7 @@
         {
             #region Public Fields
 
+            public const string Auth = BaseApi + "auth/";
             public const string BaseApi = "api/";
 
             /// <summary>
@@ -17,11 +18,11 @@
 
             public const string ProjectImages = BaseApi + "project-images/";
             public const string ProjectImages_ForProject = ProjectImages + "images-for-project/";
-            public const string ProjectImages_SetMainImage = ProjectImages + "set-main-image/";
 
             public const string ProjectImages_IdsForProject =
                 ProjectImages + "image-ids-for-project/";
 
+            public const string ProjectImages_SetMainImage = ProjectImages + "set-main-image/";
             public const string Projects = BaseApi + "projects/";
 
             public const string Projects_All = Projects + "all";

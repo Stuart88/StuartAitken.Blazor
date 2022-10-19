@@ -1,38 +1,36 @@
 ﻿using StuartAitken.Blazor.Shared.Models;
 using System.Net.Http.Json;
+using System.Text;
 using System.Text.Json;
 
 namespace StuartAitken.Blazor.Client.Helpers
 {
     public static class HttpHelpers
     {
+        #region Private Fields
+
+        private static readonly JsonSerializerOptions jsonSerializerOptions =
+            new JsonSerializerOptions
+            {
+                AllowTrailingCommas = true,
+                PropertyNameCaseInsensitive = true,
+            };
+
+        #endregion Private Fields
+
         #region Public Methods
 
-        public static async Task<TResponse> CustomPostAsJsonAsync<TRequest, TResponse>(this HttpClient http, string uri, TRequest data) where TResponse : new()
+        public static void AddAuthHeader(this HttpClient http, string pass)
         {
-            try
+            if (string.IsNullOrEmpty(pass))
             {
-                var response = await http.PostAsJsonAsync(uri, data);
-
-                return await GetResponseData<TResponse>(response);
+                http.DefaultRequestHeaders.Authorization = null;
             }
-            catch
+            else
             {
-                throw;
-            }
-        }
-
-        public static async Task<TResponse> CustomPutAsJsonAsync<TRequest, TResponse>(this HttpClient http, string uri, TRequest data) where TResponse : new()
-        {
-            try
-            {
-                var response = await http.PutAsJsonAsync(uri, data);
-
-                return await GetResponseData<TResponse>(response);
-            }
-            catch
-            {
-                throw;
+                string headerVal = Convert.ToBase64String(Encoding.UTF8.GetBytes($"user:{pass}"));
+                http.DefaultRequestHeaders.Authorization =
+                    new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", headerVal);
             }
         }
 
@@ -50,24 +48,58 @@ namespace StuartAitken.Blazor.Client.Helpers
             }
         }
 
+        public static async Task<TResponse> CustomPostAsJsonAsync<TRequest, TResponse>(
+            this HttpClient http,
+            string uri,
+            TRequest data
+        ) where TResponse : new()
+        {
+            try
+            {
+                var response = await http.PostAsJsonAsync(uri, data);
+
+                return await GetResponseData<TResponse>(response);
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        public static async Task<TResponse> CustomPutAsJsonAsync<TRequest, TResponse>(
+            this HttpClient http,
+            string uri,
+            TRequest data
+        ) where TResponse : new()
+        {
+            try
+            {
+                var response = await http.PutAsJsonAsync(uri, data);
+
+                return await GetResponseData<TResponse>(response);
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
         #endregion Public Methods
 
         #region Private Methods
 
-        private static readonly JsonSerializerOptions jsonSerializerOptions = new JsonSerializerOptions
-        {
-            AllowTrailingCommas = true,
-            PropertyNameCaseInsensitive = true,
-        };
-
-        private static async Task<T> GetResponseData<T>(HttpResponseMessage response) where T : new()
+        private static async Task<T> GetResponseData<T>(HttpResponseMessage response)
+            where T : new()
         {
             if (!response.IsSuccessStatusCode)
                 throw new Exception($"Server Error: {response.StatusCode}");
 
             string content = await response.Content.ReadAsStringAsync();
 
-            ApiResponse<T>? resp = JsonSerializer.Deserialize<ApiResponse<T>>(content, jsonSerializerOptions);
+            ApiResponse<T>? resp = JsonSerializer.Deserialize<ApiResponse<T>>(
+                content,
+                jsonSerializerOptions
+            );
 
             if (resp == null)
             {
@@ -100,7 +132,10 @@ namespace StuartAitken.Blazor.Client.Helpers
 
             string content = await response.Content.ReadAsStringAsync();
 
-            ApiResponse? resp = JsonSerializer.Deserialize<ApiResponse>(content, jsonSerializerOptions);
+            ApiResponse? resp = JsonSerializer.Deserialize<ApiResponse>(
+                content,
+                jsonSerializerOptions
+            );
 
             if (resp == null)
             {

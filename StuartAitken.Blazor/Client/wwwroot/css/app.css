@@ -5,6 +5,17 @@
     padding-bottom: 3rem;
 }
 
+.login-container {
+    position: relative;
+    left: 0;
+    top: 1rem;
+    width: 200px;
+}
+
+    .login-container label {
+        background: #ffeb3b
+    }
+
 .site-title {
     min-width: 125px;
     margin-left: 1rem;
@@ -55,7 +66,6 @@
     #image-edit-btns button {
         margin: 0 2px;
     }
-
 
 .project-description {
     padding: 1rem;

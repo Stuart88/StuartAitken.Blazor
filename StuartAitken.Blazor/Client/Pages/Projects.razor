@@ -42,7 +42,7 @@
 		<MudIconButton OnClick="@(async () => this.LoadProjectsList())"
 					   Icon="@Icons.Rounded.Refresh" Color="Color.Secondary" Variant="Variant.Filled" />
 
-		@if (this.IsAdmin)
+		@if (this.AppStateContainer.IsAdmin)
 		{
 			<MudIconButton OnClick="@(() => this.Navigation.NavigateTo($"{Routes.Pages.EditProject}/0"))"
 					   Icon="@Icons.Rounded.Add" Color="Color.Tertiary" Variant="Variant.Filled" />
@@ -100,7 +100,7 @@
 			</MudTd>
 			<MudTd>
 				<MudButtonGroup Color="Color.Primary" Variant="Variant.Outlined" VerticalAlign>
-					@if (this.IsAdmin)
+					@if (this.AppStateContainer.IsAdmin)
 					{
 						<MudIconButton Variant="Variant.Filled"
 								   Style="@($"background-color:{Colors.Green.Default};color:{Colors.Grey.Lighten5}")"
@@ -142,9 +142,9 @@
 
 	protected override async Task OnInitializedAsync()
 	{
-		await this.LoadProjectsList();
-
 		await base.OnInitializedAsync();
+
+		await this.LoadProjectsList();
 	}
 
 	private async Task LoadProjectsList()

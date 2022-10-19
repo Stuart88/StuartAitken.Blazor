@@ -2,12 +2,13 @@
 
 namespace StuartAitken.Blazor.Server.DataAccess.Entities
 {
-    [Table("PortfolioProjectTech")]
-    public class PortfolioProjectTech : EntityBase
+    [Table("SecureData")]
+    public class SecureData : EntityBase
     {
         #region Public Properties
 
-        public string Name { get; set; } = null!;
+        public string Name { get; set; }
+        public string Value { get; set; }
 
         #endregion Public Properties
     }

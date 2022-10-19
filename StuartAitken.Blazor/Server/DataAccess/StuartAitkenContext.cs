@@ -15,12 +15,13 @@ namespace StuartAitken.Blazor.Server.DataAccess
 
         public virtual DbSet<PortfolioProjectType> PortfolioProjectTypes { get; set; } = null!;
 
+        public virtual DbSet<SecureData> SecureData { get; set; } = null!;
+
         #endregion Public Properties
 
         #region Public Constructors
 
-        public StuartAitkenContext()
-        { }
+        public StuartAitkenContext() { }
 
         public StuartAitkenContext(DbContextOptions<StuartAitkenContext> options) : base(options)
         { }
@@ -39,46 +40,5 @@ namespace StuartAitken.Blazor.Server.DataAccess
         }
 
         #endregion Protected Methods
-
-        //protected override void OnModelCreating(ModelBuilder modelBuilder)
-        //{
-        //    modelBuilder.Entity<PortfolioProject>(entity =>
-        //    {
-        //        entity.ToTable("PortfolioProject");
-
-        //        entity.Property(e => e.ID).HasColumnName("ID");
-
-        //        entity.Property(e => e.ProjectDurationWeeks).HasColumnName("ProjectDuration_weeks");
-
-        //        entity.Property(e => e.Urls).HasColumnName("URLs");
-        //    });
-
-        //    modelBuilder.Entity<PortfolioProjectImage>(entity =>
-        //    {
-        //        entity.ToTable("PortfolioProjectImage");
-
-        //        entity.Property(e => e.ID).HasColumnName("ID");
-
-        //        entity.Property(e => e.ProjectId).HasColumnName("ProjectID");
-        //    });
-
-        //    modelBuilder.Entity<PortfolioProjectTech>(entity =>
-        //    {
-        //        entity.ToTable("PortfolioProjectTech");
-
-        //        entity.Property(e => e.ID).HasColumnName("ID");
-        //    });
-
-        //    modelBuilder.Entity<PortfolioProjectType>(entity =>
-        //    {
-        //        entity.ToTable("PortfolioProjectType");
-
-        //        entity.Property(e => e.ID).HasColumnName("ID");
-        //    });
-
-        //    OnModelCreatingPartial(modelBuilder);
-        //}
-
-        //partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
     }
 }
