@@ -5,6 +5,7 @@
         #region Public Properties
 
         public string Error { get; set; } = "";
+        public string InnerError { get; set; } = "";
 
         public bool Ok { get; set; } = true;
 
@@ -22,13 +23,12 @@
         public ApiResponse(Exception e)
         {
             this.Ok = false;
-            string error = e.Message;
+            this.Error = e.Message;
+            
             if(e.InnerException != null && !string.IsNullOrEmpty(e.InnerException.Message))
             {
-                error += $"\n{e.InnerException.Message}";
-
+                this.InnerError = e.InnerException.Message;
             }
-            this.Error = error;
         }
 
         #endregion Public Constructors
