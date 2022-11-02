@@ -72,29 +72,10 @@ namespace StuartAitken.Blazor.Server.DataService
             try
             {
                 return _db.PortfolioProjects
+                    .AsNoTracking()
                     .Where(p => p.ID == id)
                     .Select(p => Mapper.Mapper.Map<PortfolioProject, Project>(p))
                     .FirstOrDefaultAsync();
-            }
-            catch
-            {
-                throw;
-            }
-        }
-
-        public Task<Project?> GetPortfolioProject(Project project)
-        {
-            try
-            {
-                int justAddedID =
-                    _db.PortfolioProjects
-                        .Where(
-                            x => x.CreationDate == project.CreationDate && x.Name == project.Name
-                        )
-                        .FirstOrDefault()
-                        ?.ID ?? 0;
-
-                return GetPortfolioProject(justAddedID);
             }
             catch
             {

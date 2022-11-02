@@ -142,9 +142,6 @@ namespace StuartAitken.Blazor.Server.Controllers
         {
             try
             {
-                if (id == 0)
-                    throw new Exception("Project with ID 0 does not exist");
-
                 var portfolioProject = await _projectsService.GetPortfolioProject(id);
 
                 if (portfolioProject == null)

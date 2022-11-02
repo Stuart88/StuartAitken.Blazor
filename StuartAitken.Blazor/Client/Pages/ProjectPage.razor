@@ -28,7 +28,7 @@
 	[Parameter]
 	public int ProjectId { get; set; }
 
-	public Project project;
+	public Project project = new Project();
 
 	protected override async Task OnParametersSetAsync()
 	{
@@ -36,20 +36,23 @@
 
 		try
 		{
-			var resp = await Http.GetFromJsonAsync<ApiResponse<Project>>($"{Routes.Api.Projects}{this.ProjectId}");
+			if (this.ProjectId > 0)
+			{
+				var resp = await Http.GetFromJsonAsync<ApiResponse<Project>>($"{Routes.Api.Projects}{this.ProjectId}");
 
-			if (resp == null)
-			{
-				Snackbar.Add("Found no data!", Severity.Error);
-			}
-			else if(!resp.Ok)
-			{
-				throw new Exception(resp.Error);
-			}
-			else
-			{
-				project = resp.Data;
-				this.StateHasChanged();
+				if (resp == null)
+				{
+					Snackbar.Add("Found no data!", Severity.Error);
+				}
+				else if (!resp.Ok)
+				{
+					throw new Exception(resp.Error);
+				}
+				else
+				{
+					project = resp.Data;
+					this.StateHasChanged();
+				}
 			}
 		}
 		catch (Exception e)
