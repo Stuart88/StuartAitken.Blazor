@@ -61,7 +61,7 @@ namespace StuartAitken.Blazor.Server.Controllers
             {
                 if (_projectsService.PortfolioProjectExists(portfolioProject.ID))
                 {
-                    return new ApiResponse<Project>("DB conflict; Project ID exists");
+                    return new ApiResponse<Project>(new Exception("DB conflict; Project ID exists"));
                 }
                 else
                 {
@@ -70,7 +70,7 @@ namespace StuartAitken.Blazor.Server.Controllers
             }
 
             if (newlyAdded == null)
-                return new ApiResponse<Project>("newlyAdded is null?!");
+                return new ApiResponse<Project>(new Exception("newlyAdded is null?!"));
 
             return new ApiResponse<Project>(newlyAdded);
         }
@@ -95,7 +95,7 @@ namespace StuartAitken.Blazor.Server.Controllers
         {
             if (ID != portfolioProject.ID)
             {
-                return new ApiResponse<Project>("Portfolio ID mismatch.");
+                return new ApiResponse<Project>(new Exception("Portfolio ID mismatch."));
             }
             try
             {
@@ -104,28 +104,16 @@ namespace StuartAitken.Blazor.Server.Controllers
                 );
                 if (updatedProject != null)
                 {
-                    ////check for image in Form (will always be second file in form)
-                    //if (Request.Form.Files.Count > 0)
-                    //{
-                    //    foreach (IFormFile file in Request.Form.Files)
-                    //    {
-                    //        await _projectImageService.AddNewProjectImageAsync(
-                    //            ByteHelper.ConvertToBytes(file),
-                    //            ID
-                    //        );
-                    //    }
-                    //}
-
                     return new ApiResponse<Project>(updatedProject);
                 }
                 else
                 {
-                    return new ApiResponse<Project>("Update error. Nothing updated.");
+                    return new ApiResponse<Project>(new Exception("Update error. Nothing updated."));
                 }
             }
             catch (Exception ex)
             {
-                return new ApiResponse<Project>(ex.Message);
+                return new ApiResponse<Project>(ex);
             }
         }
 
@@ -158,7 +146,7 @@ namespace StuartAitken.Blazor.Server.Controllers
             }
             catch (Exception e)
             {
-                return new ApiResponse<Project>(e.Message);
+                return new ApiResponse<Project>(e);
             }
         }
 

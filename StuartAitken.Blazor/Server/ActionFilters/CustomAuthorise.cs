@@ -47,7 +47,7 @@ namespace StuartAitken.Blazor.Server.ActionFilters
 
             if (!isAdmin)
             {
-                context.Result = new JsonResult(new ApiResponse("Authorisation failed!"));
+                context.Result = new JsonResult(new ApiResponse(new Exception("Authorisation failed!")));
                 //await base.OnActionExecutionAsync(context, next);
             }
             else

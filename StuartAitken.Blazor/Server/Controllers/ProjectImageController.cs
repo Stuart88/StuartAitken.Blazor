@@ -51,7 +51,7 @@ namespace StuartAitken.Blazor.Server.Controllers
 
                 if (image == null)
                 {
-                    return new ApiResponse("Image not found");
+                    return new ApiResponse(new Exception("Image not found"));
                 }
 
                 await _projectImageService.DeletePortfolioProjectImage(imageRootFolder, id);
@@ -60,7 +60,7 @@ namespace StuartAitken.Blazor.Server.Controllers
             }
             catch (Exception e)
             {
-                return new ApiResponse(e.Message);
+                return new ApiResponse(e);
             }
         }
 
@@ -110,7 +110,7 @@ namespace StuartAitken.Blazor.Server.Controllers
             string errorMessage = "";
 
             if (project == null)
-                return new ApiResponse<List<ProjectImage>>("Project not found!");
+                return new ApiResponse<List<ProjectImage>>(new Exception("Project not found!"));
 
             foreach (var file in images)
             {
@@ -148,7 +148,7 @@ namespace StuartAitken.Blazor.Server.Controllers
             }
             catch (Exception e)
             {
-                return new ApiResponse(e.Message);
+                return new ApiResponse(e);
             }
         }
 

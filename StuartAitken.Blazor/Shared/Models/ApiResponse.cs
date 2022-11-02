@@ -19,10 +19,16 @@
             this.Ok = ok;
         }
 
-        public ApiResponse(string errorMessage)
+        public ApiResponse(Exception e)
         {
             this.Ok = false;
-            this.Error = errorMessage;
+            string error = e.Message;
+            if(e.InnerException != null && !string.IsNullOrEmpty(e.InnerException.Message))
+            {
+                error += $"\n{e.InnerException.Message}";
+
+            }
+            this.Error = error;
         }
 
         #endregion Public Constructors
@@ -48,7 +54,7 @@
 
         public ApiResponse(bool ok) : base(ok) { }
 
-        public ApiResponse(string errorMessage) : base(errorMessage) { }
+        public ApiResponse(Exception e) : base(e) { }
 
         #endregion Public Constructors
     }
