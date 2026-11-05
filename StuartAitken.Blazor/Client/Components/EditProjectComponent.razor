@@ -83,6 +83,7 @@ else
 		<MudNumericField Immediate HideSpinButtons="true" T="int" @bind-Value="Project.ProjectDurationDays" Label="Duration Days" Variant="Variant.Filled"
 					 Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.CalendarMonth"
 					 Disabled="@saving" />
+		<MudCheckBox T="bool" @bind-Value="Project.Featured" Label="Featured" Color="Color.Primary" Disabled="@saving" />
 
 		<h2>Links</h2>
 

@@ -166,6 +166,7 @@ namespace StuartAitken.Blazor.Server.DataService
                 updating.Description = HtmlSanitizerHelper.Sanitize(project.Description);
                 updating.Urls = project.Urls ?? "";
                 updating.Type = project.Type;
+                updating.Featured = project.Featured;
                 updating.ModifiedDate = DateTime.Now;
 
                 _db.Entry(updating).State = EntityState.Modified;

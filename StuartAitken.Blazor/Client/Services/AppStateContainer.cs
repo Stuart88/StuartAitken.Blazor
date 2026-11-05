@@ -32,6 +32,13 @@
             }
         }
 
+        /// <summary>
+        /// Retains the "Show all" projects filter choice for the lifetime of the browser session
+        /// (i.e. while the Blazor app stays loaded), so it survives navigating away from and back
+        /// to the Projects page.
+        /// </summary>
+        public bool ShowAllProjects { get; set; }
+
         #endregion Public Properties
 
         #region Public Events

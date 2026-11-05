@@ -6,6 +6,7 @@
 
         public DateTime CreationDate { get; set; }
         public string? Description { get; set; }
+        public bool Featured { get; set; }
         public int ID { get; set; }
         public List<ProjectImage> Images { get; set; } = new List<ProjectImage>();
         public DateTime ModifiedDate { get; set; }

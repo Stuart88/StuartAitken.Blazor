@@ -59,6 +59,8 @@
 			}
 		</MudSelect>
 
+		<MudCheckBox T="bool" @bind-Value="AppStateContainer.ShowAllProjects" Label="Show all" Color="Color.Primary" Class="mt-0 mr-4" />
+
 		<MudIconButton OnClick="@(async () => this.LoadProjectsList())"
 					   Icon="@Icons.Material.Rounded.Refresh" Color="Color.Secondary" Variant="Variant.Filled" />
 
@@ -230,6 +232,9 @@
 
 	private bool FilterFunc(Project p)
 	{
+		if (!AppStateContainer.ShowAllProjects && !p.Featured)
+			return false;
+
 		if (selectedTypes.Count > 0 && !p.Type.Split(", ").Any(t => selectedTypes.Contains(t)))
 			return false;
 

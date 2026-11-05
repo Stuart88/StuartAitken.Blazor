@@ -9,6 +9,7 @@ namespace StuartAitken.Blazor.Server.DataAccess.Entities
         #region Public Properties
 
         public string? Description { get; set; }
+        public bool Featured { get; set; }
         public virtual Collection<PortfolioProjectImage>? Images { get; set; }
         public string Name { get; set; } = null!;
         public DateTime ProjectDate { get; set; }
