@@ -54,6 +54,7 @@ namespace StuartAitken.Blazor.Server.Controllers
         {
             portfolioProject.CreationDate = DateTime.Now;
             portfolioProject.ModifiedDate = DateTime.Now;
+            portfolioProject.Status ??= 1;
 
             Project? newlyAdded = null;
 
