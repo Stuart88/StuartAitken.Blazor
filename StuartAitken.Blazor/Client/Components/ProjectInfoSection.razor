@@ -2,58 +2,43 @@
 
 @if (Project != null)
 {
-	<div class="project-info" style="@($"background-color:{Colors.Yellow.Default}")">
-		<h3>Date</h3>
-		<div>
-			@Project.ProjectDate.ToString("dd MMM yyyy")
-		</div>
-		<h3>Duration</h3>
-		<div>
-			@StringHelpers.MakePresentableDuration(Project)
-		</div>
+	<div class="reading__facts">
+		<dl>
+			<div class="fact-row">
+				<dt>Date</dt>
+				<dd>@Project.ProjectDate.ToString("dd MMM yyyy")</dd>
+			</div>
+			<div class="fact-row">
+				<dt>Duration</dt>
+				<dd>@StringHelpers.MakePresentableDuration(Project)</dd>
+			</div>
+			<div class="fact-row">
+				<dt>Type</dt>
+				<dd><div class="reading__icons">@foreach (var type in Project.Type.Split(", "))
+					{
+						<ProjectIcon Small Src="@StringHelpers.TypeIconSrc(type)" Tooltip="@type" />
+					}</div></dd>
+			</div>
+			<div class="fact-row">
+				<dt>Tech</dt>
+				<dd><div class="reading__icons">@foreach (var tech in Project.Tech.Split(", ").OrderBy(i => i))
+					{
+						<ProjectIcon Small Src="@StringHelpers.TechIconSrc(tech)" Tooltip="@tech" />
+					}</div></dd>
+			</div>
+		</dl>
+
 		@if (!string.IsNullOrEmpty(Project.Urls))
 		{
-			<div class="project-info-links">
-				<h3>Links</h3>
-				<ul>
-					@foreach (string url in Project.Urls.Split(", "))
-					{
-						<li>
-							<MudLink Href="@url" Target="_blank" Color="Color.Default">
-								@url
-							</MudLink>
-						</li>
-					}
-				</ul>
+			<div class="fact-links">
+				@foreach (string url in Project.Urls.Split(", "))
+				{
+					<MudLink Href="@url" Target="_blank">
+						@url
+					</MudLink>
+				}
 			</div>
-			<MudDivider Light />
 		}
-		<MudGrid Class="project-info-grid" Justify="Justify.FlexStart">
-			<MudItem xs="4">
-				<h3>Type</h3>
-				<MudGrid Justify="Justify.FlexStart">
-					@foreach (var type in Project.Type.Split(", "))
-					{
-						<MudItem>
-							<ProjectIcon Src="@StringHelpers.TypeIconSrc(type)" Tooltip="@type" />
-						</MudItem>
-					}
-				</MudGrid>
-
-			</MudItem>
-			<MudItem xs="8" Style="text-align:end">
-				<h3>Tech</h3>
-				<MudGrid Justify="Justify.FlexEnd">
-					@foreach (var tech in Project.Tech.Split(", ").OrderBy(i => i))
-					{
-						<MudItem>
-							<ProjectIcon Src="@StringHelpers.TechIconSrc(tech)" Tooltip="@tech" />
-						</MudItem>
-					}
-				</MudGrid>
-
-			</MudItem>
-		</MudGrid>
 	</div>
 }
 

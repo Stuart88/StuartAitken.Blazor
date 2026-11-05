@@ -4,18 +4,22 @@
 
 <PageTitle>Stuart Aitken - @(project?.Name ?? "Project")</PageTitle>
 
-<h1>Edit Project</h1>
+<div class="page-head">
+	<h1>Edit project</h1>
+</div>
 
 @if (this.AppStateContainer.IsAdmin)
 {
-	<MudButton Variant="Variant.Filled"
-		   Style="@($"background-color:{Colors.Red.Default};color:{Colors.Gray.Lighten5};margin-bottom:1rem")"
-		   Size="Size.Small"
-		   OnClick="() => Navigation.NavigateTo(Routes.Pages.Projects)">
-		Cancel
-	</MudButton>
+	<div class="page-body">
+		<MudButton Class="btn-outline"
+			   Size="Size.Small"
+			   Style="margin-bottom:1rem"
+			   OnClick="() => Navigation.NavigateTo(Routes.Pages.Projects)">
+			Cancel
+		</MudButton>
 
-	<EditProjectComponent Project="this.project"/>
+		<EditProjectComponent Project="this.project"/>
+	</div>
 }
 
 @code {

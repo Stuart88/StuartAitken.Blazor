@@ -14,6 +14,17 @@ window.isMobile = function () {
     return window.visualViewport.height > window.visualViewport.width;
 }
 
+window.setTheme = function (theme) {
+    document.documentElement.setAttribute('data-theme', theme);
+    try {
+        localStorage.setItem('theme', theme);
+    } catch (e) { }
+}
+
+window.getTheme = function () {
+    return document.documentElement.getAttribute('data-theme') || 'dark';
+}
+
 window.downloadCv = function () {
     var link = document.createElement('a');
     link.href = `/downloads/Stuart-Aitken-CV-Nov-2026-Default.pdf`;

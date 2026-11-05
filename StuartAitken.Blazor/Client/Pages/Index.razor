@@ -1,27 +1,142 @@
-﻿@page "/"
+@page "/"
 
 @inherits CustomComponentBase
 
 <PageTitle>Stuart Aitken</PageTitle>
 
-<MudGrid Class="index-container">
-	<MudItem md="6">
-		<h1>Welcome to my website</h1>
-		<p>It's a bit sparse on here at the moment, but that'll probably change as I start to build it up with more stuff.</p>
-		<p>
-			Have a look at the
-			<MudButton Variant="Variant.Filled"
-					   Style="@($"background-color:{Colors.Blue.Default};color:{Colors.Gray.Lighten5}")"
-					   Size="Size.Small"
-					   OnClick="() => Navigation.NavigateTo(Routes.Pages.Projects)">
-				Projects
+<section class="hero">
+	<div class="hero__text">
+		<h1>A few things I've built.</h1>
+		<p class="lead">A selection of personal and professional projects I have worked on.</p>
+		<div class="hero__actions">
+			<MudButton Class="btn-primary" OnClick="() => Navigation.NavigateTo(Routes.Pages.Projects)">
+				View projects
 			</MudButton>
-			page for info on my latest projects
-		</p>
-	</MudItem>
-	<MudItem md="6">
-		<div class="homeImage">
-			<MudImage Fluid Src="@StringHelpers.ImageAssetSrc("console", "png")" />
+			<MudButton Class="btn-outline" OnClick="() => Navigation.NavigateTo(Routes.Pages.CV)">
+				Read CV
+			</MudButton>
 		</div>
-	</MudItem>
-</MudGrid>
+	</div>
+
+	<div class="hero__visual">
+		<div class="trail-panel">
+			<div class="trail-panel__head">
+				<h2>Recent builds</h2>
+			</div>
+			@if (loading)
+			{
+				<div style="padding:var(--space-lg)">
+					<MudProgressLinear Indeterminate Color="Color.Primary" />
+				</div>
+			}
+			else
+			{
+				@foreach (var p in recentProjects)
+				{
+					<a class="trail-row" href="@($"{Routes.Pages.Projects}/{p.ID}")">
+						<span class="trail-row__name">@p.Name</span>
+						<span class="trail-row__meta">
+							<span class="is-instrument">@p.ProjectDate.ToString("MMM yyyy")</span>
+							<span class="is-instrument">@StringHelpers.MakePresentableDuration(p)</span>
+						</span>
+					</a>
+				}
+			}
+		</div>
+	</div>
+</section>
+
+@if (!loading && featuredProjects.Any())
+{
+	<section class="page-body" style="padding-top:var(--section-gap-s)">
+		<div class="section-head">
+			<h2>Featured work</h2>
+			<p class="lead">The projects I'd point you to first.</p>
+		</div>
+
+		<div class="work-grid">
+			@foreach (var p in featuredProjects)
+			{
+				<a class="work-card" href="@($"{Routes.Pages.Projects}/{p.ID}")">
+					@if (thumbnails.TryGetValue(p.ID, out var thumbSrc) && thumbSrc != null)
+					{
+						<div class="work-card__thumb">
+							<img src="@thumbSrc" alt="" loading="lazy" />
+						</div>
+					}
+					<div class="work-card__body">
+						<span class="work-card__meta">@p.ProjectDate.ToString("yyyy")</span>
+						<h3 class="work-card__name">@p.Name</h3>
+						<div class="work-card__tech">
+							@foreach (var type in p.Type.Split(", ").Take(3))
+							{
+								<ProjectIcon Small Src="@StringHelpers.TypeIconSrc(type)" Tooltip="@type" />
+							}
+						</div>
+					</div>
+				</a>
+			}
+		</div>
+	</section>
+}
+
+@code {
+	private IEnumerable<Project> projects = new List<Project>();
+	private Dictionary<int, string?> thumbnails = new();
+	private bool loading = true;
+
+	private IEnumerable<Project> recentProjects => projects.OrderByDescending(p => p.ProjectDate).Take(5);
+	private IEnumerable<Project> featuredProjects => projects.Where(p => p.Featured).OrderByDescending(p => p.ProjectDate).Take(6);
+
+	protected override async Task OnInitializedAsync()
+	{
+		await base.OnInitializedAsync();
+
+		var data = await Http.GetFromJsonAsync<IEnumerable<Project>>(Routes.Api.Projects_All);
+
+		if (data == null)
+		{
+			Snackbar.Add("Found no data!", Severity.Error);
+		}
+		else
+		{
+			projects = data;
+		}
+
+		loading = false;
+
+		if (data != null)
+		{
+			// Fires after the first render so the page isn't held up waiting on thumbnails;
+			// each card's image fades in once its lookup resolves.
+			_ = LoadFeaturedThumbnails();
+		}
+	}
+
+	// "all" is a lightweight list and doesn't carry each project's images, so the
+	// main image for the (at most six) featured cards is fetched separately.
+	private async Task LoadFeaturedThumbnails()
+	{
+		var lookups = featuredProjects.Select(async p =>
+		{
+			try
+			{
+				var images = await Http.GetFromJsonAsync<List<ProjectImage>>(Routes.Api.ProjectImages_ForProject + p.ID);
+				var main = images?.FirstOrDefault(i => i.PrimaryImage == 1) ?? images?.FirstOrDefault();
+
+				return (p.ID, Src: main == null ? null : $"/{Routes.Api.ProjectImage_AsObject}{main.ID}");
+			}
+			catch
+			{
+				return (p.ID, Src: (string?)null);
+			}
+		});
+
+		foreach (var (id, src) in await Task.WhenAll(lookups))
+		{
+			thumbnails[id] = src;
+		}
+
+		StateHasChanged();
+	}
+}

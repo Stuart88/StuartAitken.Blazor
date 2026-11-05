@@ -4,25 +4,28 @@
 
 <PageTitle>Stuart Aitken - @(project?.Name ?? "Project")</PageTitle>
 
-	<div>
-		<MudIconButton OnClick="@(() => Navigation.NavigateTo(Routes.Pages.Projects))"
-				   Icon="@Icons.Material.Rounded.ArrowBack" Color="Color.Info" />
+<div class="page-head">
+	<div class="breadcrumb" style="justify-content:space-between">
+		<span style="display:flex;align-items:center;gap:var(--space-2xs)">
+			<MudIconButton OnClick="@(() => Navigation.NavigateTo(Routes.Pages.Projects))"
+					   Icon="@Icons.Material.Rounded.ArrowBack" />
+			<a href="@Routes.Pages.Projects">Projects</a> / @(project?.Name ?? "Loading...")
+		</span>
 
-
-		.. / <MudLink Href="@(Routes.Pages.Projects)" Color="Color.Default">Projects</MudLink> / @(project?.Name ?? "Loading...")
-
-	@if (this.AppStateContainer.IsAdmin)
-	{
-		<MudButton Variant="Variant.Filled"
-			   Style="@($"background-color:{Colors.Blue.Default};color:{Colors.Gray.Lighten5};margin:10px;float:right")"
-			   Size="Size.Small"
-			   OnClick="@(() => this.Navigation.NavigateTo($"{Routes.Pages.EditProject}/{ProjectId}"))">
-			Edit
-		</MudButton>
-	}
+		@if (this.AppStateContainer.IsAdmin)
+		{
+			<MudButton Class="btn-outline"
+				   Size="Size.Small"
+				   OnClick="@(() => this.Navigation.NavigateTo($"{Routes.Pages.EditProject}/{ProjectId}"))">
+				Edit
+			</MudButton>
+		}
+	</div>
 </div>
 
-<ProjectComponent Project="project" />
+<div class="page-body">
+	<ProjectComponent Project="project" />
+</div>
 
 @code {
 	[Parameter]

@@ -4,30 +4,21 @@
 
 <PageTitle>Stuart Aitken - Projects</PageTitle>
 
-<div>
-	<MudIconButton OnClick="@(() => Navigation.NavigateTo(Routes.Pages.Index))"
-				   Icon="@Icons.Material.Rounded.ArrowBack" Color="Color.Info" />
+<div class="page-head">
+	<div class="breadcrumb">
+		<MudIconButton OnClick="@(() => Navigation.NavigateTo(Routes.Pages.Index))"
+					   Icon="@Icons.Material.Rounded.ArrowBack" />
+		<a href="@Routes.Pages.Index">Home</a> / Projects
+	</div>
 
-
-	.. / Projects
+	<h1>Projects</h1>
+	<p class="lead">Every build, sorted by date.</p>
 </div>
 
-<h1>Projects</h1>
-
-<MudTable Items="@(projects)"
-		  Hover="true"
-		  Class="projects-table"
-		  Breakpoint="Breakpoint.None"
-		  Style="@($"background-color:{Colors.Gray.Lighten5}")"
-		  Loading="@(this.loading)"
-		  T="Project"
-		  Filter="FilterFunc"
-		  @bind-SelectedItem="selectedProject"
-		  OnRowClick="RowClickEvent"
-		  LoadingProgressColor="Color.Info">
-	<ToolBarContent>
+<div class="page-body">
+	<div class="projects-toolbar">
 		<MudAutocomplete T="string"
-						 Label="Filter Name, Type, Tech"
+						 Label="Filter name, type, tech"
 						 Class="mt-0"
 						 @bind-Value="filterString"
 						 SearchFunc="@AutoCompleteSearch"
@@ -36,8 +27,7 @@
 						 CoerceValue="true"
 						 Adornment="Adornment.Start"
 						 AdornmentIcon="@Icons.Material.Filled.Search"
-						 IconSize="Size.Medium"
-						 AdornmentColor="Color.Primary" />
+						 IconSize="Size.Medium" />
 
 		<MudSelect T="string" MultiSelection Label="Type" Class="mt-0" Style="min-width:160px"
 				   SelectedValues="selectedTypes"
@@ -59,96 +49,103 @@
 			}
 		</MudSelect>
 
-		<MudCheckBox T="bool" @bind-Value="AppStateContainer.ShowAllProjects" Label="Show all" Color="Color.Primary" Class="mt-0 mr-4" />
+		<MudCheckBox T="bool" @bind-Value="AppStateContainer.ShowAllProjects" Label="Show all" Class="mt-0 mr-4" />
 
-		<MudIconButton OnClick="@(async () => this.LoadProjectsList())"
-					   Icon="@Icons.Material.Rounded.Refresh" Color="Color.Secondary" Variant="Variant.Filled" />
+		<MudIconButton Class="btn-outline" OnClick="@(async () => this.LoadProjectsList())"
+					   Icon="@Icons.Material.Rounded.Refresh" />
 
 		@if (this.AppStateContainer.IsAdmin)
 		{
-			<MudIconButton OnClick="@(() => this.Navigation.NavigateTo($"{Routes.Pages.EditProject}/0"))"
-					   Icon="@Icons.Material.Rounded.Add" Color="Color.Tertiary" Variant="Variant.Filled" />
+			<MudIconButton Class="btn-primary" OnClick="@(() => this.Navigation.NavigateTo($"{Routes.Pages.EditProject}/0"))"
+					   Icon="@Icons.Material.Rounded.Add" />
 		}
-	</ToolBarContent>
-	<HeaderContent>
-		<MudTh>
-			<MudTableSortLabel SortBy="new Func<Project, object>(x=>x.ProjectDate)"
-							   InitialDirection="SortDirection.Descending">
-				Project Date
-			</MudTableSortLabel>
-		</MudTh>
-		<MudTh>
-			<MudTableSortLabel SortBy="new Func<Project, object>(x=>x.Name)">
-				Name
-			</MudTableSortLabel>
-		</MudTh>
-		<MudHidden Breakpoint="Breakpoint.SmAndDown">
+	</div>
+
+	<MudTable Items="@(projects)"
+			  Hover="true"
+			  Class="projects-table"
+			  Breakpoint="Breakpoint.None"
+			  Loading="@(this.loading)"
+			  T="Project"
+			  Filter="FilterFunc"
+			  @bind-SelectedItem="selectedProject"
+			  OnRowClick="RowClickEvent"
+			  LoadingProgressColor="Color.Primary">
+		<HeaderContent>
 			<MudTh>
-				<MudTableSortLabel SortBy="new Func<Project, object>(x=>x.ProjectDurationDays)">
-					Duration
+				<MudTableSortLabel SortBy="new Func<Project, object>(x=>x.ProjectDate)"
+								   InitialDirection="SortDirection.Descending">
+					Project date
 				</MudTableSortLabel>
 			</MudTh>
 			<MudTh>
-				Types
+				<MudTableSortLabel SortBy="new Func<Project, object>(x=>x.Name)">
+					Name
+				</MudTableSortLabel>
 			</MudTh>
-			<MudTh>
-				Tech
-			</MudTh>
-			<MudTh>
-				@*for action btns*@
-			</MudTh>
-		</MudHidden>
-	</HeaderContent>
-	<RowTemplate>
-		<MudTd DataLabel="ProjectDate" Style="width:140px">@context.ProjectDate.ToString("yyyy MMM")</MudTd>
-		<MudTd DataLabel="Name">
-			<MudChip T="string" Style="@($"background-color:{Colors.Blue.Lighten5}")">
-				@context.Name
-			</MudChip>
-		</MudTd>
-		<MudHidden Breakpoint="Breakpoint.SmAndDown">
-			<MudTd DataLabel="Duration" Style="width:100px">@StringHelpers.MakePresentableDuration(context)</MudTd>
-			<MudTd DataLabel="Types" Style="width:100px">
-				@foreach (var type in context.Type.Split(", "))
-				{
-					<ProjectIcon Src="@StringHelpers.TypeIconSrc(type)" Tooltip="@type" />
-				}
+			<MudHidden Breakpoint="Breakpoint.SmAndDown">
+				<MudTh>
+					<MudTableSortLabel SortBy="new Func<Project, object>(x=>x.ProjectDurationDays)">
+						Duration
+					</MudTableSortLabel>
+				</MudTh>
+				<MudTh>
+					Types
+				</MudTh>
+				<MudTh>
+					Tech
+				</MudTh>
+				<MudTh>
+					@*for action btns*@
+				</MudTh>
+			</MudHidden>
+		</HeaderContent>
+		<RowTemplate>
+			<MudTd DataLabel="ProjectDate" Class="cell-date" Style="width:140px">@context.ProjectDate.ToString("yyyy MMM")</MudTd>
+			<MudTd DataLabel="Name">
+				<span class="@(context.Featured ? "chip chip--accent" : "chip")">@context.Name</span>
 			</MudTd>
-			<MudTd DataLabel="Tech">
-				@foreach (var tech in context.Tech.Split(", ").OrderBy(i => i))
-				{
-					<ProjectIcon Src="@StringHelpers.TechIconSrc(tech)" Tooltip="@tech" />
-				}
-			</MudTd>
-			<MudTd>
-				<MudButtonGroup Color="Color.Primary" Variant="Variant.Outlined" Vertical>
-					@if (this.AppStateContainer.IsAdmin)
+			<MudHidden Breakpoint="Breakpoint.SmAndDown">
+				<MudTd DataLabel="Duration" Class="cell-duration" Style="width:100px">@StringHelpers.MakePresentableDuration(context)</MudTd>
+				<MudTd DataLabel="Types" Style="width:100px">
+					@foreach (var type in context.Type.Split(", "))
 					{
-						<MudIconButton Variant="Variant.Filled"
-								   Style="@($"background-color:{Colors.Green.Default};color:{Colors.Gray.Lighten5}")"
-								   Size="Size.Small"
-								   OnClick="@(() => this.Navigation.NavigateTo($"{Routes.Pages.EditProject}/{context.ID}"))"
-								   Icon="@Icons.Material.Rounded.Edit">
-						</MudIconButton>
-						<MudIconButton Variant="Variant.Filled"
-								   Style="@($"background-color:{Colors.Red.Default};color:{Colors.Red.Lighten5}")"
-								   Size="Size.Small"
-								   OnClick="@(() => this.OnDeleteClicked(context))"
-								   Icon="@Icons.Material.Rounded.Delete">
-						</MudIconButton>
+						<ProjectIcon Src="@StringHelpers.TypeIconSrc(type)" Tooltip="@type" />
 					}
-					<MudButton Variant="Variant.Filled"
-							   Style="@($"background-color:{Colors.Blue.Default};color:{Colors.Gray.Lighten5}")"
-							   Size="Size.Small"
-							   OnClick="@(() => this.Navigation.NavigateTo($"{Routes.Pages.Projects}/{context.ID}"))">
-						View
-					</MudButton>
-				</MudButtonGroup>
+				</MudTd>
+				<MudTd DataLabel="Tech">
+					@foreach (var tech in context.Tech.Split(", ").OrderBy(i => i))
+					{
+						<ProjectIcon Src="@StringHelpers.TechIconSrc(tech)" Tooltip="@tech" />
+					}
+				</MudTd>
+				<MudTd>
+					<MudStack Row Spacing="1" Justify="Justify.FlexEnd">
+						@if (this.AppStateContainer.IsAdmin)
+						{
+							<MudIconButton Class="btn-outline"
+									   Size="Size.Small"
+									   OnClick="@(() => this.Navigation.NavigateTo($"{Routes.Pages.EditProject}/{context.ID}"))"
+									   Icon="@Icons.Material.Rounded.Edit">
+							</MudIconButton>
+							<MudIconButton Class="btn-danger"
+									   Size="Size.Small"
+									   OnClick="@(() => this.OnDeleteClicked(context))"
+									   Icon="@Icons.Material.Rounded.Delete">
+							</MudIconButton>
+						}
+						<MudButton Class="btn-primary"
+								   Size="Size.Small"
+								   OnClick="@(() => this.Navigation.NavigateTo($"{Routes.Pages.Projects}/{context.ID}"))">
+							View
+						</MudButton>
+					</MudStack>
 
-			</MudTd>
-		</MudHidden>
-	</RowTemplate>
-</MudTable>
+				</MudTd>
+			</MudHidden>
+		</RowTemplate>
+	</MudTable>
+</div>
 
 
 @code {

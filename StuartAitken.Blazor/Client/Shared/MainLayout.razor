@@ -4,58 +4,85 @@
 @inject AppStateContainer AppStateContainer
 @inject ISnackbar Snackbar
 @inject HttpClient Http
+@inject IJSRuntime JsRuntime
 
-<MudLayout Style="@($"background-color:{Colors.Yellow.Default}")">
-	<MudAppBar Style="@($"background-color:{Colors.Yellow.Accent4}")">
-		<MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Default" Style="@($"background-color:{Colors.Blue.Default}")" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
+<MudLayout>
+	<MudAppBar Elevation="0">
+		<nav class="site-nav">
+			<a class="site-wordmark" href="@Routes.Pages.Index">@Constants.SiteName</a>
 
-		<MudHidden Breakpoint="Breakpoint.SmAndDown">
-			<div class="site-title" style="@($"color:{Colors.Gray.Darken1}")">
-				@Constants.SiteName
+			<div class="site-nav-right">
+				<MudHidden Breakpoint="Breakpoint.SmAndDown">
+					<div class="site-nav-links">
+						<MudButton Class="@NavLinkClass(Routes.Pages.Index)" OnClick="@(() => Navigation.NavigateTo(Routes.Pages.Index))">Home</MudButton>
+						<MudButton Class="@NavLinkClass(Routes.Pages.Projects)" OnClick="@(() => Navigation.NavigateTo(Routes.Pages.Projects))">Projects</MudButton>
+						<MudButton Class="@NavLinkClass(Routes.Pages.CV)" OnClick="@(() => Navigation.NavigateTo(Routes.Pages.CV))">CV</MudButton>
+					</div>
+				</MudHidden>
+
+				<MudTooltip Text="@(isDarkMode ? "Switch to light mode" : "Switch to dark mode")">
+					<MudIconButton Class="nav-menu-toggle"
+								   Icon="@(isDarkMode ? Icons.Material.Rounded.LightMode : Icons.Material.Rounded.DarkMode)"
+								   OnClick="ToggleTheme" />
+				</MudTooltip>
+
+				<MudHidden Breakpoint="Breakpoint.MdAndUp">
+					<MudIconButton Class="nav-menu-toggle" Icon="@Icons.Material.Rounded.Menu" Edge="Edge.End" OnClick="@((e) => DrawerToggle())" />
+				</MudHidden>
 			</div>
-		</MudHidden>
-
-		<MudContainer MaxWidth="MaxWidth.Large">
-			<CustomAppBarButton Icon="@Icons.Material.Filled.Home" Page="@Routes.Pages.Index" Tooltip="/home" />
-			<CustomAppBarButton Icon="@Icons.Material.Filled.Dns" Page="@Routes.Pages.Projects" />
-			<CustomAppBarButton Icon="@Icons.Material.Filled.DocumentScanner" Page="@Routes.Pages.CV" />
-		</MudContainer>
-		@*<CustomAppBarButton Icon="@Icons.Material.Filled.DocumentScanner" Color="Color.Secondary" Edge="Edge.False" Page="@(Routes.Pages.Projects)" />*@
-		<MudSpacer />
-		@*<MudNavLink Href="@Routes.Pages.Swagger" Target="_blank" Match="NavLinkMatch.Prefix">Swagger API</MudNavLink>*@
+		</nav>
 	</MudAppBar>
-	<MudDrawer @bind-Open="@_drawerOpen" Style="@($"background-color:{Colors.Yellow.Accent4}")">
+	<MudDrawer @bind-Open="@_drawerOpen" Elevation="0">
 		<NavMenu />
 	</MudDrawer>
 	<MudMainContent>
-		<MudContainer MaxWidth="MaxWidth.Large" Style="padding-top:1rem;min-height:100%">
-			<MudPaper Style="@($"background-color:{Colors.Yellow.Accent1};padding:1rem")">
-				@Body
-			</MudPaper>
-			<div class="login-container">
-				@if (AppStateContainer.IsAdmin)
-				{
-					<MudButton Size="Size.Small" OnClick="@(() => {
-										AppStateContainer.IsAdmin = false;
-										AppStateContainer.Password = "";
-										this.StateHasChanged();
-																})">
-						Logout
-					</MudButton>
-				}
-				else
-				{
-					<MudTextField Class="login"
-							  @bind-Value="AppStateContainer.Password"
-							  Label="Admin Login"
-							  InputType="InputType.Password"
-							  Variant="Variant.Outlined"
-							  OnKeyUp="OnPasswordKeyPress"
-							  Margin="Margin.Dense">
-					</MudTextField>
-				}
+		@Body
+
+		<footer class="site-footer">
+			<div class="site-footer-inner page-body" style="padding-bottom:0">
+				<div class="site-footer-top">
+					<div>
+						<p class="site-footer-wordmark">@Constants.SiteName</p>
+						<p class="site-footer-tagline">Built with Blazor WebAssembly, .NET 10 and SQL Server.</p>
+					</div>
+
+					<ul class="site-footer-links">
+						<li><a href="@Routes.Pages.Index">Home</a></li>
+						<li><a href="@Routes.Pages.Projects">Projects</a></li>
+						<li><a href="@Routes.Pages.CV">CV</a></li>
+						<li><a href="https://github.com/Stuart88" target="_blank" rel="noopener">GitHub</a></li>
+					</ul>
+				</div>
+
+				<div class="site-footer-bottom">
+					<span class="site-footer-legal">&copy; @DateTime.Now.Year Stuart Aitken</span>
+
+					<div class="login-container">
+						@if (AppStateContainer.IsAdmin)
+						{
+							<MudButton Size="Size.Small" OnClick="@(() => {
+												AppStateContainer.IsAdmin = false;
+												AppStateContainer.Password = "";
+												this.StateHasChanged();
+																		})">
+								Logout
+							</MudButton>
+						}
+						else
+						{
+							<MudTextField Class="login"
+									  @bind-Value="AppStateContainer.Password"
+									  Label="Admin login"
+									  InputType="InputType.Password"
+									  Variant="Variant.Outlined"
+									  OnKeyUp="OnPasswordKeyPress"
+									  Margin="Margin.Dense">
+							</MudTextField>
+						}
+					</div>
+				</div>
 			</div>
-		</MudContainer>
+		</footer>
 	</MudMainContent>
 </MudLayout>
 
@@ -63,19 +90,55 @@
 
 @code {
 	bool _drawerOpen = false;
+	bool isDarkMode = true;
 
 	void DrawerToggle()
 	{
 		_drawerOpen = !_drawerOpen;
 	}
 
+	private async Task ToggleTheme()
+	{
+		isDarkMode = !isDarkMode;
+		await JsRuntime.InvokeVoidAsync("setTheme", isDarkMode ? "dark" : "light");
+		StateHasChanged();
+	}
+
+	private string NavLinkClass(string page)
+	{
+		var current = "/" + Navigation.ToBaseRelativePath(Navigation.Uri).TrimEnd('/');
+		bool isActive = page == Routes.Pages.Index ? current == Routes.Pages.Index : current.StartsWith(page);
+		return isActive ? "site-nav-link is-active" : "site-nav-link";
+	}
+
+	private void OnLocationChanged(object? sender, LocationChangedEventArgs e) => StateHasChanged();
 
 	protected override async Task OnInitializedAsync()
 	{
 		AppStateContainer.OnPasswordChange += StateHasChanged;
 		AppStateContainer.OnChange += StateHasChanged;
+		Navigation.LocationChanged += OnLocationChanged;
 
 		await base.OnInitializedAsync();
+	}
+
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		if (firstRender)
+		{
+			// The inline script in index.html already set data-theme (from localStorage,
+			// or the OS preference) before Blazor booted, to avoid a flash of the wrong theme.
+			var theme = await JsRuntime.InvokeAsync<string>("getTheme");
+			bool shouldBeDark = theme != "light";
+
+			if (shouldBeDark != isDarkMode)
+			{
+				isDarkMode = shouldBeDark;
+				StateHasChanged();
+			}
+		}
+
+		await base.OnAfterRenderAsync(firstRender);
 	}
 
 	private async Task OnPasswordKeyPress(KeyboardEventArgs args)
@@ -93,7 +156,8 @@
 			}
 			else
 			{
-				Snackbar.Add("Login failed", Severity.Info);
+				string? message = result?.Error;
+				Snackbar.Add(string.IsNullOrWhiteSpace(message) ? "Login failed" : message, Severity.Info);
 			}
 
 		}
@@ -101,7 +165,7 @@
 }
 
 
-<MudThemeProvider />
+<MudThemeProvider IsDarkMode="@isDarkMode" />
 <MudPopoverProvider />
 <MudDialogProvider />
 <MudSnackbarProvider />

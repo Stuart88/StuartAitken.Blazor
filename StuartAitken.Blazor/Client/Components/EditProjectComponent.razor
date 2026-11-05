@@ -2,7 +2,7 @@
 
 @if (!this.AppStateContainer.IsAdmin)
 {
-	<MudChip T="string" Color="Color.Error">Unauthorised!</MudChip>
+	<span class="chip" style="background:var(--color-bad-soft);color:var(--color-bad);border-color:transparent">Unauthorised!</span>
 }
 else if (Project == null)
 {
@@ -131,27 +131,27 @@ else
 	</div>
 }
 
-<MudButton FullWidth
-		   Style="@($"background-color:{Colors.Green.Default};color:{Colors.Gray.Lighten5};margin:10px")"
+<MudButton Class="btn-outline" FullWidth
+		   Style="margin:10px"
 		   OnClick="OnPreviewClicked"
 		   Disabled="@saving">
 	@if (this.showPreview)
 	{
-		<span>Hide Preview</span>
+		<span>Hide preview</span>
 	}
 	else
 	{
-		<span>Show Preview</span>
+		<span>Show preview</span>
 	}
 </MudButton>
 
-<MudButton FullWidth
-		   Style="@($"background-color:{Colors.Blue.Default};color:{Colors.Gray.Lighten5};margin:10px")"
+<MudButton Class="btn-primary" FullWidth
+		   Style="margin:10px"
 		   OnClick="OnSave"
 		   Disabled="@saving">
 	@if (saving)
 	{
-		<MudProgressCircular Indeterminate />
+		<MudProgressCircular Indeterminate Size="Size.Small" />
 	}
 	else
 	{

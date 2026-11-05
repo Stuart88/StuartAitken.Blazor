@@ -2,7 +2,7 @@
 
 <MudTooltip Text="@(string.IsNullOrEmpty(Tooltip) ? this.Page : this.Tooltip)" Placement="Placement.Bottom">
 	<MudIconButton Class="custom-app-bar-btn"
-				   Style="@($"background-color:{Colors.Blue.Default};margin: 0 10px;")"
+				   Style="background-color:var(--color-accent);color:var(--color-accent-ink);margin: 0 10px;"
 				   Icon="@Icon"
 				   Variant="Variant.Filled"
 				   Color="@(Color ?? MudBlazor.Color.Default)"

@@ -1,4 +1,6 @@
 using System.IO.Compression;
+using System.Threading.RateLimiting;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi;
@@ -62,7 +64,42 @@ builder.Services.AddSwaggerGen(c =>
 
 builder.Services.AddScoped<AdminAuthorise>();
 
+// Behind a reverse proxy (IIS, nginx, a CDN), Connection.RemoteIpAddress is the proxy's own
+// address for every request unless the proxy's forwarded headers are trusted and applied here.
+// KnownNetworks/KnownProxies are cleared because the proxy's address isn't fixed/known ahead of
+// time; if this app is ever exposed directly to the internet without a proxy in front, pin those
+// back down (or remove this block) - otherwise a client could forge X-Forwarded-For itself.
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+    options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+    options.KnownNetworks.Clear();
+    options.KnownProxies.Clear();
+});
+
+// Shared across every [AdminAuthorise]-protected endpoint (not just the login check, so a brute
+// force can't just move to a different admin route to keep guessing), keyed by client IP: 10
+// permits per 3 minutes, refilled automatically by the window. AdminAuthorise only draws from it
+// on a wrong password (see the comment there), and the limiter itself owns all the per-key
+// bookkeeping and eviction - nothing hand-rolled.
+builder.Services.AddSingleton(
+    PartitionedRateLimiter.Create<string, string>(clientKey =>
+        RateLimitPartition.GetFixedWindowLimiter(
+            clientKey,
+            _ => new FixedWindowRateLimiterOptions
+            {
+                PermitLimit = 10,
+                Window = TimeSpan.FromMinutes(3),
+                QueueLimit = 0,
+                AutoReplenishment = true
+            }
+        )
+    )
+);
+
 var app = builder.Build();
+
+// Must run before anything that inspects the scheme or the client's address.
+app.UseForwardedHeaders();
 
 // Must run before any middleware that writes to the response (static files, MVC, Swagger, etc.)
 app.UseResponseCompression();

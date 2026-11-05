@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Threading.RateLimiting;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using StuartAitken.Blazor.Server.Controllers;
 using StuartAitken.Blazor.Server.DataService;
@@ -58,10 +59,37 @@ namespace StuartAitken.Blazor.Server.ActionFilters
 
             if (!isAdmin)
             {
-                context.Result = new JsonResult(new ApiResponse(ok: false) { Error = "Unauthorized" })
+                // Shared across every [AdminAuthorise]-protected endpoint, keyed by client IP,
+                // using System.Threading.RateLimiting's own fixed-window limiter (registered in
+                // Program.cs). Only a WRONG password consumes a permit here - a logged-in admin
+                // resends the same correct password on every request, so normal back-to-back
+                // admin activity (editing, uploading, reordering) never touches the budget; only
+                // repeated wrong guesses do.
+                var limiter = context.HttpContext.RequestServices
+                    .GetService<PartitionedRateLimiter<string>>();
+                string clientKey = context.HttpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown";
+
+                using var lease = limiter?.AttemptAcquire(clientKey);
+
+                if (lease != null && !lease.IsAcquired)
                 {
-                    StatusCode = StatusCodes.Status401Unauthorized
-                };
+                    context.Result = new JsonResult(
+                        new ApiResponse(ok: false)
+                        {
+                            Error = "Too many attempts. Try again in a few minutes."
+                        }
+                    )
+                    {
+                        StatusCode = StatusCodes.Status429TooManyRequests
+                    };
+                }
+                else
+                {
+                    context.Result = new JsonResult(new ApiResponse(ok: false) { Error = "Unauthorized" })
+                    {
+                        StatusCode = StatusCodes.Status401Unauthorized
+                    };
+                }
                 //await base.OnActionExecutionAsync(context, next);
             }
             else

@@ -1,54 +1,752 @@
-﻿body, #app, .mud-layout {
+/* Hallmark · shape: Portfolio record · genre: modern-minimal · theme: Console (deal 2/3, seed redesign-every-look-like-969f·9e9b76a8·2026-11-05·r0) · redesign: full
+ * hero: Stage · nav: edge-aligned · footer: mast · imagery: product (live data, no screenshots) · signature: the live project trail in the hero · console: graphite
+ * axes: dark/grotesk-sans/chromatic-amber · posture: restrained · contrast: pass · fold: pass · v2.0.0 */
+/* Hallmark · pre-emit critique: P4 H4 E3 S5 R4 V5 · weakest: E, no live render available (browser/screenshot tooling declined), so finish was checked by reading every rule against the markup and CSS rather than a rendered screenshot */
+@import url("./tokens.css");
+@import url("./base.css");
+
+/* ---------------------------------------------------------------
+   MudBlazor bridge: MudThemeProvider injects its own --mud-palette-*
+   custom properties at runtime with no !important, so declaring ours
+   with !important here (a static stylesheet loaded in <head>) wins
+   the cascade regardless of DOM order, without a custom C# MudTheme.
+   Primary = amber (a person's action); Secondary/Info = cool (an
+   instrument's reading); Success = ok; Error = bad; Tertiary = ok.
+   --------------------------------------------------------------- */
+
+:root {
+    --mud-palette-black: var(--color-paper-3) !important;
+    --mud-palette-white: var(--color-ink) !important;
+    --mud-palette-primary: var(--color-accent) !important;
+    --mud-palette-primary-hover: color-mix(in oklab, var(--color-accent) 85%, white) !important;
+    --mud-palette-primary-text: var(--color-accent-ink) !important;
+    --mud-palette-secondary: var(--color-cool) !important;
+    --mud-palette-secondary-hover: color-mix(in oklab, var(--color-cool) 85%, white) !important;
+    --mud-palette-secondary-text: var(--color-paper) !important;
+    --mud-palette-tertiary: var(--color-ok) !important;
+    --mud-palette-tertiary-hover: color-mix(in oklab, var(--color-ok) 85%, white) !important;
+    --mud-palette-tertiary-text: var(--color-paper) !important;
+    --mud-palette-info: var(--color-cool) !important;
+    --mud-palette-info-hover: color-mix(in oklab, var(--color-cool) 85%, white) !important;
+    --mud-palette-info-text: var(--color-paper) !important;
+    --mud-palette-success: var(--color-ok) !important;
+    --mud-palette-success-hover: color-mix(in oklab, var(--color-ok) 85%, white) !important;
+    --mud-palette-success-text: var(--color-paper) !important;
+    --mud-palette-warning: var(--color-accent) !important;
+    --mud-palette-warning-hover: color-mix(in oklab, var(--color-accent) 85%, white) !important;
+    --mud-palette-warning-text: var(--color-accent-ink) !important;
+    --mud-palette-error: var(--color-bad) !important;
+    --mud-palette-error-hover: color-mix(in oklab, var(--color-bad) 85%, white) !important;
+    --mud-palette-error-text: var(--color-paper) !important;
+    --mud-palette-dark: var(--color-paper-3) !important;
+    --mud-palette-dark-hover: var(--color-paper-2) !important;
+    --mud-palette-dark-text: var(--color-ink) !important;
+    --mud-palette-background: var(--color-paper) !important;
+    --mud-palette-background-gray: var(--color-paper-2) !important;
+    --mud-palette-surface: var(--color-paper-2) !important;
+    --mud-palette-drawer-background: var(--color-paper) !important;
+    --mud-palette-drawer-text: var(--color-ink-2) !important;
+    --mud-palette-drawer-icon: var(--color-muted) !important;
+    --mud-palette-appbar-background: var(--color-paper) !important;
+    --mud-palette-appbar-text: var(--color-ink) !important;
+    --mud-palette-text-primary: var(--color-ink) !important;
+    --mud-palette-text-secondary: var(--color-muted) !important;
+    --mud-palette-text-disabled: var(--color-rule-2) !important;
+    --mud-palette-action-default: var(--color-muted) !important;
+    --mud-palette-action-disabled: var(--color-rule) !important;
+    --mud-palette-divider: var(--color-rule) !important;
+    --mud-palette-divider-light: var(--color-rule) !important;
+    --mud-palette-lines-default: var(--color-rule) !important;
+    --mud-palette-lines-inputs: var(--color-rule-2) !important;
+    --mud-palette-table-lines: var(--color-rule) !important;
+    --mud-palette-table-hover: var(--color-paper-3) !important;
+    --mud-palette-table-striped: var(--color-paper-3) !important;
+    --mud-default-borderradius: var(--radius-pill) !important;
+    --mud-typography-default-family: var(--font-body) !important;
+}
+
+/* ---------------------------------------------------------------
+   Page scaffolding
+   --------------------------------------------------------------- */
+
+html, body, #app, .mud-layout {
     min-height: 100vh;
-    /*Need to add this +/ 3rem to deal with annoying white area that seems to appear for pages larger than 100vh. It's a hack but it's basic CSS so who cares.*/
-    margin-bottom: -3rem;
-    padding-bottom: 3rem;
-}
-
-.login-container {
-    position: relative;
-    left: 0;
-    top: 1rem;
-    width: 200px;
-}
-
-    .login-container label {
-        background: #ffeb3b
-    }
-
-.site-title {
-    min-width: 125px;
-    margin-left: 1rem;
 }
 
 .mud-main-content {
-    min-height: 100%
+    min-height: 100%;
+    background: var(--color-paper);
 }
 
-.homeImage img {
-    border: 10px solid #000;
-    border-radius: 5px;
-    max-width: 500px;
-    margin: auto;
+.mud-layout {
+    background: var(--color-paper);
 }
 
-.index-container p {
-    margin-top: 1rem;
+section {
+    display: block;
 }
 
-.projects-table thead {
-    font-weight: bold
+.band {
+    background: var(--color-paper-3);
+    padding-block: var(--section-gap-s);
 }
 
-.projects-table tbody tr td:hover {
-    cursor: pointer;
+.band--raised {
+    background: var(--color-paper-2);
+}
+
+/* ---------------------------------------------------------------
+   Nav
+   --------------------------------------------------------------- */
+
+.mud-appbar {
+    background: var(--color-paper) !important;
+    border-bottom: var(--rule-hair) solid var(--color-rule);
+    box-shadow: none !important;
+    height: 72px;
+}
+
+.site-nav {
+    width: 100%;
+    max-width: var(--container);
+    margin-inline: auto;
+    padding-inline: var(--gutter);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-lg);
+}
+
+.site-wordmark {
+    font-family: var(--font-display);
+    font-weight: var(--display-weight);
+    font-size: var(--text-lg);
+    letter-spacing: var(--tracking-display);
+    color: var(--color-ink);
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.site-wordmark:hover {
+    color: var(--color-accent);
+}
+
+.site-nav-right {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+}
+
+.site-nav-links {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+}
+
+.site-nav-link.mud-button-root {
+    background: transparent !important;
+    color: var(--color-muted) !important;
+    font-family: var(--font-body);
+    font-weight: 500;
+    font-size: var(--text-sm);
+    text-transform: none;
+    letter-spacing: normal;
+    padding: var(--space-xs) var(--space-sm);
+    border-radius: var(--radius-pill);
+    box-shadow: none !important;
+    min-width: 0;
+    transition: color var(--dur-short) var(--ease-out), background-color var(--dur-short) var(--ease-out);
+}
+
+.site-nav-link.mud-button-root:hover {
+    color: var(--color-ink) !important;
+    background: var(--color-paper-2) !important;
+}
+
+.site-nav-link.is-active.mud-button-root {
+    color: var(--color-accent) !important;
+}
+
+.nav-menu-toggle.mud-icon-button-root {
+    color: var(--color-ink) !important;
+    background: transparent !important;
+}
+
+.nav-menu-toggle.mud-icon-button-root:hover {
+    background: var(--color-paper-2) !important;
+}
+
+.mud-drawer {
+    background: var(--color-paper) !important;
+    border-right: var(--rule-hair) solid var(--color-rule) !important;
+}
+
+.site-drawer-nav .mud-nav-link {
+    border-radius: var(--radius-pill);
+    margin-block: var(--space-3xs);
+}
+
+.site-drawer-nav .mud-nav-link.mud-selected {
+    background: var(--color-paper-2);
+}
+
+.site-drawer-nav .mud-nav-link-text {
+    color: var(--color-ink-2);
+    font-weight: 500;
+}
+
+/* ---------------------------------------------------------------
+   Footer
+   --------------------------------------------------------------- */
+
+.site-footer {
+    border-top: var(--rule-hair) solid var(--color-rule);
+    margin-top: var(--section-gap);
+    padding-block: var(--space-2xl) var(--space-xl);
+}
+
+.site-footer-inner {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xl);
+}
+
+.site-footer-top {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: var(--space-xl);
+}
+
+.site-footer-wordmark {
+    font-family: var(--font-display);
+    font-weight: var(--display-weight);
+    font-size: var(--text-2xl);
+    letter-spacing: var(--tracking-display);
+    color: var(--color-ink);
+    margin: 0 0 var(--space-xs);
+}
+
+.site-footer-tagline {
+    color: var(--color-muted);
+    font-size: var(--text-sm);
+    max-width: 44ch;
+}
+
+.site-footer-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-lg);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.site-footer-links a {
+    color: var(--color-ink-2);
+    font-size: var(--text-sm);
+    text-decoration: none;
+    text-underline-offset: 0.16em;
+}
+
+.site-footer-links a:hover {
+    color: var(--color-accent);
+    text-decoration: underline;
+    text-decoration-color: var(--color-rule-2);
+}
+
+.site-footer-bottom {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: var(--space-md);
+    padding-top: var(--space-lg);
+    border-top: var(--rule-hair) solid var(--color-rule);
+}
+
+.site-footer-legal {
+    color: var(--color-muted);
+    font-size: var(--text-xs);
+}
+
+/* ---------------------------------------------------------------
+   Admin login control (kept, restyled)
+   --------------------------------------------------------------- */
+
+.login-container {
+    width: 220px;
+}
+
+.login-container .mud-input {
+    background: var(--color-paper-3);
+}
+
+.login-container .mud-input-outlined-border {
+    border-color: var(--color-rule) !important;
+}
+
+.login-container label {
+    color: var(--color-muted) !important;
+    background: transparent !important;
+}
+
+.site-footer-bottom .mud-button-root {
+    font-size: var(--text-xs);
+    color: var(--color-muted) !important;
+    background: transparent !important;
+    box-shadow: none !important;
+}
+
+/* ---------------------------------------------------------------
+   Controls
+   --------------------------------------------------------------- */
+
+/* MudBlazor's Material-derived default tracks buttons in capitals;
+   labels, captions and controls here stay the body face, untracked (54, 67). */
+.mud-button-root {
+    text-transform: none !important;
+    letter-spacing: normal !important;
+    font-family: var(--font-body);
+    box-shadow: none !important;
+}
+
+.btn-primary.mud-button-root {
+    background: var(--color-accent) !important;
+    color: var(--color-accent-ink) !important;
+    border-radius: var(--radius-pill);
+    font-weight: 500;
+    text-transform: none;
+    box-shadow: none !important;
+    transition: background-color var(--dur-short) var(--ease-out);
+}
+
+.btn-primary.mud-button-root:hover {
+    background: color-mix(in oklab, var(--color-accent) 85%, white) !important;
+}
+
+.btn-outline.mud-button-root {
+    background: var(--color-paper-2) !important;
+    color: var(--color-ink) !important;
+    border: var(--rule-hair) solid var(--color-rule-2) !important;
+    border-radius: var(--radius-pill);
+    font-weight: 500;
+    text-transform: none;
+    box-shadow: none !important;
+}
+
+.btn-outline.mud-button-root:hover {
+    background: var(--color-paper-3) !important;
+}
+
+.btn-danger.mud-icon-button-root, .btn-danger.mud-button-root {
+    background: var(--color-bad-soft) !important;
+    color: var(--color-bad) !important;
+    box-shadow: none !important;
+}
+
+.btn-ok.mud-icon-button-root, .btn-ok.mud-button-root {
+    background: var(--color-ok-soft) !important;
+    color: var(--color-ok) !important;
+    box-shadow: none !important;
+}
+
+/* ---------------------------------------------------------------
+   Hero
+   --------------------------------------------------------------- */
+
+.hero {
+    width: 100%;
+    max-width: var(--container);
+    margin-inline: auto;
+    padding-inline: var(--gutter);
+    padding-block: var(--space-3xl) var(--section-gap-s);
+    display: grid;
+    grid-template-columns: 5fr 7fr;
+    gap: var(--space-3xl);
+    align-items: center;
+}
+
+.hero__text h1 {
+    margin-bottom: var(--space-md);
+}
+
+.hero__text .lead {
+    color: var(--color-ink-2);
+    margin-bottom: var(--space-xl);
+}
+
+.hero__actions {
+    display: flex;
+    gap: var(--space-sm);
+    flex-wrap: wrap;
+}
+
+.hero__actions .mud-button-root {
+    padding-inline: var(--space-lg);
+    height: 48px;
+}
+
+.hero__visual {
+    min-width: 0;
+}
+
+@media (max-width: 60rem) {
+    .hero {
+        grid-template-columns: 1fr;
+        gap: var(--space-xl);
+        padding-block: var(--space-2xl) var(--space-xl);
+    }
+}
+
+/* ---------------------------------------------------------------
+   Trail (an audit trail of real, dated records)
+   --------------------------------------------------------------- */
+
+.trail-panel {
+    background: var(--color-paper-2);
+    border: var(--rule-hair) solid var(--color-rule);
+    border-radius: var(--radius-card);
+    overflow: hidden;
+}
+
+.trail-panel__head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: var(--space-md) var(--space-lg);
+    border-bottom: var(--rule-hair) solid var(--color-rule);
+}
+
+.trail-panel__head h2, .trail-panel__head h3 {
+    font-size: var(--text-md);
+    font-weight: 500;
+    color: var(--color-ink-2);
+    margin: 0;
+}
+
+.trail-panel__meta {
+    font-family: var(--font-outlier);
+    font-size: var(--text-xs);
+    color: var(--color-muted);
+    font-variant-numeric: tabular-nums slashed-zero;
+}
+
+.trail-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: var(--space-md);
+    padding: var(--space-md) var(--space-lg);
+    border-bottom: var(--rule-hair) solid var(--color-rule);
+    text-decoration: none;
+    color: inherit;
+    transition: background-color var(--dur-short) var(--ease-out);
+}
+
+.trail-row:last-child {
+    border-bottom: none;
+}
+
+a.trail-row:hover {
+    background: var(--color-paper-3);
+}
+
+.trail-row__name {
+    font-weight: 500;
+    color: var(--color-ink);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.trail-row__meta {
+    display: flex;
+    gap: var(--space-md);
+    font-family: var(--font-outlier);
+    font-size: var(--text-xs);
+    color: var(--color-muted);
+    font-variant-numeric: tabular-nums slashed-zero;
+    white-space: nowrap;
+}
+
+.trail-row__meta .is-person {
+    color: var(--color-accent);
+}
+
+.trail-row__meta .is-instrument {
+    color: var(--color-cool);
+}
+
+/* ---------------------------------------------------------------
+   Section heads
+   --------------------------------------------------------------- */
+
+.section-head {
+    margin-bottom: var(--space-2xl);
+}
+
+.section-head .lead {
+    color: var(--color-muted);
+    margin-top: var(--space-sm);
+}
+
+/* ---------------------------------------------------------------
+   Featured work grid
+   --------------------------------------------------------------- */
+
+.work-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--gap-columns);
+}
+
+.work-card {
+    display: block;
+    background: var(--color-paper-2);
+    border: var(--rule-hair) solid var(--color-rule);
+    border-radius: var(--radius-card);
+    overflow: hidden;
+    text-decoration: none;
+    color: inherit;
+    transition: border-color var(--dur-short) var(--ease-out), background-color var(--dur-short) var(--ease-out);
+}
+
+.work-card:hover {
+    border-color: var(--color-rule-2);
+    background: var(--color-paper-3);
+}
+
+.work-card__thumb {
+    aspect-ratio: 16 / 10;
+    background: var(--color-paper-3);
+    min-width: 0;
+}
+
+.work-card__thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.work-card__body {
+    padding: var(--space-lg);
+}
+
+.work-card__meta {
+    font-family: var(--font-outlier);
+    font-size: var(--text-xs);
+    color: var(--color-cool);
+    font-variant-numeric: tabular-nums;
+}
+
+.work-card__name {
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: var(--text-lg);
+    color: var(--color-ink);
+    margin: var(--space-xs) 0 var(--space-sm);
+}
+
+.work-card__tech {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2xs);
+    margin-top: var(--space-sm);
+}
+
+@media (max-width: 60rem) {
+    .work-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 40rem) {
+    .work-grid { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* ---------------------------------------------------------------
+   Icon badge (tech/type logos: a light tile so dark marks stay legible
+   on the graphite ground)
+   --------------------------------------------------------------- */
+
+.icon-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-icon-badge);
+    border-radius: 6px;
+    padding: var(--space-2xs);
+    margin-inline: var(--space-3xs);
+}
+
+/* ---------------------------------------------------------------
+   Chip
+   --------------------------------------------------------------- */
+
+.chip {
+    display: inline-flex;
+    align-items: center;
+    font-size: var(--text-xs);
+    padding: 2px var(--space-xs);
+    border-radius: 4px;
+    border: var(--rule-hair) solid var(--color-rule);
+}
+
+.chip--accent {
+    background: var(--color-accent-soft);
+    color: var(--color-accent);
+    border-color: transparent;
+}
+
+.chip--cool {
+    background: var(--color-cool-soft);
+    color: var(--color-cool);
+    border-color: transparent;
+}
+
+/* ---------------------------------------------------------------
+   Page header (Projects, CV, detail breadcrumb)
+   --------------------------------------------------------------- */
+
+.page-head {
+    width: 100%;
+    max-width: var(--container);
+    margin-inline: auto;
+    padding-inline: var(--gutter);
+    padding-top: var(--space-2xl);
+    padding-bottom: var(--space-xl);
+}
+
+.breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2xs);
+    color: var(--color-muted);
+    font-size: var(--text-sm);
+    margin-bottom: var(--space-lg);
+}
+
+.breadcrumb a {
+    color: var(--color-muted);
+    text-decoration: none;
+}
+
+.breadcrumb a:hover {
+    color: var(--color-accent);
+}
+
+.breadcrumb .mud-icon-button-root {
+    color: var(--color-muted) !important;
+    background: transparent !important;
+}
+
+.page-head h1 {
+    font-size: var(--text-section);
+    margin-bottom: var(--space-sm);
+}
+
+.page-head .lead {
+    color: var(--color-muted);
+}
+
+.page-body {
+    width: 100%;
+    max-width: var(--container);
+    margin-inline: auto;
+    padding-inline: var(--gutter);
+    padding-bottom: var(--section-gap-s);
+}
+
+/* ---------------------------------------------------------------
+   Projects table (density is the design: craft.md § 9, flow.md § App screens)
+   --------------------------------------------------------------- */
+
+.projects-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-md);
+    padding: var(--space-md) var(--space-lg);
+    background: var(--color-paper-2);
+    border: var(--rule-hair) solid var(--color-rule);
+    border-bottom: none;
+    border-radius: var(--radius-card) var(--radius-card) 0 0;
+}
+
+.projects-toolbar .mud-input-control, .projects-toolbar .mud-select {
+    background: transparent;
+}
+
+.projects-table.mud-table {
+    background: var(--color-paper-2) !important;
+    border: var(--rule-hair) solid var(--color-rule);
+    border-radius: 0 0 var(--radius-card) var(--radius-card);
+    overflow: hidden;
+    box-shadow: none !important;
+}
+
+.projects-table .mud-table-container {
+    background: transparent;
+}
+
+.projects-table thead th {
+    background: var(--color-paper-3) !important;
+    color: var(--color-muted) !important;
+    font-weight: 500;
+    font-size: var(--text-sm);
+    text-transform: none;
+    letter-spacing: normal;
+    border-bottom: var(--rule-hair) solid var(--color-rule) !important;
+}
+
+.projects-table .mud-table-sort-label, .projects-table .mud-table-sort-label-icon {
+    color: var(--color-muted) !important;
+}
+
+.projects-table tbody tr {
+    border-bottom: var(--rule-hair) solid var(--color-rule) !important;
+}
+
+.projects-table tbody tr:hover {
+    background: var(--color-paper-3) !important;
+}
+
+.projects-table td {
+    color: var(--color-ink-2);
+    font-size: var(--text-sm);
+}
+
+.projects-table .cell-date, .projects-table .cell-duration {
+    font-family: var(--font-outlier);
+    color: var(--color-muted);
+    font-variant-numeric: tabular-nums slashed-zero;
+}
+
+/* ---------------------------------------------------------------
+   Project detail (the "Reading": one record set large)
+   --------------------------------------------------------------- */
+
+.reading {
+    display: grid;
+    grid-template-columns: 7fr 5fr;
+    gap: var(--space-2xl);
+    align-items: start;
+}
+
+@media (max-width: 60rem) {
+    .reading {
+        grid-template-columns: 1fr;
+    }
+}
+
+.reading__media {
+    background: var(--color-paper-3);
+    border: var(--rule-hair) solid var(--color-rule);
+    border-radius: var(--radius-card);
+    overflow: hidden;
 }
 
 .project-carousel {
     min-height: 40vh;
-    width: 95%;
-    margin: 0 auto !important;
-    padding: 0 2%;
 }
 
 .carousel-image, .carousel-image img {
@@ -56,46 +754,157 @@
     margin: auto;
 }
 
+.mud-carousel {
+    background: var(--color-paper-3) !important;
+}
+
 #image-edit-btns {
     position: absolute;
     text-align: right;
-    top: 0;
-    right: 0;
+    top: var(--space-sm);
+    right: var(--space-sm);
+    display: flex;
+    gap: var(--space-xs);
 }
 
-    #image-edit-btns button {
-        margin: 0 2px;
-    }
+.reading__facts {
+    background: var(--color-paper-2);
+    border: var(--rule-hair) solid var(--color-rule);
+    border-radius: var(--radius-card);
+    padding: var(--space-lg);
+}
+
+.reading__facts dl {
+    margin: 0;
+}
+
+.reading__facts .fact-row {
+    display: grid;
+    grid-template-columns: 9ch 1fr;
+    gap: var(--space-md);
+    padding: var(--space-sm) 0;
+    border-bottom: var(--rule-hair) solid var(--color-rule);
+}
+
+.reading__facts .fact-row:last-child {
+    border-bottom: none;
+}
+
+.reading__facts dt {
+    color: var(--color-muted);
+    font-size: var(--text-sm);
+}
+
+.reading__facts dd {
+    margin: 0;
+    font-family: var(--font-outlier);
+    font-size: var(--text-sm);
+    color: var(--color-ink);
+    font-variant-numeric: tabular-nums slashed-zero;
+}
+
+.reading__facts dd.is-person {
+    color: var(--color-accent);
+    font-family: var(--font-body);
+}
+
+.reading__facts .fact-links {
+    margin-top: var(--space-md);
+    padding-top: var(--space-md);
+    border-top: var(--rule-hair) solid var(--color-rule);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2xs);
+}
+
+.reading__facts .fact-links a {
+    color: var(--color-cool);
+    font-size: var(--text-sm);
+    word-break: break-all;
+}
+
+.reading__icons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xs);
+}
 
 .project-description {
-    padding: 1rem;
-    margin: 2rem 1rem;
+    margin-top: var(--section-gap-s);
+    max-width: 75ch;
 }
 
-.project-description-title {
-    margin-bottom: 1.5rem;
+.project-description h1 {
+    font-size: var(--text-section);
+    margin-bottom: var(--space-lg);
 }
 
-.project-info {
-    max-width: 500px;
-    padding: 1rem;
-    margin: 1rem auto;
-    border-radius: 1rem;
+.project-description p {
+    max-width: 75ch;
+    color: var(--color-ink-2);
 }
 
-.project-info-links {
-    margin-bottom: 1rem;
+/* ---------------------------------------------------------------
+   CV page
+   --------------------------------------------------------------- */
+
+.cv-panel {
+    background: var(--color-paper-2);
+    border: var(--rule-hair) solid var(--color-rule);
+    border-radius: var(--radius-card);
+    padding: var(--space-xl);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-lg);
 }
 
-.project-info-grid {
-    margin-top: 1rem;
+.cv-panel object {
+    border-radius: var(--radius-pill);
+    max-width: 100%;
 }
 
-    .project-info-grid h3 {
-        margin-bottom: 1rem;
-    }
+/* ---------------------------------------------------------------
+   Edit project (admin, app-screen density)
+   --------------------------------------------------------------- */
+
+.edit-project-container {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+    max-width: 760px;
+}
 
 .edit-project-container h2 {
-    margin-top: 1rem;
-    margin-bottom: 0.5rem;
+    font-size: var(--text-title);
+    color: var(--color-ink-2);
+    margin-top: var(--space-lg);
+    margin-bottom: 0;
+}
+
+.edit-project-container .mud-input-control, .edit-project-container .mud-select {
+    background: var(--color-paper-3);
+}
+
+.edit-project-container .mud-paper {
+    background: var(--color-paper-2) !important;
+    border: var(--rule-hair) solid var(--color-rule) !important;
+}
+
+#quill-editor {
+    background: var(--color-paper-3);
+    border: var(--rule-hair) solid var(--color-rule);
+    border-radius: var(--radius-card);
+    min-height: 220px;
+    color: var(--color-ink);
+}
+
+.description-content .ql-toolbar {
+    background: var(--color-paper-2);
+    border-color: var(--color-rule) !important;
+    border-radius: var(--radius-card) var(--radius-card) 0 0;
+}
+
+.description-content .ql-container {
+    border-color: var(--color-rule) !important;
 }

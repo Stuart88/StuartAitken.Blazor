@@ -3,39 +3,40 @@
 
 <PageTitle>Stuart Aitken - CV</PageTitle>
 
+<div class="page-head">
+	<div class="breadcrumb" style="justify-content:space-between">
+		<span style="display:flex;align-items:center;gap:var(--space-2xs)">
+			<MudIconButton OnClick="@(() => Navigation.NavigateTo(Routes.Pages.Index))"
+						   Icon="@Icons.Material.Rounded.ArrowBack" />
+			<a href="@Routes.Pages.Index">Home</a> / CV
+		</span>
 
-<div>
-	<MudIconButton OnClick="@(() => Navigation.NavigateTo(Routes.Pages.Index))"
-				   Icon="@Icons.Material.Rounded.ArrowBack" Color="Color.Info" />
+		<MudButton Class="btn-primary"
+				   Size="Size.Small"
+				   OnClick="@(async () => await JsRuntime.InvokeVoidAsync("downloadCv"))">
+			Download CV
+		</MudButton>
+	</div>
 
-
-	.. / CV
+	<h1>CV, @DateTime.Now.Year</h1>
 </div>
 
-
-<div id="cv-container" style="padding-top:1rem">
-	<MudButton Variant="Variant.Filled"
-			   Style="@($"background-color:{Colors.Blue.Default};color:{Colors.Gray.Lighten5}")"
-			   Size="Size.Small"
-			   OnClick="@(async () => await JsRuntime.InvokeVoidAsync("downloadCv"))">
-		Download CV
-	</MudButton>
-	<center>
-		<h1>
-			CV - Stuart Aitken @DateTime.Now.Year
-		</h1>
-		@if (width == 0)
-		{
-			<MudProgressCircular Indeterminate />
-		}
-		else
-		{
-			<object data="/downloads/Stuart-Aitken-CV-Nov-2026-Default.pdf"
-				width="@width"
-				height="@height">
-			</object>
-		}
-	</center>
+<div class="page-body">
+	<div class="cv-panel">
+		<div id="cv-container" style="width:100%;display:flex;justify-content:center">
+			@if (width == 0)
+			{
+				<MudProgressCircular Indeterminate Color="Color.Primary" />
+			}
+			else
+			{
+				<object data="/downloads/Stuart-Aitken-CV-Nov-2026-Default.pdf"
+					width="@width"
+					height="@height">
+				</object>
+			}
+		</div>
+	</div>
 </div>
 
 @code {

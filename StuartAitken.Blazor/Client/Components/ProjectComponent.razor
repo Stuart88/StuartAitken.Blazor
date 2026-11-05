@@ -7,54 +7,54 @@
 else
 {
 	<div>
-		<MudCarousel Class="project-carousel"
-				 ShowArrows="true"
-				 ShowBullets="true"
-				 Style="@($"background-color:{Colors.Yellow.Default}")"
-				 EnableSwipeGesture="true"
-				 AutoCycle="false"
-				 TData="object">
-			@foreach (var img in Project.Images.OrderByDescending(i => i.PrimaryImage == 1).ToList())
-			{
-				<MudCarouselItem Transition="Transition.Fade" Color="@Color.Default">
-					<div class="d-flex text-center carousel-image">
-						<MudImage Fluid
-						  Src="@($"/{Routes.Api.ProjectImage_AsObject}{img.ID}")"
-						  ObjectFit="ObjectFit.Contain"
-						  ObjectPosition="ObjectPosition.Center" />
+		<h1>@Project.Name</h1>
 
-						@if (this.AppStateContainer.IsAdmin)
-						{
-							<div id="image-edit-btns">
-								@if (img.PrimaryImage != 1)
+		<div class="reading">
+			<div class="reading__media">
+				<MudCarousel Class="project-carousel"
+						 ShowArrows="true"
+						 ShowBullets="@(Project.Images.Count <= MaxBullets)"
+						 EnableSwipeGesture="true"
+						 AutoCycle="false"
+						 TData="object">
+					@foreach (var img in Project.Images.OrderByDescending(i => i.PrimaryImage == 1).ToList())
+					{
+						<MudCarouselItem Transition="Transition.Fade" Color="@Color.Default">
+							<div class="d-flex text-center carousel-image">
+								<MudImage Fluid
+								  Src="@($"/{Routes.Api.ProjectImage_AsObject}{img.ID}")"
+								  ObjectFit="ObjectFit.Contain"
+								  ObjectPosition="ObjectPosition.Center" />
+
+								@if (this.AppStateContainer.IsAdmin)
 								{
-									<MudButton Size="Size.Small"
-							   ButtonType="ButtonType.Button"
-							   Style="@($"background-color:{Colors.Blue.Default};color:{Colors.Shades.White}")"
-							   OnClick="() => SetPrimaryImage(img)">
-										Make main image
-									</MudButton>
+									<div id="image-edit-btns">
+										@if (img.PrimaryImage != 1)
+										{
+											<MudButton Class="btn-outline" Size="Size.Small"
+									   ButtonType="ButtonType.Button"
+									   OnClick="() => SetPrimaryImage(img)">
+												Make main image
+											</MudButton>
 
+										}
+										<MudButton Class="btn-danger" Size="Size.Small"
+									   ButtonType="ButtonType.Button"
+									   OnClick="() => DeleteImage(img)">
+											Delete
+										</MudButton>
+									</div>
 								}
-								<MudButton Size="Size.Small"
-							   ButtonType="ButtonType.Button"
-							   Style="@($"background-color:{Colors.Red.Default};color:{Colors.Shades.White}")"
-							   OnClick="() => DeleteImage(img)">
-									Delete
-								</MudButton>
 							</div>
-						}
-					</div>
-				</MudCarouselItem>
-			}
-		</MudCarousel>
+						</MudCarouselItem>
+					}
+				</MudCarousel>
+			</div>
 
-		<ProjectInfoSection Project="Project" />
+			<ProjectInfoSection Project="Project" />
+		</div>
 
 		<div class="project-description">
-			<div class="project-description-title">
-				<h1>@Project.Name</h1>
-			</div>
 			@((MarkupString)(Project.Description ?? ""))
 		</div>
 	</div>
@@ -63,6 +63,10 @@ else
 @code {
 	[Parameter]
 	public Project Project { get; set; }
+
+	// Past this many images, the bullet row has no room to fit on a phone and stops
+	// being a useful indicator anyway; the arrows and swipe gesture still navigate.
+	private const int MaxBullets = 4;
 
 	private async Task DeleteImage(ProjectImage img)
 	{
