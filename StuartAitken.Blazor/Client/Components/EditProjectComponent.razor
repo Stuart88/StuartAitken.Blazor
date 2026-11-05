@@ -2,7 +2,7 @@
 
 @if (!this.AppStateContainer.IsAdmin)
 {
-	<MudChip Color="Color.Error">Unauthorised!</MudChip>
+	<MudChip T="string" Color="Color.Error">Unauthorised!</MudChip>
 }
 else if (Project == null)
 {
@@ -20,34 +20,68 @@ else
 		<MudButton HtmlTag="label"
 			   Variant="Variant.Filled"
 			   Color="Color.Primary"
-			   StartIcon="@Icons.Filled.CloudUpload"
+			   StartIcon="@Icons.Material.Filled.CloudUpload"
 			   for="fileInput">
 			Upload Files
 		</MudButton>
-		@if (images != null)
+		@if (images != null && images.Count > 0)
 		{
 			<MudText Typo="@Typo.h6">@images.Count() File@(images.Count() == 1 ? "" : "s"):</MudText>
-			<MudList>
+			<MudList T="string">
 				@foreach (var img in images)
 				{
-					<MudListItem Icon="@Icons.Filled.AttachFile" @key="@img">
+					<MudListItem T="string" Icon="@Icons.Material.Filled.AttachFile" @key="@img">
 						@img.Name <code>@img.Size bytes</code>
 					</MudListItem>
 				}
 			</MudList>
 		}
+
+		@if (Project.Images != null && Project.Images.Count > 0)
+		{
+			<MudText Typo="@Typo.h6" Class="mt-4">Existing Images (drag to reorder):</MudText>
+			<MudDropContainer T="ProjectImage"
+							   @ref="imageDropContainer"
+							   Items="@Project.Images"
+							   ItemsSelector="@((item, zone) => true)"
+							   ItemDropped="OnImageDropped"
+							   Class="d-flex flex-wrap gap-4 mt-2">
+				<ChildContent>
+					<MudDropZone T="ProjectImage" Identifier="project-images" AllowReorder="true" Class="d-flex flex-wrap gap-4" />
+				</ChildContent>
+				<ItemRenderer>
+					<MudPaper Class="pa-2" Style="width:150px;cursor:grab" Elevation="3">
+						<MudImage Src="@($"/{Routes.Api.ProjectImage_AsObject}{context.ID}")"
+								  Fluid Height="110" ObjectFit="ObjectFit.Cover" Class="rounded" />
+						<div class="d-flex justify-space-between mt-1">
+							<MudIconButton Size="Size.Small"
+										   Icon="@(context.PrimaryImage == 1 ? Icons.Material.Filled.Star : Icons.Material.Filled.StarBorder)"
+										   Color="@(context.PrimaryImage == 1 ? Color.Warning : Color.Default)"
+										   Disabled="@(context.PrimaryImage == 1 || imageActionInProgress)"
+										   OnClick="@(() => SetPrimaryImage(context))" />
+							<MudIconButton Size="Size.Small"
+										   Icon="@Icons.Material.Filled.Delete"
+										   Color="Color.Error"
+										   Disabled="@imageActionInProgress"
+										   OnClick="@(() => DeleteExistingImage(context))" />
+						</div>
+					</MudPaper>
+				</ItemRenderer>
+			</MudDropContainer>
+		}
+
 		<h2>Details</h2>
 		<MudTextField Immediate @bind-Value="@Project.Name" Label="Name" Variant="Variant.Filled"
-				  Adornment="Adornment.Start" AdornmentIcon="@Icons.Filled.DocumentScanner"
+				  Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.DocumentScanner"
 				  Disabled="@saving" />
 		<MudDatePicker Label="Project Date" Editable="true" Variant="Variant.Filled"
-				   Adornment="Adornment.Start" AdornmentIcon="@Icons.Filled.CalendarMonth"
+				   Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.CalendarMonth"
 				   DateChanged="@((val) => Project.ProjectDate = val ?? DateTime.MinValue)"
 				   Placeholder="Select Date"
 				   Date="@Project.ProjectDate"
 				   DateFormat="dd MMM yyyy" />
 		<MudNumericField Immediate HideSpinButtons="true" T="int" @bind-Value="Project.ProjectDurationDays" Label="Duration Days" Variant="Variant.Filled"
-					 Adornment="Adornment.Start" AdornmentIcon="@Icons.Filled.CalendarMonth"
+					 Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.CalendarMonth"
 					 Disabled="@saving" />
 
 		<h2>Links</h2>
@@ -56,7 +90,7 @@ else
 		{
 			int index = i;
 			<MudTextField Immediate T="string" TextChanged="@((val) => OnUrlUpdated(index,val))" Variant="Variant.Text"
-				  Adornment="Adornment.Start" AdornmentIcon="@Icons.Filled.Link"
+				  Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Link"
 				  Disabled="@saving"
 				  Text="@this.Links[index]" />
 		}
@@ -64,7 +98,7 @@ else
 		<h2>Type / Tech</h2>
 
 		<MudSelect MultiSelection T="string" Label="Project Type" Variant="Variant.Filled"
-			   SelectedValues="@(this.Project.Type.Split(", ").Where(i => !string.IsNullOrWhiteSpace(i)))"
+			   SelectedValues="@(this.Project.Type.Split(", ").Where(i => !string.IsNullOrWhiteSpace(i)).ToList())"
 			   SelectedValuesChanged="@((vals) => OnSelectedValuesChanged(ItemType.ProjectType, vals))"
 			   Disabled="@saving">
 			@foreach (var t in ProjectTypesOrdered)
@@ -76,7 +110,7 @@ else
 		</MudSelect>
 
 		<MudSelect MultiSelection T="string" Label="Project Type" Variant="Variant.Filled"
-			   SelectedValues="@(this.Project.Tech.Split(", ").Where(i => !string.IsNullOrWhiteSpace(i)))"
+			   SelectedValues="@(this.Project.Tech.Split(", ").Where(i => !string.IsNullOrWhiteSpace(i)).ToList())"
 			   SelectedValuesChanged="@((vals) => OnSelectedValuesChanged(ItemType.ProjectTech, vals))"
 			   Disabled="@saving">
 			@foreach (var t in ProjectTechsOrdered)
@@ -97,7 +131,7 @@ else
 }
 
 <MudButton FullWidth
-		   Style="@($"background-color:{Colors.Green.Default};color:{Colors.Grey.Lighten5};margin:10px")"
+		   Style="@($"background-color:{Colors.Green.Default};color:{Colors.Gray.Lighten5};margin:10px")"
 		   OnClick="OnPreviewClicked"
 		   Disabled="@saving">
 	@if (this.showPreview)
@@ -111,7 +145,7 @@ else
 </MudButton>
 
 <MudButton FullWidth
-		   Style="@($"background-color:{Colors.Blue.Default};color:{Colors.Grey.Lighten5};margin:10px")"
+		   Style="@($"background-color:{Colors.Blue.Default};color:{Colors.Gray.Lighten5};margin:10px")"
 		   OnClick="OnSave"
 		   Disabled="@saving">
 	@if (saving)
@@ -132,6 +166,8 @@ else
 	private List<ProjectTech> ProjectTechs { get; set; } = new List<ProjectTech>();
 	private bool saving;
 	private bool showPreview;
+	private bool imageActionInProgress;
+	private MudDropContainer<ProjectImage>? imageDropContainer;
 	private IList<IBrowserFile> images = new List<IBrowserFile>();
 
 	private List<ProjectType> ProjectTypesOrdered => this.ProjectTypes.OrderByDescending(p => this.Project.Type.Contains(p.Name)).ThenBy(p => p.Name).ToList();
@@ -313,6 +349,93 @@ else
 		foreach (var file in e.GetMultipleFiles())
 		{
 			images.Add(file);
+		}
+	}
+
+	private async Task DeleteExistingImage(ProjectImage img)
+	{
+		bool? shouldDelete = await this.Dialog.ShowMessageBox(
+			"Delete",
+			$"Delete this image. \n\nAre you sure?",
+			yesText: "Delete", cancelText: "Cancel");
+
+		if (shouldDelete != true)
+			return;
+
+		imageActionInProgress = true;
+
+		try
+		{
+			await this.Http.CustomDeleteAsync(Routes.Api.ProjectImages + img.ID);
+
+			Project.Images.Remove(img);
+			imageDropContainer?.Refresh();
+		}
+		catch (Exception e)
+		{
+			this.Snackbar.Add(e.Message, Severity.Error);
+		}
+		finally
+		{
+			imageActionInProgress = false;
+			this.StateHasChanged();
+		}
+	}
+
+	private async Task SetPrimaryImage(ProjectImage img)
+	{
+		imageActionInProgress = true;
+
+		try
+		{
+			var resp = await this.Http.PostAsync(Routes.Api.ProjectImages_SetMainImage + img.ID, null);
+
+			var apiResponse = await resp.Content.ReadFromJsonAsync<ApiResponse>();
+
+			if (apiResponse == null)
+				throw new Exception("ApiResponse is null!");
+
+			if (apiResponse.Ok)
+			{
+				Project.Images.ForEach(i => i.PrimaryImage = i.ID == img.ID ? 1 : 0);
+				imageDropContainer?.Refresh();
+			}
+			else
+			{
+				this.Snackbar.Add(apiResponse.Error, Severity.Error);
+			}
+		}
+		catch (Exception e)
+		{
+			this.Snackbar.Add(e.Message, Severity.Error);
+		}
+		finally
+		{
+			imageActionInProgress = false;
+			this.StateHasChanged();
+		}
+	}
+
+	private async Task OnImageDropped(MudItemDropInfo<ProjectImage> dropInfo)
+	{
+		Project.Images.UpdateOrder(dropInfo, i => i.SortOrder);
+
+		try
+		{
+			var orderedIds = Project.Images.OrderBy(i => i.SortOrder).Select(i => i.ID).ToList();
+
+			var resp = await this.Http.PutAsJsonAsync(Routes.Api.ProjectImages_Reorder, orderedIds);
+
+			var apiResponse = await resp.Content.ReadFromJsonAsync<ApiResponse>();
+
+			if (apiResponse == null || !apiResponse.Ok)
+			{
+				this.Snackbar.Add(apiResponse?.Error ?? "Failed to save new image order", Severity.Error);
+			}
+		}
+		catch (Exception e)
+		{
+			this.Snackbar.Add(e.Message, Severity.Error);
 		}
 	}
 

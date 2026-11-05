@@ -1,5 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using StuartAitken.Blazor.Server.DataAccess;
 using StuartAitken.Blazor.Server.DataAccess.Entities;
+using StuartAitken.Blazor.Server.Exceptions;
+using StuartAitken.Blazor.Server.Security;
 using StuartAitken.Blazor.Shared.Models;
 
 namespace StuartAitken.Blazor.Server.DataService
@@ -8,7 +11,7 @@ namespace StuartAitken.Blazor.Server.DataService
     {
         #region Public Constructors
 
-        public ProjectsService() { }
+        public ProjectsService(StuartAitkenContext db) : base(db) { }
 
         #endregion Public Constructors
 
@@ -20,6 +23,7 @@ namespace StuartAitken.Blazor.Server.DataService
             {
                 var portfolioProject = Mapper.Mapper.Map<Project, PortfolioProject>(project);
                 portfolioProject.Urls = portfolioProject.Urls ?? "";
+                portfolioProject.Description = HtmlSanitizerHelper.Sanitize(portfolioProject.Description);
                 _db.Add(portfolioProject);
                 await _db.SaveChangesAsync();
                 return Mapper.Mapper.Map<PortfolioProject, Project>(portfolioProject);
@@ -34,7 +38,11 @@ namespace StuartAitken.Blazor.Server.DataService
         {
             try
             {
-                PortfolioProject portfolioProject = _db.PortfolioProjects.Find(id);
+                PortfolioProject? portfolioProject = _db.PortfolioProjects.Find(id);
+
+                if (portfolioProject == null)
+                    throw new UserFacingException($"Project with ID {id} does not exist");
+
                 _db.PortfolioProjects.Remove(portfolioProject);
                 _db.Entry(portfolioProject).State = EntityState.Deleted;
                 return await _db.SaveChangesAsync();
@@ -135,7 +143,7 @@ namespace StuartAitken.Blazor.Server.DataService
 
         public bool PortfolioProjectExists(int ID)
         {
-            return GetAllPortfolioProjects().Any(e => e.ID == ID);
+            return _db.PortfolioProjects.Any(e => e.ID == ID);
         }
 
         public async Task<Project?> UpdatePortfolioProject(Project project)
@@ -143,19 +151,19 @@ namespace StuartAitken.Blazor.Server.DataService
             try
             {
                 if (project == null)
-                    throw new Exception("Project was null");
+                    throw new UserFacingException("Project was null");
 
                 PortfolioProject? updating = _db.PortfolioProjects.Find(project.ID);
 
                 if (updating == null)
-                    throw new Exception("Project not found!");
+                    throw new UserFacingException("Project not found!");
 
                 updating.Name = project.Name;
                 updating.ProjectDate = project.ProjectDate;
                 updating.ProjectDurationDays = project.ProjectDurationDays;
                 updating.Status = project.Status;
                 updating.Tech = project.Tech;
-                updating.Description = project.Description;
+                updating.Description = HtmlSanitizerHelper.Sanitize(project.Description);
                 updating.Urls = project.Urls ?? "";
                 updating.Type = project.Type;
                 updating.ModifiedDate = DateTime.Now;

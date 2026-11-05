@@ -35,6 +35,7 @@ namespace StuartAitken.Blazor.Client
         public void Dispose()
         {
             AppStateContainer.OnPasswordChange -= OnPasswordChanged;
+            AppStateContainer.OnChange -= OnAppStateChanged;
         }
 
         #endregion Public Methods
@@ -44,6 +45,7 @@ namespace StuartAitken.Blazor.Client
         protected override async Task OnInitializedAsync()
         {
             AppStateContainer.OnPasswordChange += OnPasswordChanged;
+            AppStateContainer.OnChange += OnAppStateChanged;
 
             await base.OnInitializedAsync();
         }
@@ -51,6 +53,14 @@ namespace StuartAitken.Blazor.Client
         #endregion Protected Methods
 
         #region Private Methods
+
+        // Pages/components that read AppStateContainer.IsAdmin directly in their markup (e.g. to
+        // show/hide edit buttons) otherwise never re-render when it changes - MainLayout
+        // re-rendering itself doesn't re-render the @Body content it wraps.
+        private void OnAppStateChanged()
+        {
+            this.StateHasChanged();
+        }
 
         private void OnPasswordChanged()
         {

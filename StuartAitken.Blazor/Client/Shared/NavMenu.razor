@@ -1,6 +1,11 @@
-﻿<MudNavMenu>
+@inherits CustomComponentBase
+
+<MudNavMenu>
     <CustomSidebarButton Href="@Routes.Pages.Index" Icon="@Icons.Material.Filled.Home" Text="Home" />
     <CustomSidebarButton Href="@Routes.Pages.Projects" Icon="@Icons.Material.Filled.Dns" Text="Projects" />
     <CustomSidebarButton Href="@Routes.Pages.CV" Icon="@Icons.Material.Filled.DocumentScanner" Text="CV" />
-    <CustomSidebarButton Href="@Routes.Pages.Swagger" Icon="@Icons.Material.Filled.Api" Text="Swagger API" Target="_blank" />
+    @if (this.AppStateContainer.IsAdmin)
+    {
+        <CustomSidebarButton Href="@Routes.Pages.Swagger" Icon="@Icons.Material.Filled.Api" Text="Swagger API" Target="_blank" />
+    }
 </MudNavMenu>

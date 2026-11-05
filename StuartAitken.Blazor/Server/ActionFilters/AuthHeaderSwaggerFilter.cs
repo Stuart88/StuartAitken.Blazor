@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Controllers;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Reflection;
 
@@ -29,24 +29,10 @@ namespace StuartAitken.Blazor.Server.ActionFilters
                     if (operation.Security == null)
                         operation.Security = new List<OpenApiSecurityRequirement>();
 
+                    var scheme = new OpenApiSecuritySchemeReference("Bearer", context.Document);
+
                     operation.Security.Add(
-                        new OpenApiSecurityRequirement
-                        {
-                            {
-                                new OpenApiSecurityScheme
-                                {
-                                    Name = "Authorization",
-                                    In = ParameterLocation.Header,
-                                    BearerFormat = "Bearer token",
-                                    Reference = new OpenApiReference
-                                    {
-                                        Type = ReferenceType.SecurityScheme,
-                                        Id = "Bearer"
-                                    }
-                                },
-                                new string[] { }
-                            }
-                        }
+                        new OpenApiSecurityRequirement { [scheme] = new List<string>() }
                     );
                 }
             }

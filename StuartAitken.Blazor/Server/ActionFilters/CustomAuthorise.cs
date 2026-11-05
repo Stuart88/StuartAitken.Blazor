@@ -23,31 +23,45 @@ namespace StuartAitken.Blazor.Server.ActionFilters
             ActionExecutionDelegate next
         )
         {
-            var dataService = context.HttpContext.RequestServices.GetService<SecureDataService>();
-            var controller = context.Controller as CustomControllerBase;
-
             bool isAdmin = false;
 
-            if (dataService != null && controller != null)
+            try
             {
-                string password = StringHelper.GetPasswordFromAuthHeader(
-                    context.HttpContext.Request
-                );
+                var dataService = context.HttpContext.RequestServices.GetService<SecureDataService>();
+                var controller = context.Controller as CustomControllerBase;
 
-                if (!string.IsNullOrEmpty(password))
+                if (dataService != null && controller != null)
                 {
-                    var adminData = dataService.GetSecureData(AdminSecureData);
+                    string password = StringHelper.GetPasswordFromAuthHeader(
+                        context.HttpContext.Request
+                    );
 
-                    if (adminData != null)
+                    if (!string.IsNullOrEmpty(password))
                     {
-                        isAdmin = SecurityHelper.PasswordCorrect(password, adminData.Value);
+                        var adminData = dataService.GetSecureData(AdminSecureData);
+
+                        if (adminData != null)
+                        {
+                            isAdmin = SecurityHelper.PasswordCorrect(password, adminData.Value);
+                        }
                     }
                 }
+            }
+            catch (Exception e)
+            {
+                var logger = context.HttpContext.RequestServices.GetService<
+                    ILogger<AdminAuthorise>
+                >();
+                logger?.LogError(e, "Admin authorisation check failed");
+                isAdmin = false;
             }
 
             if (!isAdmin)
             {
-                context.Result = new JsonResult(new ApiResponse(new Exception("Authorisation failed!")));
+                context.Result = new JsonResult(new ApiResponse(ok: false) { Error = "Unauthorized" })
+                {
+                    StatusCode = StatusCodes.Status401Unauthorized
+                };
                 //await base.OnActionExecutionAsync(context, next);
             }
             else

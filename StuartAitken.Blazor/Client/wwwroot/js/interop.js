@@ -16,7 +16,7 @@ window.isMobile = function () {
 
 window.downloadCv = function () {
     var link = document.createElement('a');
-    link.href = `/downloads/Stuart-Aitken-CV-Oct-2022-Default.pdf`;
+    link.href = `/downloads/Stuart-Aitken-CV-Nov-2026-Default.pdf`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);

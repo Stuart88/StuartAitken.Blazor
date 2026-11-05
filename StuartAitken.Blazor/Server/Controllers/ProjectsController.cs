@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using StuartAitken.Blazor.Server.ActionFilters;
 using StuartAitken.Blazor.Server.DataService;
+using StuartAitken.Blazor.Server.Exceptions;
 using StuartAitken.Blazor.Shared.Models;
 
 namespace StuartAitken.Blazor.Server.Controllers
@@ -12,6 +13,7 @@ namespace StuartAitken.Blazor.Server.Controllers
     {
         #region Private Fields
 
+        private readonly ILogger<ProjectsController> _logger;
         private readonly IWebHostEnvironment _webHostEnvironment;
         private ProjectImageService _projectImageService;
         private ProjectsService _projectsService;
@@ -30,12 +32,14 @@ namespace StuartAitken.Blazor.Server.Controllers
         public ProjectsController(
             ProjectsService projectsService,
             ProjectImageService projectImageService,
-            IWebHostEnvironment webHostEnvironment
+            IWebHostEnvironment webHostEnvironment,
+            ILogger<ProjectsController> logger
         )
         {
             this._projectsService = projectsService;
             this._projectImageService = projectImageService;
             this._webHostEnvironment = webHostEnvironment;
+            this._logger = logger;
         }
 
         #endregion Public Constructors
@@ -79,11 +83,23 @@ namespace StuartAitken.Blazor.Server.Controllers
         [HttpDelete("{id}")]
         public async Task<ApiResponse> DeletePortfolioProject([FromRoute] int id)
         {
-            await _projectImageService.DeleteAllImagesForProjectId(imageRootFolder, id);
+            try
+            {
+                await _projectImageService.DeleteAllImagesForProjectId(imageRootFolder, id);
 
-            await _projectsService.DeletePortfolioProjectAsync(id);
+                await _projectsService.DeletePortfolioProjectAsync(id);
 
-            return new ApiResponse();
+                return new ApiResponse();
+            }
+            catch (UserFacingException e)
+            {
+                return new ApiResponse(ok: false) { Error = e.Message };
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Failed to delete project {ProjectId}", id);
+                return new ApiResponse(ok: false) { Error = "An unexpected error occurred." };
+            }
         }
 
         [AdminAuthorise]
@@ -111,9 +127,14 @@ namespace StuartAitken.Blazor.Server.Controllers
                     return new ApiResponse<Project>(new Exception("Update error. Nothing updated."));
                 }
             }
-            catch (Exception ex)
+            catch (UserFacingException e)
             {
-                return new ApiResponse<Project>(ex);
+                return new ApiResponse<Project>(ok: false) { Error = e.Message };
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Failed to update project {ProjectId}", ID);
+                return new ApiResponse<Project>(ok: false) { Error = "An unexpected error occurred." };
             }
         }
 
@@ -134,7 +155,7 @@ namespace StuartAitken.Blazor.Server.Controllers
 
                 if (portfolioProject == null)
                 {
-                    throw new Exception($"Project with ID {id} does not exist");
+                    throw new UserFacingException($"Project with ID {id} does not exist");
                 }
 
                 portfolioProject.Views ??= 0;
@@ -144,9 +165,14 @@ namespace StuartAitken.Blazor.Server.Controllers
 
                 return new ApiResponse<Project>(portfolioProject);
             }
+            catch (UserFacingException e)
+            {
+                return new ApiResponse<Project>(ok: false) { Error = e.Message };
+            }
             catch (Exception e)
             {
-                return new ApiResponse<Project>(e);
+                _logger.LogError(e, "Failed to get project {ProjectId}", id);
+                return new ApiResponse<Project>(ok: false) { Error = "An unexpected error occurred." };
             }
         }
 

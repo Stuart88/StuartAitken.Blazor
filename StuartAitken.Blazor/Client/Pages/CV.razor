@@ -6,7 +6,7 @@
 
 <div>
 	<MudIconButton OnClick="@(() => Navigation.NavigateTo(Routes.Pages.Index))"
-				   Icon="@Icons.Rounded.ArrowBack" Color="Color.Info" />
+				   Icon="@Icons.Material.Rounded.ArrowBack" Color="Color.Info" />
 
 
 	.. / CV
@@ -15,7 +15,7 @@
 
 <div id="cv-container" style="padding-top:1rem">
 	<MudButton Variant="Variant.Filled"
-			   Style="@($"background-color:{Colors.Blue.Default};color:{Colors.Grey.Lighten5}")"
+			   Style="@($"background-color:{Colors.Blue.Default};color:{Colors.Gray.Lighten5}")"
 			   Size="Size.Small"
 			   OnClick="@(async () => await JsRuntime.InvokeVoidAsync("downloadCv"))">
 		Download CV
@@ -30,7 +30,7 @@
 		}
 		else
 		{
-			<object data="/downloads/Stuart-Aitken-CV-Oct-2022-Default.pdf"
+			<object data="/downloads/Stuart-Aitken-CV-Nov-2026-Default.pdf"
 				width="@width"
 				height="@height">
 			</object>

@@ -12,9 +12,9 @@ namespace StuartAitken.Blazor.Server.DataService
 
         #region Public Constructors
 
-        public ServiceBase()
+        public ServiceBase(StuartAitkenContext db)
         {
-            this._db = new StuartAitkenContext();
+            this._db = db;
         }
 
         #endregion Public Constructors

@@ -6,7 +6,7 @@
 
 	<div>
 		<MudIconButton OnClick="@(() => Navigation.NavigateTo(Routes.Pages.Projects))"
-				   Icon="@Icons.Rounded.ArrowBack" Color="Color.Info" />
+				   Icon="@Icons.Material.Rounded.ArrowBack" Color="Color.Info" />
 
 
 		.. / <MudLink Href="@(Routes.Pages.Projects)" Color="Color.Default">Projects</MudLink> / @(project?.Name ?? "Loading...")
@@ -14,7 +14,7 @@
 	@if (this.AppStateContainer.IsAdmin)
 	{
 		<MudButton Variant="Variant.Filled"
-			   Style="@($"background-color:{Colors.Blue.Default};color:{Colors.Grey.Lighten5};margin:10px;float:right")"
+			   Style="@($"background-color:{Colors.Blue.Default};color:{Colors.Gray.Lighten5};margin:10px;float:right")"
 			   Size="Size.Small"
 			   OnClick="@(() => this.Navigation.NavigateTo($"{Routes.Pages.EditProject}/{ProjectId}"))">
 			Edit

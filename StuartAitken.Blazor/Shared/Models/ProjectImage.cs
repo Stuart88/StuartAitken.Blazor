@@ -9,6 +9,7 @@
         public DateTime ModifiedDate { get; set; }
         public int? PrimaryImage { get; set; }
         public int ProjectId { get; set; }
+        public int SortOrder { get; set; }
         public int Status { get; set; }
 
         #endregion Public Properties

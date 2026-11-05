@@ -1,5 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using StuartAitken.Blazor.Server.DataAccess;
 using StuartAitken.Blazor.Server.DataAccess.Entities;
+using StuartAitken.Blazor.Server.Exceptions;
 using StuartAitken.Blazor.Server.Mapper;
 using StuartAitken.Blazor.Shared.Models;
 
@@ -9,7 +11,7 @@ namespace StuartAitken.Blazor.Server.DataService
     {
         #region Public Constructors
 
-        public ProjectImageService() { }
+        public ProjectImageService(StuartAitkenContext db) : base(db) { }
 
         #endregion Public Constructors
 
@@ -22,19 +24,28 @@ namespace StuartAitken.Blazor.Server.DataService
         )
         {
             if (image.Length == 0)
-                throw new Exception("No image data!");
+                throw new UserFacingException("No image data!");
 
             if (image.Length > Shared.Constants.Constants.MaxFileSizeBytes)
-                throw new Exception(
+                throw new UserFacingException(
                     $"Image too large! (> {Shared.Constants.Constants.MaxFileSizeBytes.ToString()[0]}MB)"
                 ); // <-- This is daft but good enough for typical image upload sizes
 
             try
             {
+                int nextSortOrder =
+                    (
+                        _db.PortfolioProjectImages
+                            .Where(i => i.ProjectId == projectID)
+                            .Select(i => (int?)i.SortOrder)
+                            .Max() ?? -1
+                    ) + 1;
+
                 var portfolioProjectImage = new PortfolioProjectImage
                 {
                     CreationDate = DateTime.Now,
                     ProjectId = projectID,
+                    SortOrder = nextSortOrder,
                     Status = 1,
                     ModifiedDate = DateTime.Now,
                 };
@@ -179,9 +190,37 @@ namespace StuartAitken.Blazor.Server.DataService
         {
             try
             {
-                var images = _db.PortfolioProjectImages.Where(x => x.ProjectId == projID);
+                var images = _db.PortfolioProjectImages
+                    .Where(x => x.ProjectId == projID)
+                    .OrderBy(x => x.SortOrder)
+                    .ThenBy(x => x.ID);
 
                 return images.Map<PortfolioProjectImage, ProjectImage>().ToList();
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        public async Task ReorderProjectImages(List<int> orderedImageIds)
+        {
+            try
+            {
+                for (int i = 0; i < orderedImageIds.Count; i++)
+                {
+                    PortfolioProjectImage? img = _db.PortfolioProjectImages.Find(
+                        orderedImageIds[i]
+                    );
+
+                    if (img != null)
+                    {
+                        img.SortOrder = i;
+                        _db.Entry(img).State = EntityState.Modified;
+                    }
+                }
+
+                await _db.SaveChangesAsync();
             }
             catch
             {
@@ -202,7 +241,7 @@ namespace StuartAitken.Blazor.Server.DataService
 
                 if (newMainImage == null)
                 {
-                    throw new Exception("Image not found");
+                    throw new UserFacingException("Image not found");
                 }
 
                 int projID = newMainImage.ProjectId;

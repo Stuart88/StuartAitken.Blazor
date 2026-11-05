@@ -22,6 +22,7 @@
             public const string ProjectImages_IdsForProject =
                 ProjectImages + "image-ids-for-project/";
 
+            public const string ProjectImages_Reorder = ProjectImages + "reorder";
             public const string ProjectImages_SetMainImage = ProjectImages + "set-main-image/";
             public const string Projects = BaseApi + "projects/";
 

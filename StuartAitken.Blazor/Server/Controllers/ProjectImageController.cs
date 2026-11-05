@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using StuartAitken.Blazor.Server.ActionFilters;
 using StuartAitken.Blazor.Server.DataService;
+using StuartAitken.Blazor.Server.Exceptions;
 using StuartAitken.Blazor.Shared.Models;
 
 namespace StuartAitken.Blazor.Server.Controllers
@@ -11,6 +12,7 @@ namespace StuartAitken.Blazor.Server.Controllers
     {
         #region Private Fields
 
+        private readonly ILogger<ProjectImageController> _logger;
         private readonly IWebHostEnvironment _webHostEnvironment;
         private ProjectImageService _projectImageService;
         private ProjectsService _projectService;
@@ -29,12 +31,14 @@ namespace StuartAitken.Blazor.Server.Controllers
         public ProjectImageController(
             ProjectImageService projectImageService,
             ProjectsService projectService,
-            IWebHostEnvironment webHostEnvironment
+            IWebHostEnvironment webHostEnvironment,
+            ILogger<ProjectImageController> logger
         )
         {
             this._projectService = projectService;
             this._projectImageService = projectImageService;
             this._webHostEnvironment = webHostEnvironment;
+            this._logger = logger;
         }
 
         #endregion Public Constructors
@@ -58,9 +62,14 @@ namespace StuartAitken.Blazor.Server.Controllers
 
                 return new ApiResponse();
             }
+            catch (UserFacingException e)
+            {
+                return new ApiResponse(ok: false) { Error = e.Message };
+            }
             catch (Exception e)
             {
-                return new ApiResponse(e);
+                _logger.LogError(e, "Failed to delete image {ImageId}", id);
+                return new ApiResponse(ok: false) { Error = "An unexpected error occurred." };
             }
         }
 
@@ -124,16 +133,44 @@ namespace StuartAitken.Blazor.Server.Controllers
                     if (addedImage != null)
                         addedImages.Add(addedImage);
                 }
-                catch (Exception e)
+                catch (UserFacingException e)
                 {
                     errorMessage += $"{e.Message}\n";
+                    response.Ok = false;
+                }
+                catch (Exception e)
+                {
+                    _logger.LogError(e, "Failed to add image to project {ProjectId}", projectId);
+                    errorMessage += "Failed to upload one or more images.\n";
                     response.Ok = false;
                 }
             }
 
             response.Data = addedImages;
+            response.Error = errorMessage;
 
             return response;
+        }
+
+        [AdminAuthorise]
+        [HttpPut("reorder")]
+        public async Task<ApiResponse> ReorderImages([FromBody] List<int> orderedImageIds)
+        {
+            try
+            {
+                await _projectImageService.ReorderProjectImages(orderedImageIds);
+
+                return new ApiResponse();
+            }
+            catch (UserFacingException e)
+            {
+                return new ApiResponse(ok: false) { Error = e.Message };
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Failed to reorder images");
+                return new ApiResponse(ok: false) { Error = "An unexpected error occurred." };
+            }
         }
 
         [AdminAuthorise]
@@ -144,11 +181,16 @@ namespace StuartAitken.Blazor.Server.Controllers
             {
                 return await _projectImageService.SetMainPortfolioProjectImageAsync(id) != 0
                     ? new ApiResponse()
-                    : throw new Exception("No data saved!");
+                    : throw new UserFacingException("No data saved!");
+            }
+            catch (UserFacingException e)
+            {
+                return new ApiResponse(ok: false) { Error = e.Message };
             }
             catch (Exception e)
             {
-                return new ApiResponse(e);
+                _logger.LogError(e, "Failed to set main image {ImageId}", id);
+                return new ApiResponse(ok: false) { Error = "An unexpected error occurred." };
             }
         }
 

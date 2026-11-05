@@ -1,4 +1,5 @@
-﻿using StuartAitken.Blazor.Server.DataAccess.Entities;
+﻿using StuartAitken.Blazor.Server.DataAccess;
+using StuartAitken.Blazor.Server.DataAccess.Entities;
 
 namespace StuartAitken.Blazor.Server.DataService
 {
@@ -6,7 +7,7 @@ namespace StuartAitken.Blazor.Server.DataService
     {
         #region Public Constructors
 
-        public SecureDataService() { }
+        public SecureDataService(StuartAitkenContext db) : base(db) { }
 
         #endregion Public Constructors
 

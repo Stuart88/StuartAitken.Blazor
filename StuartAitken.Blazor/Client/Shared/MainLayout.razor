@@ -10,7 +10,7 @@
 		<MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Default" Style="@($"background-color:{Colors.Blue.Default}")" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
 
 		<MudHidden Breakpoint="Breakpoint.SmAndDown">
-			<div class="site-title" style="@($"color:{Colors.Grey.Darken1}")">
+			<div class="site-title" style="@($"color:{Colors.Gray.Darken1}")">
 				@Constants.SiteName
 			</div>
 		</MudHidden>
@@ -102,5 +102,6 @@
 
 
 <MudThemeProvider />
+<MudPopoverProvider />
 <MudDialogProvider />
 <MudSnackbarProvider />
