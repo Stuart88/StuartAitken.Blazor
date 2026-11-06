@@ -108,13 +108,13 @@
 			<MudHidden Breakpoint="Breakpoint.SmAndDown">
 				<MudTd DataLabel="Duration" Class="cell-duration" Style="width:100px">@StringHelpers.MakePresentableDuration(context)</MudTd>
 				<MudTd DataLabel="Types" Style="width:100px">
-					@foreach (var type in context.Type.Split(", "))
+					@foreach (var type in StringHelpers.SplitList(context.Type))
 					{
 						<ProjectIcon Src="@StringHelpers.TypeIconSrc(type)" Tooltip="@type" />
 					}
 				</MudTd>
 				<MudTd DataLabel="Tech">
-					@foreach (var tech in context.Tech.Split(", ").OrderBy(i => i))
+					@foreach (var tech in StringHelpers.SplitList(context.Tech).OrderBy(i => i))
 					{
 						<ProjectIcon Src="@StringHelpers.TechIconSrc(tech)" Tooltip="@tech" />
 					}

@@ -70,14 +70,17 @@
 						}
 						else
 						{
-							<MudTextField Class="login"
-									  @bind-Value="AppStateContainer.Password"
-									  Label="Admin login"
-									  InputType="InputType.Password"
-									  Variant="Variant.Outlined"
-									  OnKeyUp="OnPasswordKeyPress"
-									  Margin="Margin.Dense">
-							</MudTextField>
+							<form @onsubmit:preventDefault="true" autocomplete="on">
+								<MudTextField Class="login"
+										  @bind-Value="AppStateContainer.Password"
+										  Label="Admin login"
+										  InputType="InputType.Password"
+										  Variant="Variant.Outlined"
+										  UserAttributes="@(new Dictionary<string, object> { { "autocomplete", "current-password" } })"
+										  OnKeyUp="OnPasswordKeyPress"
+										  Margin="Margin.Dense">
+								</MudTextField>
+							</form>
 						}
 					</div>
 				</div>

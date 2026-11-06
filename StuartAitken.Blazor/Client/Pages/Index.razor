@@ -68,7 +68,7 @@
 						<span class="work-card__meta">@p.ProjectDate.ToString("yyyy")</span>
 						<h3 class="work-card__name">@p.Name</h3>
 						<div class="work-card__tech">
-							@foreach (var type in p.Type.Split(", ").Take(3))
+							@foreach (var type in StringHelpers.SplitList(p.Type).Take(3))
 							{
 								<ProjectIcon Small Src="@StringHelpers.TypeIconSrc(type)" Tooltip="@type" />
 							}

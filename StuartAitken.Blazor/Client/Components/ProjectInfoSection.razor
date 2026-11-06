@@ -14,14 +14,14 @@
 			</div>
 			<div class="fact-row">
 				<dt>Type</dt>
-				<dd><div class="reading__icons">@foreach (var type in Project.Type.Split(", "))
+				<dd><div class="reading__icons">@foreach (var type in StringHelpers.SplitList(Project.Type))
 					{
 						<ProjectIcon Small Src="@StringHelpers.TypeIconSrc(type)" Tooltip="@type" />
 					}</div></dd>
 			</div>
 			<div class="fact-row">
 				<dt>Tech</dt>
-				<dd><div class="reading__icons">@foreach (var tech in Project.Tech.Split(", ").OrderBy(i => i))
+				<dd><div class="reading__icons">@foreach (var tech in StringHelpers.SplitList(Project.Tech).OrderBy(i => i))
 					{
 						<ProjectIcon Small Src="@StringHelpers.TechIconSrc(tech)" Tooltip="@tech" />
 					}</div></dd>

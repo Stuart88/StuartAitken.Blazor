@@ -1,4 +1,6 @@
-﻿using StuartAitken.Blazor.Shared.Models;
+﻿using System;
+using System.Linq;
+using StuartAitken.Blazor.Shared.Models;
 
 namespace StuartAitken.Blazor.Client.Helpers
 {
@@ -35,6 +37,23 @@ namespace StuartAitken.Blazor.Client.Helpers
 
             // Duration is less than one week Give result in days.
             return $"{d} Days";
+        }
+
+        /// <summary>
+        /// Splits a comma-separated list (e.g. Project.Type/Project.Tech) and drops blank
+        /// entries, so a trailing/double separator doesn't produce an empty tag whose icon
+        /// src would resolve to "images/.../.svg" and 404.
+        /// </summary>
+        public static string[] SplitList(string value)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+                return Array.Empty<string>();
+
+            return value
+                .Split(',')
+                .Select(s => s.Trim())
+                .Where(s => !string.IsNullOrEmpty(s))
+                .ToArray();
         }
 
         public static string TechIconSrc(string name)

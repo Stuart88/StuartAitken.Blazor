@@ -65,6 +65,15 @@
     --mud-typography-default-family: var(--font-body) !important;
 }
 
+/* MudBlazor's tooltip pairs --mud-palette-dark-text (remapped above to the
+   theme-tracking --color-ink) with --mud-palette-gray-darker, which is never
+   remapped and stays a fixed dark grey in both themes. In light mode that
+   pairs dark ink text with an always-dark background, so pin the tooltip to
+   a fixed light text colour - the dark-theme reading, which is already fine. */
+.mud-tooltip-default {
+    color: oklch(95% 0.005 250) !important;
+}
+
 /* ---------------------------------------------------------------
    Page scaffolding
    --------------------------------------------------------------- */
@@ -754,6 +763,13 @@ a.trail-row:hover {
     margin: auto;
 }
 
+.carousel-image__clickable {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    cursor: zoom-in;
+}
+
 .mud-carousel {
     background: var(--color-paper-3) !important;
 }
@@ -907,4 +923,59 @@ a.trail-row:hover {
 
 .description-content .ql-container {
     border-color: var(--color-rule) !important;
+}
+
+/* ---------------------------------------------------------------
+   Image lightbox (full-screen project image viewer)
+   --------------------------------------------------------------- */
+
+.mud-dialog.image-lightbox {
+    background: color-mix(in oklab, var(--color-paper-3) 92%, black) !important;
+    box-shadow: none !important;
+    max-width: none !important;
+}
+
+.image-lightbox .mud-dialog-content {
+    padding: 0 !important;
+    height: 100%;
+}
+
+.image-lightbox__body {
+    position: relative;
+    height: 100%;
+    width: 100%;
+    display: flex;
+}
+
+.image-lightbox__close {
+    position: absolute;
+    top: var(--space-md);
+    right: var(--space-md);
+    z-index: var(--z-modal);
+    color: var(--color-ink) !important;
+}
+
+.image-lightbox__carousel {
+    width: 100%;
+    height: 100%;
+    background: transparent !important;
+}
+
+.image-lightbox__image-wrap {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    padding: var(--space-2xl) var(--space-3xl);
+}
+
+.image-lightbox__image-wrap img {
+    height: 100% !important;
+    width: 100% !important;
+    margin: auto;
+}
+
+@media (max-width: 60rem) {
+    .image-lightbox__image-wrap {
+        padding: var(--space-3xl) var(--space-sm);
+    }
 }

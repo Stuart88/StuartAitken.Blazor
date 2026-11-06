@@ -17,14 +17,16 @@ else
 						 EnableSwipeGesture="true"
 						 AutoCycle="false"
 						 TData="object">
-					@foreach (var img in Project.Images.OrderByDescending(i => i.PrimaryImage == 1).ToList())
+					@foreach (var img in OrderedImages)
 					{
 						<MudCarouselItem Transition="Transition.Fade" Color="@Color.Default">
 							<div class="d-flex text-center carousel-image">
-								<MudImage Fluid
-								  Src="@($"/{Routes.Api.ProjectImage_AsObject}{img.ID}")"
-								  ObjectFit="ObjectFit.Contain"
-								  ObjectPosition="ObjectPosition.Center" />
+								<div class="carousel-image__clickable" @onclick="() => OpenLightbox(img)">
+									<MudImage Fluid
+									  Src="@($"/{Routes.Api.ProjectImage_AsObject}{img.ID}")"
+									  ObjectFit="ObjectFit.Contain"
+									  ObjectPosition="ObjectPosition.Center" />
+								</div>
 
 								@if (this.AppStateContainer.IsAdmin)
 								{
@@ -67,6 +69,31 @@ else
 	// Past this many images, the bullet row has no room to fit on a phone and stops
 	// being a useful indicator anyway; the arrows and swipe gesture still navigate.
 	private const int MaxBullets = 4;
+
+	private List<ProjectImage> OrderedImages => Project.Images.OrderByDescending(i => i.PrimaryImage == 1).ToList();
+
+	private async Task OpenLightbox(ProjectImage img)
+	{
+		var images = OrderedImages;
+		int startIndex = Math.Max(0, images.FindIndex(i => i.ID == img.ID));
+
+		var parameters = new DialogParameters<ImageLightbox>
+		{
+			{ x => x.Images, images },
+			{ x => x.StartIndex, startIndex }
+		};
+
+		var options = new DialogOptions
+		{
+			FullScreen = true,
+			CloseButton = false,
+			BackdropClick = true,
+			CloseOnEscapeKey = true,
+			NoHeader = true
+		};
+
+		await this.Dialog.ShowAsync<ImageLightbox>(null, parameters, options);
+	}
 
 	private async Task DeleteImage(ProjectImage img)
 	{

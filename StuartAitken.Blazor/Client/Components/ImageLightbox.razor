@@ -1,0 +1,50 @@
+<MudDialog Class="image-lightbox">
+	<DialogContent>
+		<div class="image-lightbox__body">
+			<MudIconButton Class="image-lightbox__close"
+						   Icon="@Icons.Material.Rounded.Close"
+						   Color="Color.Inherit"
+						   OnClick="Close" />
+
+			<MudCarousel @bind-SelectedIndex="selectedIndex"
+						 Class="image-lightbox__carousel"
+						 ShowArrows="@(Images.Count > 1)"
+						 ShowBullets="@(Images.Count > 1 && Images.Count <= 8)"
+						 EnableSwipeGesture="true"
+						 AutoCycle="false"
+						 TData="object">
+				@foreach (var img in Images)
+				{
+					<MudCarouselItem Transition="Transition.Fade" Color="Color.Default">
+						<div class="image-lightbox__image-wrap">
+							<MudImage Fluid
+									  Src="@($"/{Routes.Api.ProjectImage_AsObject}{img.ID}")"
+									  ObjectFit="ObjectFit.Contain"
+									  ObjectPosition="ObjectPosition.Center" />
+						</div>
+					</MudCarouselItem>
+				}
+			</MudCarousel>
+		</div>
+	</DialogContent>
+</MudDialog>
+
+@code {
+	[CascadingParameter]
+	private IMudDialogInstance MudDialog { get; set; } = default!;
+
+	[Parameter]
+	public List<ProjectImage> Images { get; set; } = new();
+
+	[Parameter]
+	public int StartIndex { get; set; }
+
+	private int selectedIndex;
+
+	protected override void OnInitialized()
+	{
+		selectedIndex = StartIndex;
+	}
+
+	private void Close() => MudDialog.Close();
+}
