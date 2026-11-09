@@ -30,12 +30,20 @@
 			}
 			else
 			{
-				<object data="/downloads/Stuart-Aitken-CV-Nov-2026-Default.pdf"
+				<iframe src="/downloads/Stuart-Aitken-CV-Nov-2026-Default.pdf"
 					width="@width"
-					height="@height">
-				</object>
+					height="@height"
+					style="width:@(width)px;height:@(height)px;">
+				</iframe>
 			}
 		</div>
+
+		<a class="cv-panel__fallback-link"
+		   href="/downloads/Stuart-Aitken-CV-Nov-2026-Default.pdf"
+		   target="_blank"
+		   rel="noopener">
+			Can't see the CV above? Open it directly
+		</a>
 	</div>
 </div>
 

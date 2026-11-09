@@ -104,6 +104,10 @@
 			<MudTd DataLabel="ProjectDate" Class="cell-date" Style="width:140px">@context.ProjectDate.ToString("yyyy MMM")</MudTd>
 			<MudTd DataLabel="Name">
 				<span class="@(context.Featured ? "chip chip--accent" : "chip")">@context.Name</span>
+				@if (!string.IsNullOrWhiteSpace(context.ShortDescription))
+				{
+					<span class="cell-name__desc">@context.ShortDescription</span>
+				}
 			</MudTd>
 			<MudHidden Breakpoint="Breakpoint.SmAndDown">
 				<MudTd DataLabel="Duration" Class="cell-duration" Style="width:100px">@StringHelpers.MakePresentableDuration(context)</MudTd>

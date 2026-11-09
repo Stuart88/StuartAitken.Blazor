@@ -159,6 +159,7 @@ namespace StuartAitken.Blazor.Server.DataService
                     throw new UserFacingException("Project not found!");
 
                 updating.Name = project.Name;
+                updating.ShortDescription = project.ShortDescription;
                 updating.ProjectDate = project.ProjectDate;
                 updating.ProjectDurationDays = project.ProjectDurationDays;
                 updating.Status = project.Status;

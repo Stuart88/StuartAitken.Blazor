@@ -67,6 +67,10 @@
 					<div class="work-card__body">
 						<span class="work-card__meta">@p.ProjectDate.ToString("yyyy")</span>
 						<h3 class="work-card__name">@p.Name</h3>
+						@if (!string.IsNullOrWhiteSpace(p.ShortDescription))
+						{
+							<p class="work-card__desc">@p.ShortDescription</p>
+						}
 						<div class="work-card__tech">
 							@foreach (var type in StringHelpers.SplitList(p.Type).Take(3))
 							{

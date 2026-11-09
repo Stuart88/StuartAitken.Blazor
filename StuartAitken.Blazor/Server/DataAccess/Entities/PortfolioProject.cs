@@ -14,6 +14,7 @@ namespace StuartAitken.Blazor.Server.DataAccess.Entities
         public string Name { get; set; } = null!;
         public DateTime ProjectDate { get; set; }
         public int ProjectDurationDays { get; set; }
+        public string? ShortDescription { get; set; }
         public int? Status { get; set; }
         public string Tech { get; set; } = null!;
         public string Type { get; set; } = null!;

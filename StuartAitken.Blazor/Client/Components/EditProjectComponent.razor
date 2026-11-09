@@ -74,6 +74,11 @@ else
 		<MudTextField Immediate @bind-Value="@Project.Name" Label="Name" Variant="Variant.Filled"
 				  Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.DocumentScanner"
 				  Disabled="@saving" />
+		<MudTextField Immediate @bind-Value="@Project.ShortDescription" Label="Short Description" Variant="Variant.Filled"
+				  Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.ShortText"
+				  HelperText="Shown under the title on the projects table and on featured work cards"
+				  Counter="140" MaxLength="140"
+				  Disabled="@saving" />
 		<MudDatePicker Label="Project Date" Editable="true" Variant="Variant.Filled"
 				   Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.CalendarMonth"
 				   DateChanged="@((val) => Project.ProjectDate = val ?? DateTime.MinValue)"
